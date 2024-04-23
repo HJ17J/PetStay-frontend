@@ -1,0 +1,22 @@
+.main-page {
+  font-family: "Arial", sans-serif;
+
+  .hero-section,
+  .feature-section,
+  .vip-section,
+  .reviews-section,
+  .custom-care-section {
+    padding: 20px;
+    text-align: center;
+  }
+
+  h1,
+  h2,
+  h3 {
+    color: #6c63ff;
+  }
+
+  p {
+    color: #444;
+  }
+}

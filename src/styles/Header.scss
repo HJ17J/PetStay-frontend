@@ -1,0 +1,65 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.headerContainer {
+  width: 100%;
+  height: 100px !important;
+  background-color: #6c63ff;
+  height: 70px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+
+.logoTitle {
+  color: #fffbf7;
+  font-weight: bold;
+}
+
+.myLinkContainer {
+  display: flex;
+}
+
+.myLink {
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 0 1rem;
+  color: #fffbf7;
+  &:hover {
+    color: skyblue;
+  }
+}
+
+.langContainer {
+  display: flex;
+  gap: 5px;
+}
+
+.en {
+  cursor: pointer;
+  color: #fffbf7;
+  &:hover {
+    color: skyblue;
+  }
+}
+
+.cn {
+  cursor: pointer;
+  color: #fffbf7;
+  &:hover {
+    color: skyblue;
+  }
+}
+
+.ko {
+  cursor: pointer;
+  color: #fffbf7;
+  &:hover {
+    color: skyblue;
+  }
+}

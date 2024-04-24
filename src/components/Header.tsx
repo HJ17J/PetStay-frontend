@@ -12,10 +12,10 @@ export default function Header() {
         <Link to="/pet-sitters" className="myLink">
           펫시터
         </Link>
-        <Link to="" className="myLink">
+        <Link to="/profile/:userid" className="myLink">
           마이페이지
         </Link>
-        <Link to="" className="myLink">
+        <Link to="/login" className="myLink">
           로그인
         </Link>
         <div className="langContainer">

@@ -63,3 +63,16 @@
     color: skyblue;
   }
 }
+
+.logoTitle {
+  color: #fffbf7;
+  font-weight: bold;
+  display: flex; /* 로고 이미지와 텍스트를 가로로 정렬하기 위해 추가 */
+  align-items: center; /* 로고 이미지와 텍스트를 세로로 정렬하기 위해 추가 */
+}
+
+.logoTitle img {
+  width: 50px; /* 로고 이미지의 너비를 50px로 조정 */
+  height: auto; /* 이미지 비율 유지 */
+  margin-right: 10px; /* 로고 이미지와 텍스트 사이 간격 조정 */
+}

@@ -1,0 +1,88 @@
+.chat-container {
+  background-color: #f0f0f5;
+  color: #333;
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+
+  h1 {
+    color: #6c63ff;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 0 20px;
+
+    li {
+      background-color: #fff;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      padding: 10px 15px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+      img {
+        width: 100%;
+        height: auto;
+        max-width: 200px;
+        border-radius: 5px;
+        margin-top: 10px;
+      }
+    }
+  }
+
+  input[type="text"],
+  input[type="file"] {
+    width: calc(100% - 110px);
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  button {
+    width: 100px;
+    background-color: #6c63ff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: darken(#6c63ff, 10%);
+    }
+  }
+
+  // 반응형 웹 디자인을 위한 미디어 쿼리
+  @media (max-width: 768px) {
+    padding: 10px;
+
+    h1 {
+      font-size: 1.5em;
+    }
+
+    input[type="text"],
+    input[type="file"],
+    button {
+      width: 100%;
+      margin: 10px 0;
+    }
+
+    ul li {
+      padding: 8px 10px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    ul li {
+      font-size: 0.9em;
+    }
+
+    button {
+      padding: 8px 0;
+    }
+  }
+}

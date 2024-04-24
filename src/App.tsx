@@ -1,13 +1,23 @@
-import Header from "./components/Header";
-import Mypage from "./pages/Mypage";
-import Register from "./pages/Register";
 import MainPage from "./pages/MainPage";
+import ChatPage from "./pages/ChatPage";
+import { Provider } from "react-redux";
+import store from "./store/store";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import PetSitterList from "./pages/PetSitterList";
 
 function App() {
   return (
-    <div className="App">
-      <MainPage />
-    </div>
+    <Provider store={store}>
+      <Router>
+        <div className="App">
+          <Routes>
+            <Route path="/" element={<MainPage />} />
+            {/* <Route path="/chat" element={<ChatPage />} /> */}
+            <Route path="/pet-sitters" element={<PetSitterList />} />
+          </Routes>
+        </div>
+      </Router>
+    </Provider>
   );
 }
 

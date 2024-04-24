@@ -1,10 +1,12 @@
 import React from "react";
 import "../styles/MainPage.scss";
 import Footer from "../components/Footer";
+import Header from "../components/Header";
 
 const MainPage = () => {
   return (
     <div className="main-page">
+      <Header />
       <section className="hero-section">
         <h1>펫스테이와 함께라면, 집을 떠나도 마음은 항상 함께합니다</h1>
       </section>

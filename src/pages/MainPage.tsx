@@ -35,26 +35,36 @@ const MainPage = () => {
         <p>당신의 소중한 가족을 위한 최적의 펫시터를 찾아보세요.</p>
         <img src="images/Main3.png" alt="VIP Pets" />
       </section>
-      <section className="reviews-section">
-        <h3>펫스테이 이용자들의 진솔한 후기</h3>
-        <div className="review">
-          <p>"정말 만족스러운 서비스였어요!"</p>
-          <p>- 김철수</p>
+      <section className="team">
+        <h3>펫스테이 팀 조직도</h3>
+        <div className="team-members">
+          <div className="team-member">
+            <img src="" alt="Team Member 1" />
+            <p>진현정</p>
+            <p>CEO</p>
+          </div>
+          <div className="team-member">
+            <img src="" alt="Team Member 2" />
+            <p>신동원</p>
+            <p>CTO</p>
+          </div>
+          <div className="team-member">
+            <img src="" alt="Team Member 3" />
+            <p>이형석</p>
+            <p>COO</p>
+          </div>
+          <div className="team-member">
+            <img src="images/lim.png" alt="Team Member 4" />
+            <p>임학민</p>
+            <p>CMO</p>
+          </div>
+          <div className="team-member">
+            <img src="" alt="Team Member 5" />
+            <p>홍주희</p>
+            <p>CFO</p>
+          </div>
         </div>
-        <div className="review">
-          <p>"우리 댕댕이가 너무 행복해 보였어요!"</p>
-          <p>- 이영희</p>
-        </div>
-        <div className="review">
-          <p>"다음에도 또 이용할 거예요!"</p>
-          <p>- 박민지</p>
-        </div>
-      </section>
-      <section className="custom-care-section">
-        <p>당신의 일정에 맞춤 돌봄, 펫스테이가 해결해 드립니다.</p>
-        <p>짧은 산책부터 장기 돌봄까지!</p>
-        <img src="path/to/your/image4.jpg" alt="Custom Care" />
-      </section>
+      </section>{" "}
       <Footer />
     </div>
   );

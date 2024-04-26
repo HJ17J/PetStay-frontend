@@ -1,15 +1,6 @@
 import MainPage from "./pages/MainPage";
 import Reservation from "./pages/Reservation";
 import "boxicons/css/boxicons.css";
-
-function App() {
-  return (
-    <div className="App">
-      {/* <MainPage /> */}
-      <Reservation />
-    </div>
-
-import ChatPage from "./pages/ChatPage";
 import { Provider } from "react-redux";
 import store from "./store/store";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -25,14 +16,12 @@ function App() {
           <Routes>
             <Route path="/" element={<MainPage />} />
             <Route path="/profile/:userid" element={<Mypage />} />
-            {/* <Route path="/chat" element={<ChatPage />} /> */}
             <Route path="/pet-sitters" element={<PetSitterList />} />
             <Route path="/login" element={<Register />} />
           </Routes>
         </div>
       </Router>
     </Provider>
-
   );
 }
 

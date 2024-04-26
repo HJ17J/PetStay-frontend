@@ -1,61 +1,42 @@
-.header {
-  background-color: #5a5aee;
-  padding: 10px 0;
-}
-
-.menu {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
+.pet-sitter-list {
   display: flex;
-  justify-content: space-evenly;
-  li a {
-    color: white;
-    text-decoration: none;
-  }
-}
-
-.main {
-  padding: 20px;
-}
-
-.searchBox {
-  margin: 20px 0;
-  display: flex;
-  justify-content: center;
-}
-
-.searchInput {
-  width: 80%;
-  padding: 10px;
-}
-
-.sitterItem {
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
+  margin-top: 20px;
 }
 
-.sitterImage {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-}
+.pet-sitter-card {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  width: 80%;
+  padding: 20px;
 
-.sitterInfo {
-  flex-grow: 1;
-  padding-left: 20px;
-  .rating {
-    color: gold;
+  .sitter-image img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-right: 20px;
   }
-}
 
-.reserveButton {
-  background-color: #5a5aee;
-  color: white;
-  padding: 10px 20px;
-  border: none;
+  .sitter-info {
+    flex-grow: 1;
+
+    h3 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    p {
+      margin: 5px 0;
+      font-size: 16px;
+    }
+
+    .sitter-rating {
+      color: gold;
+      font-size: 20px;
+    }
+  }
 }

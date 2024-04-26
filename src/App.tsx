@@ -1,4 +1,14 @@
 import MainPage from "./pages/MainPage";
+import Reservation from "./pages/Reservation";
+import "boxicons/css/boxicons.css";
+
+function App() {
+  return (
+    <div className="App">
+      {/* <MainPage /> */}
+      <Reservation />
+    </div>
+
 import ChatPage from "./pages/ChatPage";
 import { Provider } from "react-redux";
 import store from "./store/store";
@@ -22,6 +32,7 @@ function App() {
         </div>
       </Router>
     </Provider>
+
   );
 }
 

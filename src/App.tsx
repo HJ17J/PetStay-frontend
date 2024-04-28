@@ -1,6 +1,6 @@
 import MainPage from "./pages/MainPage";
 import Reservation from "./pages/Reservation";
-import "boxicons/css/boxicons.css";
+// import "boxicons/css/boxicons.css";
 import { Provider } from "react-redux";
 import store from "./store/store";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";

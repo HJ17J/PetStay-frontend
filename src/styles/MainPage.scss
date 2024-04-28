@@ -27,18 +27,48 @@ section {
 .image-text-overlay {
   position: relative;
   img.faded-image {
-    width: 90%;
+    width: 100%;
     height: auto; // 가변 높이로 조정
-    opacity: 0.9;
   }
-  .overlay-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #fff;
-    font-size: 24px; // 글씨 크기 조정
-    font-weight: 600; // 글씨 굵기 변경
+}
+
+/* sitter section 스타일 */
+.sitter-section {
+  .sitter-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .sitter-text,
+    .sitter-image {
+      flex: 0 1 30%; // 너비를 300px로 고정하고 필요에 따라 축소 가능하도록 설정
+      padding: 20px;
+      max-width: 50%; // 최대 너비를 50%로 제한
+    }
+
+    .sitter-image img {
+      width: 100%;
+      height: auto;
+    }
+  }
+}
+
+/* vip section 스타일 */
+.vip-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .vip-text,
+  .vip-image {
+    flex: 0 1 30%; // 너비를 300px로 고정하고 필요에 따라 축소 가능하도록 설정
+    padding: 20px;
+    max-width: 50%; // 최대 너비를 50%로 제한
+  }
+
+  .vip-image img {
+    width: 100%;
+    height: auto;
   }
 }
 

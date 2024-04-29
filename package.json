@@ -10,7 +10,6 @@
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.96",
     "@types/react-dom": "^18.2.25",
-    "@types/react-router-dom": "^5.3.3",
     "axios": "^1.6.8",
     "boxicons": "^2.1.4",
     "i18next": "^23.11.2",
@@ -46,6 +45,7 @@
   },
   "devDependencies": {
     "@types/i18next": "^13.0.0",
-    "@types/react": "^18.3.1"
+    "@types/react": "^18.3.1",
+    "@types/react-router-dom": "^5.3.3"
   }
 }

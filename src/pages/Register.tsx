@@ -6,8 +6,10 @@ import { RootState } from "../store/store";
 import axios, { AxiosError } from "axios";
 import { LoginErrorResponse } from "../types/loginErrorResponse";
 import { SignupPayload, ErrorPayload } from "../types/authTypes";
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
+  const navigate = useNavigate();
   const [userid, setUserid] = useState("");
   const [userpw, setUserpw] = useState("");
   const [confirmUserpw, setConfirmUserpw] = useState("");
@@ -53,6 +55,8 @@ export default function Register() {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // 폼 기본 이벤트 방지
 
+    console.log("Login attempt:", { userid, userpw }); // 로그인 시도 로그
+
     try {
       const response = await axios.post(
         process.env.REACT_APP_API_SERVER + "/login",
@@ -67,10 +71,13 @@ export default function Register() {
         }
       );
 
-      if (response.data.status === "success") {
+      console.log("Server response:", response.data); // 서버 응답 로그
+
+      if (response.data.statusCode === 200) {
         // 성공 액션 디스패치
         console.log("로그인 성공");
         dispatch(loginSuccess({ userid }));
+        navigate("/");
       } else {
         // 실패 액션 디스패치
         dispatch(
@@ -82,11 +89,12 @@ export default function Register() {
       }
     } catch (error) {
       const axiosError = error as AxiosError<LoginErrorResponse>;
+      console.error("Complete error response:", axiosError.response);
       if (axiosError.response) {
         // 오류 응답에 따라 오류 메시지 디스패치
         dispatch(
           loginFailure({
-            userid: axiosError.response.data.error,
+            userid: "아이디 확인이 필요합니다",
             userpw: axiosError.response.data.error,
           })
         );
@@ -276,6 +284,121 @@ export default function Register() {
                 required
               />
             </div>
+            <button>보호자 가입</button>
+            <button>펫시터 가입</button>
+            <input type="submit" className="btn" value="Sign up" />
+            <p className="social-text">Or Sign up with social platforms</p>
+            <div className="social-media">
+              <a href="#" className="social-icon">
+                <img
+                  className="social"
+                  src="/register/images/kakaotalk_logo.png"
+                  alt=""
+                />
+              </a>
+              <a href="#" className="social-icon">
+                <img
+                  className="social"
+                  src="/register/images/naver_logo.png"
+                  alt=""
+                />
+              </a>
+              <a href="#" className="social-icon">
+                <img
+                  className="social"
+                  src="/register/images/google_logo.png"
+                  alt=""
+                />
+              </a>
+              <a href="#" className="social-icon">
+                <img
+                  className="social"
+                  src="/register/images/apple_logo.png"
+                  alt=""
+                />
+              </a>
+            </div>
+          </form>
+          <form className="petsitter-form" onSubmit={handleSignup}>
+            <h2 className="title">Sign up</h2>
+            <div className="input-field">
+              <i className="fas fa-user"></i>
+              <input
+                type="text"
+                placeholder="아이디"
+                value={userid}
+                onChange={(e) => setUserid(e.target.value)}
+                required
+              />
+            </div>
+            <button
+              type="button"
+              className="btn"
+              onClick={checkUserIdAvailability}
+            >
+              중복 확인
+            </button>
+
+            <div className="input-field">
+              <i className="fas fa-envelope"></i>
+              <input
+                type="text"
+                placeholder="닉네임"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+            <button
+              type="button"
+              className="btn"
+              onClick={checkNameAvailability}
+            >
+              중복 확인
+            </button>
+
+            <div className="input-field">
+              <i className="fas fa-lock"></i>
+              <input
+                type="password"
+                placeholder="비밀번호"
+                value={userpw}
+                onChange={(e) => setUserpw(e.target.value)}
+                required
+              />
+            </div>
+            <div className="input-field">
+              <i className="fas fa-confirm"></i>
+              <input
+                type="password"
+                placeholder="비밀번호 확인"
+                value={confirmUserpw}
+                onChange={(e) => setConfirmUserpw(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="input-field">
+              <i className="fas fa-address"></i>
+              <input
+                type="text"
+                placeholder="주소"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                required
+              />
+            </div>
+            <div className="input-field">
+              <i className="fas fa-type"></i>
+              <input type="text" />
+            </div>
+            <div className="input-field">
+              <i className="fas fa-license"></i>
+              <input type="text" />
+            </div>
+
+            <button>보호자 가입</button>
+            <button>펫시터 가입</button>
             <input type="submit" className="btn" value="Sign up" />
             <p className="social-text">Or Sign up with social platforms</p>
             <div className="social-media">

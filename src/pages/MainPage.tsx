@@ -10,13 +10,13 @@ const MainPage = () => {
       <section className="intro-section">
         <div className="image-text-overlay">
           <img
-            src="images/Main1.png"
+            src="images/top banner1 edit.png"
             alt="Happy Pets"
             className="faded-image"
           />
-          <p className="overlay-text">
+          {/* <p className="overlay-text">
             펫스테이와 함께라면, 집을 떠나도 마음은 항상 함께합니다.
-          </p>
+          </p> */}
         </div>
       </section>
       <section className="sitter-section">
@@ -31,9 +31,13 @@ const MainPage = () => {
         </div>
       </section>
       <section className="vip-section">
-        <p>펫스테이에서는 모든 반려동물이 VIP입니다.</p>
-        <p>당신의 소중한 가족을 위한 최적의 펫시터를 찾아보세요.</p>
-        <img src="images/Main3.png" alt="VIP Pets" />
+        <div className="vip-text">
+          <p>펫스테이에서는 모든 반려동물이 VIP입니다.</p>
+          <p>당신의 소중한 가족을 위한 최적의 펫시터를 찾아보세요.</p>
+        </div>
+        <div className="vip-image">
+          <img src="images/Main3.png" alt="VIP Pets" />
+        </div>
       </section>
       <section className="team">
         <h3>펫스테이 팀 조직도</h3>
@@ -64,7 +68,10 @@ const MainPage = () => {
             <p>CFO</p>
           </div>
         </div>
-      </section>{" "}
+      </section>
+      {/* <section className="bottom">
+        <img src="images/bottom banner2 edit.png" alt="bottom" />
+      </section> */}
       <Footer />
     </div>
   );

@@ -1,0 +1,22 @@
+/* 기본 시간대 스타일 */
+.timeslot {
+  background-color: white;
+  padding: 10px;
+  margin: 5px;
+  border: 1px solid black;
+  cursor: pointer;
+  width: 100px;
+  text-align: center;
+  display: inline-block;
+}
+
+/* 활성화된 시간대 스타일 */
+.timeslot.active {
+  background-color: lightblue;
+}
+.timeslot.inactive {
+  background-color: lightgray;
+}
+.timeslot.done {
+  background-color: gray;
+}

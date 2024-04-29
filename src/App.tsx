@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import PetSitterList from "./pages/PetSitterList";
 import Register from "./pages/Register";
 import Mypage from "./pages/Mypage";
+import MyCalendar from "./components/MyCalender";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/profile/:userid" element={<Mypage />} />
             <Route path="/pet-sitters" element={<PetSitterList />} />
             <Route path="/login" element={<Register />} />
+            <Route path="/calender" element={<MyCalendar />} />
           </Routes>
         </div>
       </Router>

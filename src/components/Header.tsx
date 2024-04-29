@@ -1,15 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "../styles/Header.scss";
 
 const Header: React.FC = () => {
   const { t, i18n } = useTranslation();
-
-  // 번역 함수 디버깅
-  console.log("Translated Header.petSitter:", t("header.petSitter"));
-  console.log("Translated Header.myPage:", t("header.myPage"));
-  console.log("Translated Header.login:", t("header.login"));
 
   return (
     <div className="headerContainer">

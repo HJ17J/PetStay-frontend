@@ -20,10 +20,16 @@ export interface SignupPayload {
   usertype: string; // 회원 유형 정보 추가
 }
 
-export interface ErrorPayload {
-  userid?: string;
-  userpw?: string;
-  // 필요하다면 추가적인 회원가입 관련 에러 필드도 추가할 수 있습니다.
-  name?: string;
-  address?: string;
+export interface LoginErrorPayload {
+  userid?: string; // 로그인 시 아이디 입력 에러
+  userpw?: string; // 로그인 시 비밀번호 입력 에러
+}
+
+export interface SignupErrorPayload {
+  userid?: string; // 회원가입 시 아이디 입력 에러
+  userpw?: string; // 회원가입 시 비밀번호 입력 에러
+  name?: string; // 회원가입 시 이름 입력 에러
+  address?: string; // 회원가입 시 주소 입력 에러
+  usertype?: string; // 회원가입 시 회원 유형 선택 에러
+  // 필요에 따라 추가적인 에러 필드를 여기에 포함시킬 수 있습니다.
 }

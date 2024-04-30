@@ -5,7 +5,12 @@ import { loginSuccess, loginFailure, signupFailure } from "../store/authSlice";
 import { RootState } from "../store/store";
 import axios, { AxiosError } from "axios";
 import { LoginErrorResponse } from "../types/loginErrorResponse";
-import { SignupPayload, ErrorPayload } from "../types/authTypes";
+import {
+  SignupPayload,
+  LoginErrorPayload,
+  SignupErrorPayload,
+  LoginPayload,
+} from "../types/authTypes";
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {
@@ -25,30 +30,48 @@ export default function Register() {
   const checkUserIdAvailability = async () => {
     try {
       const response = await axios.post(
-        process.env.REACT_APP_API_SERVER + "/join",
-        {
-          params: { userid },
-        }
+        process.env.REACT_APP_API_SERVER + "/idCheck",
+        { userid },
+        { headers: { "Content-Type": "application/json" } }
       );
       setIsUserIdAvailable(response.data.isAvailable);
-    } catch (error) {
+      alert(response.data.message);
+    } catch (error: unknown) {
       console.error("Error checking user ID availability:", error);
-      setIsUserIdAvailable(false);
+      if (axios.isAxiosError(error)) {
+        // 이제 error는 AxiosError 타입으로, 안전하게 내부 속성에 접근 가능
+        console.error("Detailed Error:", error.response?.data?.message);
+        setIsUserIdAvailable(false);
+        alert(`Error: ${error.response?.data?.message || "Unknown Error"}`);
+      } else {
+        // error가 AxiosError 타입이 아닐 경우의 처리
+        console.error("An unexpected error occurred:", error);
+        alert("An unexpected error occurred. Please try again.");
+      }
     }
   };
 
   const checkNameAvailability = async () => {
     try {
       const response = await axios.post(
-        process.env.REACT_APP_API_SERVER + "/join",
-        {
-          params: { name },
-        }
+        process.env.REACT_APP_API_SERVER + "/nameCheck",
+        { name },
+        { headers: { "Content-Type": "application/json" } }
       );
       setIsNameAvailable(response.data.isAvailable);
-    } catch (error) {
-      console.error("Error checking name availability:", error);
-      setIsNameAvailable(false);
+      alert(response.data.message);
+    } catch (error: unknown) {
+      console.error("Error checking user ID availability:", error);
+      if (axios.isAxiosError(error)) {
+        // 이제 error는 AxiosError 타입으로, 안전하게 내부 속성에 접근 가능
+        console.error("Detailed Error:", error.response?.data?.message);
+        setIsNameAvailable(false);
+        alert(`Error: ${error.response?.data?.message || "Unknown Error"}`);
+      } else {
+        // error가 AxiosError 타입이 아닐 경우의 처리
+        console.error("An unexpected error occurred:", error);
+        alert("An unexpected error occurred. Please try again.");
+      }
     }
   };
 
@@ -146,7 +169,7 @@ export default function Register() {
         );
       }
     } catch (error) {
-      const axiosError = error as AxiosError<ErrorPayload>;
+      const axiosError = error as AxiosError<SignupErrorPayload>;
       dispatch(
         signupFailure({
           userid: axiosError.response?.data.userid || "회원가입 오류",
@@ -319,7 +342,7 @@ export default function Register() {
               </a>
             </div>
           </form>
-          <form className="petsitter-form" onSubmit={handleSignup}>
+          {/* <form className="petsitter-form" onSubmit={handleSignup}>
             <h2 className="title">Sign up</h2>
             <div className="input-field">
               <i className="fas fa-user"></i>
@@ -431,7 +454,7 @@ export default function Register() {
                 />
               </a>
             </div>
-          </form>
+          </form> */}
         </div>
       </div>
 

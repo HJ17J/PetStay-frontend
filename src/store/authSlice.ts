@@ -1,5 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { LoginState, LoginPayload, ErrorPayload } from "../types/authTypes";
+import {
+  LoginState,
+  LoginPayload,
+  LoginErrorPayload,
+  SignupErrorPayload,
+} from "../types/authTypes";
 
 const initialState: LoginState = {
   userid: "",
@@ -21,10 +26,10 @@ export const authSlice = createSlice({
       state.userpw = "";
       state.error = { userid: "", userpw: "" };
     },
-    loginFailure: (state, action: PayloadAction<ErrorPayload>) => {
+    loginFailure: (state, action: PayloadAction<LoginErrorPayload>) => {
       state.error = { ...state.error, ...action.payload };
     },
-    signupFailure: (state, action: PayloadAction<ErrorPayload>) => {
+    signupFailure: (state, action: PayloadAction<SignupErrorPayload>) => {
       // 회원가입 실패시 에러 상태 업데이트
       state.error = { ...state.error, ...action.payload };
     },

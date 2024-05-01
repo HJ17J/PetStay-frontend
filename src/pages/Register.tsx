@@ -12,6 +12,8 @@ import {
   LoginPayload,
 } from "../types/authTypes";
 import { useNavigate } from "react-router-dom";
+import Header from "../components/Header";
+import { useTranslation } from "react-i18next";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -29,6 +31,8 @@ export default function Register() {
   const [isUserIdAvailable, setIsUserIdAvailable] = useState(false);
   const [isNameAvailable, setIsNameAvailable] = useState(false);
 
+  const { t } = useTranslation();
+
   const dispatch = useDispatch();
 
   const [formToShow, setFormToShow] = useState("signIn");
@@ -38,7 +42,7 @@ export default function Register() {
   // 공통 - id 중복확인
   const checkUserIdAvailability = async () => {
     if (!userid) {
-      alert("아이디를 입력해주세요.");
+      alert(t("enterUserId"));
       return;
     }
     try {
@@ -67,7 +71,7 @@ export default function Register() {
   // 공통 - name 중복확인
   const checkNameAvailability = async () => {
     if (!name) {
-      alert("닉네임을 입력해주세요.");
+      alert(t("enterUserName"));
       return;
     }
     try {
@@ -117,7 +121,7 @@ export default function Register() {
 
       if (response.data.statusCode === 200) {
         // 성공 액션 디스패치
-        console.log("로그인 성공");
+        alert(t("login.success"));
         dispatch(loginSuccess({ userid }));
         navigate("/");
       } else {
@@ -151,24 +155,24 @@ export default function Register() {
     e.preventDefault();
     // 아이디와 닉네임 중복 확인 여부 검사
     if (userid && !isUserIdAvailable) {
-      alert("아이디 중복 확인이 필요합니다.");
+      alert(t("userId.check"));
       return;
     }
     if (name && !isNameAvailable) {
-      alert("닉네임 중복 확인이 필요합니다.");
+      alert(t("userName.check"));
       return;
     }
 
     if (!userid) {
-      alert("아이디를 입력해주세요.");
+      alert(t("enterUserId"));
       return;
     }
     if (!name) {
-      alert("닉네임을 입력해주세요.");
+      alert(t("enterUserName"));
       return;
     }
     if (userpw !== confirmUserpw) {
-      alert("비밀번호가 일치하지 않습니다.");
+      alert(t("passwordMismatch"));
       return;
     }
     try {
@@ -189,7 +193,7 @@ export default function Register() {
       if (response.data && response.status === 200) {
         console.log("회원가입 성공");
         dispatch(loginSuccess({ userid }));
-        alert("회원가입 성공! 로그인 페이지로 이동합니다.");
+        alert(t("signup.success"));
 
         // 로그인 폼으로 전환하고 폼을 보이게 설정
         setFormToShow("signIn");
@@ -250,28 +254,28 @@ export default function Register() {
     e.preventDefault();
     // 아이디와 닉네임 중복 확인 여부 검사
     if (userid && !isUserIdAvailable) {
-      alert("아이디 중복 확인이 필요합니다.");
+      alert(t("userId.check"));
       return;
     }
     if (name && !isNameAvailable) {
-      alert("닉네임 중복 확인이 필요합니다.");
+      alert(t("userName.check"));
       return;
     }
 
     if (!userid) {
-      alert("아이디를 입력해주세요.");
+      alert(t("enterUserId"));
       return;
     }
     if (!name) {
-      alert("닉네임을 입력해주세요.");
+      alert(t("enterUserName"));
       return;
     }
     if (userpw !== confirmUserpw) {
-      alert("비밀번호가 일치하지 않습니다.");
+      alert(t("passwordMismatch"));
       return;
     }
     if (animalTypes.length === 0) {
-      alert("최소 하나의 동물 종류를 선택해주세요.");
+      alert(t("selectAnimalType"));
       return;
     }
 
@@ -299,7 +303,7 @@ export default function Register() {
       if (response.status === 200) {
         console.log("펫시터 회원가입 성공");
         dispatch(loginSuccess({ userid }));
-        alert("회원가입 성공! 로그인 페이지로 이동합니다.");
+        alert(t("signup.success"));
 
         // 로그인 폼으로 전환하고 폼을 보이게 설정
         setFormToShow("signIn");
@@ -332,16 +336,17 @@ export default function Register() {
 
   return (
     <div className="container">
+      <Header />
       <div className="forms-container">
         <div className="signin-signup">
           {formToShow === "signIn" && (
             <form className="sign-in-form" onSubmit={handleLogin}>
-              <h2 className="title">Sign in</h2>
+              <h2 className="title">{t("signIn.title")}</h2>
               <div className="input-field">
                 <i className="fas fa-user"></i>
                 <input
                   type="text"
-                  placeholder="아이디"
+                  placeholder={t("enterUserId")}
                   value={userid}
                   onChange={(e) => setUserid(e.target.value)}
                 />
@@ -351,14 +356,18 @@ export default function Register() {
                 <i className="fas fa-lock"></i>
                 <input
                   type="password"
-                  placeholder="비밀번호"
+                  placeholder={t("enterPassword")}
                   value={userpw}
                   onChange={(e) => setUserpw(e.target.value)}
                 />
                 {error.userpw && <p style={{ color: "red" }}>{error.userpw}</p>}
               </div>
-              <input type="submit" value="Login" className="btn solid" />
-              <p className="social-text">Or Sign in with social platforms</p>
+              <input
+                type="submit"
+                value={t("signIn.title")}
+                className="btn solid"
+              />
+              <p className="social-text">{t("socialPlatform")}</p>
               <div className="social-media">
                 <a href="#" className="social-icon">
                   <img
@@ -393,12 +402,12 @@ export default function Register() {
           )}
           {formToShow === "signUp" && (
             <form className="sign-up-form" onSubmit={handleSignup}>
-              <h2 className="title">Sign up</h2>
+              <h2 className="title">{t("signUp.title")}</h2>
               <div className="input-field">
                 <i className="fas fa-user"></i>
                 <input
                   type="text"
-                  placeholder="아이디"
+                  placeholder={t("enterUserId")}
                   value={userid}
                   onChange={(e) => setUserid(e.target.value)}
                   required
@@ -408,7 +417,7 @@ export default function Register() {
                   className="btn"
                   onClick={checkUserIdAvailability}
                 >
-                  중복 확인
+                  {t("check")}
                 </button>
               </div>
 
@@ -416,7 +425,7 @@ export default function Register() {
                 <i className="fas fa-envelope"></i>
                 <input
                   type="text"
-                  placeholder="닉네임"
+                  placeholder={t("enterUserName")}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -426,7 +435,7 @@ export default function Register() {
                   className="btn"
                   onClick={checkNameAvailability}
                 >
-                  중복 확인
+                  {t("check")}
                 </button>
               </div>
 
@@ -434,7 +443,7 @@ export default function Register() {
                 <i className="fas fa-lock"></i>
                 <input
                   type="password"
-                  placeholder="비밀번호"
+                  placeholder={t("enterPassword")}
                   value={userpw}
                   onChange={(e) => setUserpw(e.target.value)}
                   required
@@ -444,7 +453,7 @@ export default function Register() {
                 <i className="fas fa-confirm"></i>
                 <input
                   type="password"
-                  placeholder="비밀번호 확인"
+                  placeholder={t("confirmPassWord")}
                   value={confirmUserpw}
                   onChange={(e) => setConfirmUserpw(e.target.value)}
                   required
@@ -455,20 +464,26 @@ export default function Register() {
                 <i className="fas fa-address"></i>
                 <input
                   type="text"
-                  placeholder="주소"
+                  placeholder={t("enterAddress")}
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   required
                 />
               </div>
-              <button type="button" className="btn" onClick={showSignUpForm}>
-                보호자 가입
-              </button>
-              <button type="button" className="btn" onClick={showPetSitterForm}>
-                펫시터 가입
-              </button>
-              <input type="submit" className="btn" value="Sign up" />
-              <p className="social-text">Or Sign up with social platforms</p>
+              <div className="button-container">
+                <button type="button" className="btn" onClick={showSignUpForm}>
+                  {t("userSignUp")}
+                </button>
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={showPetSitterForm}
+                >
+                  {t("petSitterSignUp")}
+                </button>
+              </div>
+              <input type="submit" className="btn" value={t("signUp.title")} />
+              <p className="social-text">{t("socialPlatform")}</p>
               <div className="social-media">
                 <a href="#" className="social-icon">
                   <img
@@ -503,12 +518,12 @@ export default function Register() {
           )}
           {formToShow === "petSitter" && (
             <form className="petsitter-form" onSubmit={handlePetSitterSignup}>
-              <h2 className="title">회원가입</h2>
+              <h2 className="title">{t("signUp.title")}</h2>
               <div className="input-field">
                 <i className="fas fa-user"></i>
                 <input
                   type="text"
-                  placeholder="아이디"
+                  placeholder={t("enterUserId")}
                   value={userid}
                   onChange={(e) => setUserid(e.target.value)}
                   required
@@ -518,14 +533,14 @@ export default function Register() {
                   className="btn"
                   onClick={checkUserIdAvailability}
                 >
-                  중복 확인
+                  {t("check")}
                 </button>
               </div>
               <div className="input-field">
                 <i className="fas fa-envelope"></i>
                 <input
                   type="text"
-                  placeholder="닉네임"
+                  placeholder={t("enterUserName")}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -535,14 +550,14 @@ export default function Register() {
                   className="btn"
                   onClick={checkNameAvailability}
                 >
-                  중복 확인
+                  {t("check")}
                 </button>
               </div>
               <div className="input-field">
                 <i className="fas fa-lock"></i>
                 <input
                   type="password"
-                  placeholder="비밀번호"
+                  placeholder={t("enterPassword")}
                   value={userpw}
                   onChange={(e) => setUserpw(e.target.value)}
                   required
@@ -552,7 +567,7 @@ export default function Register() {
                 <i className="fas fa-confirm"></i>
                 <input
                   type="password"
-                  placeholder="비밀번호 확인"
+                  placeholder={t("confirmPassWord")}
                   value={confirmUserpw}
                   onChange={(e) => setConfirmUserpw(e.target.value)}
                   required
@@ -562,7 +577,7 @@ export default function Register() {
                 <i className="fas fa-address"></i>
                 <input
                   type="text"
-                  placeholder="주소"
+                  placeholder={t("enterAddress")}
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   required
@@ -577,7 +592,7 @@ export default function Register() {
                     value="dog"
                     onChange={handleAnimalTypeChange}
                   />
-                  강아지
+                  {t("puppy")}
                 </label>
                 <label>
                   <input
@@ -586,7 +601,7 @@ export default function Register() {
                     value="cat"
                     onChange={handleAnimalTypeChange}
                   />
-                  고양이
+                  {t("cat")}
                 </label>
                 <label>
                   <input
@@ -595,14 +610,14 @@ export default function Register() {
                     value="other"
                     onChange={handleAnimalTypeChange}
                   />
-                  기타
+                  {t("etc")}
                 </label>
               </div>
               <div className="input-field">
                 <i className="fas fa-license"></i>
                 <input
                   type="text"
-                  placeholder="자격증"
+                  placeholder={t("license")}
                   value={license}
                   onChange={(e) => setLicense(e.target.value)}
                 />
@@ -611,7 +626,7 @@ export default function Register() {
                 <i className="fas fa-career"></i>
                 <input
                   type="text"
-                  placeholder="경력사항"
+                  placeholder={t("career")}
                   value={career}
                   onChange={(e) => setCareer(e.target.value)}
                 />
@@ -620,7 +635,7 @@ export default function Register() {
                 <i className="fas fa-oneLineIntro"></i>
                 <input
                   type="text"
-                  placeholder="한 줄 자기소개"
+                  placeholder={t("oneLineIntro")}
                   value={oneLineIntro}
                   onChange={(e) => setOneLineIntro(e.target.value)}
                 />
@@ -628,7 +643,7 @@ export default function Register() {
               <div className="input-field">
                 <i className="fas fa-introduction"></i>
                 <textarea
-                  placeholder="자기소개"
+                  placeholder={t("selfIntroduction")}
                   value={selfIntroduction}
                   onChange={(e) => setSelfIntroduction(e.target.value)}
                   required
@@ -638,20 +653,26 @@ export default function Register() {
                 <i className="fas fa-pay"></i>
                 <input
                   type="number"
-                  placeholder="요금"
+                  placeholder={t("pay")}
                   value={pay}
                   onChange={(e) => setPay(e.target.value)}
                   required
                 />
               </div>
-              <button type="button" className="btn" onClick={showSignUpForm}>
-                보호자 가입
-              </button>
-              <button type="button" className="btn" onClick={showPetSitterForm}>
-                펫시터 가입
-              </button>
-              <input type="submit" className="btn" value="Sign up" />
-              <p className="social-text">Or Sign up with social platforms</p>
+              <div className="button-container">
+                <button type="button" className="btn" onClick={showSignUpForm}>
+                  {t("userSignUp")}
+                </button>
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={showPetSitterForm}
+                >
+                  {t("petSitterSignUp")}
+                </button>
+              </div>
+              <input type="submit" className="btn" value={t("signUp.title")} />
+              <p className="social-text">{t("socialPlatform")}</p>
               <div className="social-media">
                 <a href="#" className="social-icon">
                   <img
@@ -690,28 +711,42 @@ export default function Register() {
       <div className="panels-container">
         <div className="panel left-panel">
           <div className="content">
-            <h3>New here ?</h3>
+            <h3>{t("newHere")}</h3>
+            <br />
             <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Debitis,
-              ex ratione. Aliquid!
+              {t("newHere.description.one")}
+              <br />
+              <br />
+              {t("newHere.description.two")}
+              <br />
+              <br />
+              {t("newHere.description.three")}
             </p>
+            <br />
             <button
               className="btn transparent"
               id="sign-up-btn"
               onClick={handleSignUpMode}
             >
-              회원가입
+              {t("signUp.title")}
             </button>
           </div>
           <img src="/register/images/login.svg" className="image" alt="" />
         </div>
         <div className="panel right-panel">
           <div className="content">
-            <h3>One of us ?</h3>
+            <h3>{t("alreadyMember")}</h3>
+            <br />
             <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum
-              laboriosam ad deleniti.
+              {t("welcomeBack.one")}
+              <br />
+              <br />
+              {t("welcomeBack.two")}
+              <br />
+              <br />
+              {t("welcomeBack.three")}
             </p>
+            <br />
             <button
               className="btn transparent"
               id="sign-in-btn"
@@ -721,7 +756,7 @@ export default function Register() {
                 setFormToShow("signIn");
               }}
             >
-              로그인
+              {t("signIn.title")}
             </button>
           </div>
           <img src="/register/images/reg.svg" className="image" alt="" />

@@ -19,6 +19,11 @@ input {
   overflow: hidden;
 }
 
+.headerContainer {
+  position: relative;
+  z-index: 10; // 다른 요소들보다 높은 값을 설정
+}
+
 .forms-container {
   position: absolute;
   width: 100%;
@@ -94,6 +99,17 @@ form.sign-in-form {
     margin-left: 10px; // 버튼과 입력 필드 사이의 간격
     white-space: nowrap; // 버튼 텍스트가 줄바꿈되지 않도록 설정
   }
+}
+
+.button-container {
+  display: flex;
+  justify-content: center; // 버튼을 중앙 정렬
+  align-items: center; // 버튼을 수직 중앙 정렬
+  gap: 10px; // 버튼 사이의 간격 설정
+}
+
+.btn {
+  flex: 1; // 버튼들이 동일한 크기를 가지도록 설정
 }
 
 .input-field i {

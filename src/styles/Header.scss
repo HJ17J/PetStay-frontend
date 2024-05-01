@@ -125,22 +125,3 @@
     font-size: 0.7em; // 가장 작은 화면에서 폰트 크기 더 줄임
   }
 }
-
-.custom-toast .Toastify__toast {
-  background-color: #004a7c;
-  color: #ffffff;
-  font-size: 14px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.custom-toast .Toastify__close-button {
-  color: #fff;
-  opacity: 0.7; // 닫기 버튼의 불투명도 조절
-}
-
-.custom-toast .Toastify__toast-icon {
-  font-size: 16px; // 아이콘 크기 줄임
-  height: 18px; // 아이콘 컨테이너 높이 조정
-  width: 18px; // 아이콘 컨테이너 너비 조정
-}

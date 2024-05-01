@@ -206,29 +206,29 @@ export default function Reservation() {
                   저도 마음을 단단히 먹어야겠다고 많이 생각했네요.. 시간이 좀
                   걸리더라도 잘 배워보려고 합니다! 너무 잘 알려주셔서
                   감사했습니다 잘 해볼게요 ㅋㅋㅋ ㅎㅎ
-                </div>
-              </div> */}
+                // </div>*/}
             </div>
           </div>
         </div>
-        <div className="reservationSection2">
-          <div className="trainerInfoContainer4">
-            <div className="priceContainer">
-              <div className="priceTitle">이용 금액</div>
-              <hr />
-              <div className="detailPriceWrapper">
-                <div className="detailPriceContainer">
-                  <div className="sixtyMins">
-                    <span>60분</span>
-                  </div>
-                  <div>방문 교육</div>
+      </div>
+      <div className="reservationSection2">
+        <div className="trainerInfoContainer4">
+          <div className="priceContainer">
+            <div className="priceTitle">이용 금액</div>
+            <hr />
+            <div className="detailPriceWrapper">
+              <div className="detailPriceContainer">
+                <div className="sixtyMins">
+                  <span>60분</span>
                 </div>
-                <div>₩ {sitterData?.pay}원</div>
+                <div>방문 교육</div>
               </div>
+              <div>₩ {sitterData?.pay}원</div>
             </div>
           </div>
-          <div className="trainerInfoContainer5">
-            <MyCalendar />
+        </div>
+        <div className="trainerInfoContainer5">
+          <MyCalendar />
           <div className="trainerInfoContainer5"></div>
           <div className="trainerInfoContainer6"></div>
           <div className="trainerInfoContainer7"></div>

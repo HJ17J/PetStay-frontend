@@ -35,6 +35,7 @@ export default function Register() {
 
   const { error } = useSelector((state: RootState) => state.auth);
 
+  // 공통 - id 중복확인
   const checkUserIdAvailability = async () => {
     if (!userid) {
       alert("아이디를 입력해주세요.");
@@ -63,6 +64,7 @@ export default function Register() {
     }
   };
 
+  // 공통 - name 중복확인
   const checkNameAvailability = async () => {
     if (!name) {
       alert("닉네임을 입력해주세요.");
@@ -91,6 +93,7 @@ export default function Register() {
     }
   };
 
+  // 공통 - 로그인
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // 폼 기본 이벤트 방지
 
@@ -143,6 +146,7 @@ export default function Register() {
     }
   };
 
+  // 일반 보호자 - 회원가입
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!isUserIdAvailable) {
@@ -226,6 +230,7 @@ export default function Register() {
     }
   };
 
+  // 펫시터 - 회원가입
   const handlePetSitterSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (

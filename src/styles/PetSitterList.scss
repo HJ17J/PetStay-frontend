@@ -64,7 +64,7 @@
 
   // Sitter 프로필 사진 컨테이너
   .sitter-image-box {
-    width: 40%;
+    width: 320px;
     display: flex;
     .sitter-image {
       width: 280px;
@@ -77,17 +77,18 @@
 
   // Sitter 소개글 컨테이너
   .sitter-info {
-    width: 60%;
+    width: 480px;
     height: 230px;
     padding: 20px 40px;
     .title-box {
+      width: 400px;
       display: flex;
       justify-content: space-between;
       height: 32px;
       // 이름
       h2 {
         margin: 0;
-        width: 50%;
+        width: 200px;
         font-size: 28px;
         line-height: 32px;
         overflow: hidden;
@@ -96,7 +97,7 @@
       }
       // Sitter 평점 컨테이너
       .rating-box {
-        width: 50%;
+        width: 200px;
         height: 32px;
         font-size: 24px;
         line-height: 32px;
@@ -106,8 +107,20 @@
         display: flex;
         justify-content: space-evenly;
         .stars {
-          width: 130px;
+          width: 120px;
+          position: relative;
           margin-right: 5px;
+          .base-star {
+            color: #a0a0a0;
+            position: relative;
+          }
+          .filled-star {
+            overflow: hidden;
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: gold;
+          }
         }
         .rating {
           width: 32px;

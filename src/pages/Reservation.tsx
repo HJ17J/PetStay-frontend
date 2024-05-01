@@ -2,17 +2,44 @@ import "../styles/Reservation.scss";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import "boxicons/";
-import { useState, SyntheticEvent, ChangeEvent } from "react";
+import { useState, SyntheticEvent, ChangeEvent, useEffect } from "react";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
+import { PetSitter } from "../types/PetSitterList";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
 export default function Reservation() {
+  const { sitteridx } = useParams();
+  // console.log("sitteridx>>", sitteridx);
   const [showModal, setShowModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
   const [isPickerVisible, setPickerVisible] = useState(false);
   const [currentEmoji, setCurrentEmoji] = useState(null);
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [sitterData, setSitterData] = useState<PetSitter | null>(null);
+
+  //sitter정보 받아오는 함수
+  const getSitterData = async () => {
+    try {
+      const response = await axios.get(
+        process.env.REACT_APP_API_SERVER + `/sitter/${sitteridx}`
+        // process.env.REACT_APP_API_SERVER + `/sitter/3`
+      );
+      console.log(response.data.sitterInfo);
+      setSitterData(response.data.sitterInfo);
+      console.log("sitterData>>>", sitterData);
+    } catch (error) {
+      console.error("Error fetching sitter data:", error);
+      throw error;
+    }
+  };
+
+  //useEffect로 mount시 실행
+  useEffect(() => {
+    getSitterData();
+  }, []);
 
   // This function will be triggered when the file field changes
   const imageChange = (e: ChangeEvent<HTMLInputElement>) => {

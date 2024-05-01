@@ -2,16 +2,28 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "../styles/Header.scss";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../store/authSlice";
+import { RootState } from "../store/store";
 
 const Header: React.FC = () => {
   const { t, i18n } = useTranslation();
 
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    i18n.changeLanguage("ko");
+  };
+
   return (
     <div className="headerContainer">
-      <div className="logoTitle">
+      <Link to="/" className="logoTitle">
         <img src="/images/PetStayLogo.png" alt="logo" />
         petStay
-      </div>
+      </Link>
       <div className="myLinkContainer">
         <Link to="/pet-sitters" className="myLink">
           {t("header.petSitter")}
@@ -19,9 +31,15 @@ const Header: React.FC = () => {
         <Link to="/profile/:userid" className="myLink">
           {t("header.myPage")}
         </Link>
-        <Link to="/login" className="myLink">
-          {t("header.login")}
-        </Link>
+        {isLoggedIn ? (
+          <div className="myLink" onClick={handleLogout}>
+            {t("header.logout")}
+          </div>
+        ) : (
+          <Link to="/login" className="myLink">
+            {t("header.login")}
+          </Link>
+        )}
         <div className="langContainer">
           <div className="en" onClick={() => i18n.changeLanguage("en")}>
             EN

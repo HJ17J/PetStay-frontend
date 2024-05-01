@@ -6,13 +6,58 @@ import { useState, SyntheticEvent, ChangeEvent, useEffect } from "react";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import MyCalendar from "../components/MyCalender";
+import { PetSitter } from "../types/PetSitterList";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import { review } from "../types/review";
 
 export default function Reservation() {
+  const { useridx } = useParams();
+  // console.log("sitteridx>>", useridx);
   const [inputValue, setInputValue] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
   const [isPickerVisible, setPickerVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [sitterData, setSitterData] = useState<PetSitter | null>(null);
+  const [reviewData, setReviewData] = useState<review[] | null>(null);
+
+  //sitter정보 받아오는 함수
+  const getSitterData = async () => {
+    try {
+      const response = await axios.get(
+        process.env.REACT_APP_API_SERVER + `/sitter/${useridx}`
+      );
+      // console.log("data>", response.data);
+      const transformedData: PetSitter = {
+        useridx: response.data.sitterInfo.useridx,
+        name: response.data.sitterInfo.name,
+        img: response.data.sitterInfo.img,
+        address: response.data.sitterInfo.address,
+        selfIntroduction: response.data.sitterInfo.oneLineIntro,
+        career: response.data.sitterInfo.career,
+        license: response.data.sitterInfo.license,
+        shortIntro: response.data.sitterInfo.selfIntroduction,
+        pay: response.data.sitterInfo.pay,
+        rating: response.data.rvNumberData[0].averageRating,
+        reviewCount: response.data.rvNumberData[0].reviewCount,
+        animalType: response.data.sitterInfo.type,
+      };
+
+      setSitterData(transformedData);
+      setReviewData(response.data.reviews);
+    } catch (error) {
+      console.error("Error fetching sitter data:", error);
+      throw error;
+    }
+  };
+
+  //useEffect로 mount시 실행
+  useEffect(() => {
+    getSitterData();
+  }, []);
+  // console.log("sitterData>>>", sitterData);
+  // console.log("reviewData>>>", reviewData);
 
   // This function will be triggered when the file field changes
   const imageChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -62,7 +107,7 @@ export default function Reservation() {
                 className="image image_input"
               />
               <div className="image_button_container">
-                <div className="trainerName">둘리훈련사</div>
+                <div className="trainerName">{sitterData?.name}</div>
               </div>
             </div>
             <div className="trainerIntroductionContainer">
@@ -70,10 +115,7 @@ export default function Reservation() {
                 <span>자기소개</span>
               </div> */}
               <div className="selfIntroductionText">
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nihil
-                magni laudantium beatae quia. Recusandae, fuga quas consectetur
-                perferendis aperiam esse velit veniam ducimus? Quisquam
-                consequatur perferendis quidem quia, recusandae ab!
+                {sitterData?.shortIntro}
               </div>
             </div>
             <div className="btn-box">
@@ -94,9 +136,7 @@ export default function Reservation() {
                 <i className="bx bx-trophy"></i>
                 <span>대표경력</span>
               </div>
-              <div className="textField">
-                반련동물 훈련-관리사 교육 강사, 반려견 교육 센터 근무
-              </div>
+              <div className="textField">{sitterData?.career}</div>
             </div>
             <div className="expertyContainer containers">
               <div className="trainerTitle">
@@ -117,36 +157,35 @@ export default function Reservation() {
                     alt=""
                     style={{ width: "120px", height: "76px" }}
                   />
+                  {sitterData?.license}
                 </div>
               </div>
             </div>
           </div>
           <div className="trainerInfoContainer3">
             <div className="reviewContainer">
-              <div className="addReviewContainer">
-                <div className="reviewtitle">리뷰쓰기</div>
-                <div className="reviewSubtitle">어떤 점이 좋았나요?</div>
-                <div className="reviewtextArea">
-                  <textarea></textarea>
-                </div>
-                <div className="reviewAddImage">
-                  <label htmlFor="reviewImage" className="reviewlabel">
-                    <i className="bx bxs-camera"></i>
-                    <div className="reviewImageTitle">사진/동영상 첨부하기</div>
-                  </label>
-                  <input
-                    type="file"
-                    id="reviewImage"
-                    className="reviewInput"
-                    accept="image/*"
-                  />
-                </div>
-                <div className="reviewBtn">
-                  <button>등록</button>
-                  <button>취소</button>
-                </div>
-              </div>
-              <div className="reviewListContainer">
+              {reviewData?.map((el) => {
+                return (
+                  <div className="reviewListContainer" key={el.reviewidx}>
+                    <div className="reviewSection">
+                      <div className="info1">
+                        <img src={el.img} alt="" className="info1Img" />
+                      </div>
+                      <div className="info2">
+                        <div className="info2Text">
+                          {el.name} (슈나우저·9살)
+                        </div>
+                        <div className="info2Text">
+                          {el.rate} 점 {el.createdAt}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="hr"></div>
+                    <div className="content">{el.content}</div>
+                  </div>
+                );
+              })}
+              {/* <div className="reviewListContainer">
                 <div className="reviewSection">
                   <div className="info1">
                     <img
@@ -168,7 +207,7 @@ export default function Reservation() {
                   걸리더라도 잘 배워보려고 합니다! 너무 잘 알려주셔서
                   감사했습니다 잘 해볼게요 ㅋㅋㅋ ㅎㅎ
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -184,12 +223,23 @@ export default function Reservation() {
                   </div>
                   <div>방문 교육</div>
                 </div>
-                <div>₩150,000</div>
+                <div>₩ {sitterData?.pay}원</div>
               </div>
             </div>
           </div>
           <div className="trainerInfoContainer5">
             <MyCalendar />
+          <div className="trainerInfoContainer5"></div>
+          <div className="trainerInfoContainer6"></div>
+          <div className="trainerInfoContainer7"></div>
+          <div className="trainerInfoContainer8">
+            <div className="priceTitle">예약정보확인</div>
+            {/* myCalendr컴포넌트불러오기 */}
+            <div className="selectedReservation"></div>
+          </div>
+          <div className="trainerInfoContainer9">
+            <button className="reservationBtn">예약</button>
+            <button className="reservationBtn">취소</button>
           </div>
         </div>
       </div>

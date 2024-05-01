@@ -1,9 +1,14 @@
 export interface PetSitter {
-  id: number;
+  useridx: number;
   name: string;
-  image: string;
-  introduction: string;
-  price: number;
+  img: string;
+  address: string;
+  shortIntro: string;
+  selfIntroduction: string;
+  career: string;
+  license: string;
+  pay: number;
   rating: number;
-  reviewsCount: number;
+  reviewCount: number;
+  animalType: string;
 }

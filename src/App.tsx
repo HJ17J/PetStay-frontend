@@ -17,10 +17,10 @@ function App() {
           <Routes>
             <Route path="/" element={<MainPage />} />
             <Route path="/profile/:userid" element={<Mypage />} />
-            <Route path="/pet-sitters" element={<PetSitterList />} />
+            <Route path="/petsitters" element={<PetSitterList />} />
             <Route path="/login" element={<Register />} />
             <Route path="/calender" element={<MyCalendar />} />
-            <Route path="/reservation" element={<Reservation />} />
+            <Route path="/petsitter/:useridx" element={<Reservation />} />
           </Routes>
         </div>
       </Router>

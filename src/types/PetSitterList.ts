@@ -4,6 +4,9 @@ export interface PetSitter {
   img: string;
   address: string;
   shortIntro: string;
+  selfIntroduction: string;
+  career: string;
+  license: string;
   pay: number;
   rating: number;
   reviewCount: number;

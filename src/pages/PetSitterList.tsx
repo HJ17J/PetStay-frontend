@@ -1,6 +1,6 @@
 import React from "react";
-import { BrowserRouter as Router } from "react-router-dom";
 import styles from "../styles/PetSitterList.scss";
+import { useNavigate } from "react-router-dom";
 import { PetSitter } from "../types/PetSitterList";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -9,7 +9,7 @@ export default function PetSitterList() {
   const [petSitters, setPetSitters] = useState<PetSitter[]>([]);
   const [searchTarget, setSearchTarget] = useState("address");
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [filteredSitters, setFilteredSitters] = useState<PetSitter[]>([]);
+  const navigate = useNavigate();
 
   // 펫시터 검색 요청
   const searchSitters = async () => {
@@ -80,7 +80,13 @@ export default function PetSitterList() {
         </div>
         <section className="sitter-list-section">
           {petSitters.map((sitter) => (
-            <div key={sitter.useridx} className="sitter-item">
+            <div
+              key={sitter.useridx}
+              className="sitter-item"
+              onClick={() => {
+                navigate(`/petsitter/${sitter.useridx}`);
+              }}
+            >
               <div className="sitter-image-box">
                 <img
                   src={sitter.img || "/placeholder.png"}

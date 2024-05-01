@@ -26,8 +26,8 @@ export default function Register() {
   const [license, setLicense] = useState("");
   const [career, setCareer] = useState("");
   const [oneLineIntro, setOneLineIntro] = useState("");
-  const [isUserIdAvailable, setIsUserIdAvailable] = useState(true);
-  const [isNameAvailable, setIsNameAvailable] = useState(true);
+  const [isUserIdAvailable, setIsUserIdAvailable] = useState(false);
+  const [isNameAvailable, setIsNameAvailable] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -149,19 +149,28 @@ export default function Register() {
   // 일반 보호자 - 회원가입
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!isUserIdAvailable) {
-      alert("아이디가 이미 사용 중입니다.");
+    // 아이디와 닉네임 중복 확인 여부 검사
+    if (userid && !isUserIdAvailable) {
+      alert("아이디 중복 확인이 필요합니다.");
       return;
     }
-    if (!isNameAvailable) {
-      alert("닉네임이 이미 사용 중입니다.");
+    if (name && !isNameAvailable) {
+      alert("닉네임 중복 확인이 필요합니다.");
+      return;
+    }
+
+    if (!userid) {
+      alert("아이디를 입력해주세요.");
+      return;
+    }
+    if (!name) {
+      alert("닉네임을 입력해주세요.");
       return;
     }
     if (userpw !== confirmUserpw) {
       alert("비밀번호가 일치하지 않습니다.");
       return;
     }
-
     try {
       const response = await axios.post<SignupPayload>(
         `${process.env.REACT_APP_API_SERVER}/join`,
@@ -180,6 +189,12 @@ export default function Register() {
       if (response.data && response.status === 200) {
         console.log("회원가입 성공");
         dispatch(loginSuccess({ userid }));
+        alert("회원가입 성공! 로그인 페이지로 이동합니다.");
+
+        // 로그인 폼으로 전환하고 폼을 보이게 설정
+        setFormToShow("signIn");
+        const container = document.querySelector(".container");
+        container?.classList.remove("sign-up-mode");
       } else {
         dispatch(
           signupFailure({
@@ -233,25 +248,30 @@ export default function Register() {
   // 펫시터 - 회원가입
   const handlePetSitterSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (
-      !isUserIdAvailable ||
-      !isNameAvailable ||
-      userpw !== confirmUserpw ||
-      animalTypes.length === 0
-    ) {
-      // 클라이언트 측 유효성 검사 실패
-      if (!isUserIdAvailable) {
-        alert("아이디가 이미 사용 중입니다.");
-      }
-      if (!isNameAvailable) {
-        alert("닉네임이 이미 사용 중입니다.");
-      }
-      if (userpw !== confirmUserpw) {
-        alert("비밀번호가 일치하지 않습니다.");
-      }
-      if (animalTypes.length === 0) {
-        alert("최소 하나의 동물 종류를 선택해주세요.");
-      }
+    // 아이디와 닉네임 중복 확인 여부 검사
+    if (userid && !isUserIdAvailable) {
+      alert("아이디 중복 확인이 필요합니다.");
+      return;
+    }
+    if (name && !isNameAvailable) {
+      alert("닉네임 중복 확인이 필요합니다.");
+      return;
+    }
+
+    if (!userid) {
+      alert("아이디를 입력해주세요.");
+      return;
+    }
+    if (!name) {
+      alert("닉네임을 입력해주세요.");
+      return;
+    }
+    if (userpw !== confirmUserpw) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+    if (animalTypes.length === 0) {
+      alert("최소 하나의 동물 종류를 선택해주세요.");
       return;
     }
 
@@ -279,6 +299,12 @@ export default function Register() {
       if (response.status === 200) {
         console.log("펫시터 회원가입 성공");
         dispatch(loginSuccess({ userid }));
+        alert("회원가입 성공! 로그인 페이지로 이동합니다.");
+
+        // 로그인 폼으로 전환하고 폼을 보이게 설정
+        setFormToShow("signIn");
+        const container = document.querySelector(".container");
+        container?.classList.remove("sign-up-mode");
       } else {
         dispatch(
           signupFailure({
@@ -477,7 +503,7 @@ export default function Register() {
           )}
           {formToShow === "petSitter" && (
             <form className="petsitter-form" onSubmit={handlePetSitterSignup}>
-              <h2 className="title">Sign up</h2>
+              <h2 className="title">회원가입</h2>
               <div className="input-field">
                 <i className="fas fa-user"></i>
                 <input
@@ -674,7 +700,7 @@ export default function Register() {
               id="sign-up-btn"
               onClick={handleSignUpMode}
             >
-              Sign up
+              회원가입
             </button>
           </div>
           <img src="/register/images/login.svg" className="image" alt="" />
@@ -692,9 +718,10 @@ export default function Register() {
               onClick={() => {
                 const container = document.querySelector(".container");
                 container?.classList.remove("sign-up-mode");
+                setFormToShow("signIn");
               }}
             >
-              Sign in
+              로그인
             </button>
           </div>
           <img src="/register/images/reg.svg" className="image" alt="" />

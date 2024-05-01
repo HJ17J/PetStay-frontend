@@ -15,7 +15,8 @@ const Header: React.FC = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    i18n.changeLanguage('ko');
+    alert("로그아웃 되었습니다.");
+    i18n.changeLanguage("ko");
   };
 
   return (

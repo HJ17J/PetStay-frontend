@@ -16,7 +16,7 @@ input {
   width: 100%;
   background-color: #fff;
   min-height: 100vh;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .headerContainer {
@@ -35,7 +35,7 @@ input {
 .signin-signup {
   position: absolute;
   top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -45%);
   left: 75%;
   width: 50%;
   transition: 1s 0.7s ease-in-out;
@@ -51,7 +51,7 @@ form {
   flex-direction: column;
   padding: 0rem 5rem;
   transition: all 0.2s 0.7s;
-  overflow: hidden;
+  overflow: auto;
   grid-column: 1 / 2;
   grid-row: 1 / 2;
 }
@@ -63,6 +63,13 @@ form.sign-up-form {
 
 form.sign-in-form {
   z-index: 2;
+}
+
+form.petsitter-form {
+  transform: translate(0, 20%);
+  transition: 1s 0.7s ease-in-out;
+  overflow: auto;
+  height: 90vh;
 }
 
 .title {
@@ -262,12 +269,6 @@ form.sign-in-form {
 .right-panel .image,
 .right-panel .content {
   transform: translateX(800px);
-}
-
-// petsitter-form
-form.petsitter-form {
-  overflow-y: auto; // 세로 스크롤만 추가
-  max-height: 90vh; // 폼의 최대 높이를 화면 높이의 90%로 제한
 }
 
 /* ANIMATION */

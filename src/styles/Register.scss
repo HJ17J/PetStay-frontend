@@ -90,7 +90,7 @@ form.sign-in-form {
     padding-right: 10px; // 버튼과의 간격을 주기 위해 오른쪽 패딩 추가
   }
 
-  button {
+  .chatPageBtn {
     margin-left: 10px; // 버튼과 입력 필드 사이의 간격
     white-space: nowrap; // 버튼 텍스트가 줄바꿈되지 않도록 설정
   }

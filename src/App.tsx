@@ -19,7 +19,8 @@ function App() {
             <Route path="/profile/:userid" element={<Mypage />} />
             <Route path="/pet-sitters" element={<PetSitterList />} />
             <Route path="/login" element={<Register />} />
-            <Route path="/calender" element={<MyCalendar />} />
+            <Route path="/mycalender" element={<Reservation />} />
+            {/* <Route path="/Calendar" element={<Reservation />} /> */}
           </Routes>
         </div>
       </Router>

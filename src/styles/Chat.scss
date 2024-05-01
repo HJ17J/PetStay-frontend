@@ -41,7 +41,7 @@
     border-radius: 5px;
   }
 
-  button {
+  .chatPageBtn {
     width: 100px;
     background-color: #6c63ff;
     color: white;
@@ -66,7 +66,7 @@
 
     input[type="text"],
     input[type="file"],
-    button {
+    .chatPageBtn {
       width: 100%;
       margin: 10px 0;
     }
@@ -81,7 +81,7 @@
       font-size: 0.9em;
     }
 
-    button {
+    .chatPageBtn {
       padding: 8px 0;
     }
   }

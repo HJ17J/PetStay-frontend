@@ -2,16 +2,16 @@ import "../styles/Reservation.scss";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import "boxicons/";
-import { useState, SyntheticEvent, ChangeEvent } from "react";
+import { useState, SyntheticEvent, ChangeEvent, useEffect } from "react";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
+import MyCalendar from "../components/MyCalender";
 
 export default function Reservation() {
+  const [inputValue, setInputValue] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
   const [isPickerVisible, setPickerVisible] = useState(false);
-  const [currentEmoji, setCurrentEmoji] = useState(null);
-
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   // This function will be triggered when the file field changes
@@ -79,7 +79,7 @@ export default function Reservation() {
             <div className="btn-box">
               <a
                 href=""
-                className="btn"
+                className="reservationBtn"
                 onClick={(e) => {
                   toggleModal(e);
                 }}
@@ -123,10 +123,37 @@ export default function Reservation() {
           </div>
           <div className="trainerInfoContainer3">
             <div className="reviewContainer">
+              <div className="addReviewContainer">
+                <div className="reviewtitle">리뷰쓰기</div>
+                <div className="reviewSubtitle">어떤 점이 좋았나요?</div>
+                <div className="reviewtextArea">
+                  <textarea></textarea>
+                </div>
+                <div className="reviewAddImage">
+                  <label htmlFor="reviewImage" className="reviewlabel">
+                    <i className="bx bxs-camera"></i>
+                    <div className="reviewImageTitle">사진/동영상 첨부하기</div>
+                  </label>
+                  <input
+                    type="file"
+                    id="reviewImage"
+                    className="reviewInput"
+                    accept="image/*"
+                  />
+                </div>
+                <div className="reviewBtn">
+                  <button>등록</button>
+                  <button>취소</button>
+                </div>
+              </div>
               <div className="reviewListContainer">
                 <div className="reviewSection">
                   <div className="info1">
-                    <img src="" alt="" className="info1Img" />
+                    <img
+                      src="https://picsum.photos/seed/picsum/200/300"
+                      alt=""
+                      className="info1Img"
+                    />
                   </div>
                   <div className="info2">
                     <div className="info2Text">서◯리 님 (슈나우저·9살)</div>
@@ -161,16 +188,8 @@ export default function Reservation() {
               </div>
             </div>
           </div>
-          <div className="trainerInfoContainer5"></div>
-          <div className="trainerInfoContainer6"></div>
-          <div className="trainerInfoContainer7"></div>
-          <div className="trainerInfoContainer8">
-            <div className="priceTitle">예약정보확인</div>
-            <div className="selectedReservation"></div>
-          </div>
-          <div className="trainerInfoContainer9">
-            <button className="reservationBtn">예약</button>
-            <button className="reservationBtn">취소</button>
+          <div className="trainerInfoContainer5">
+            <MyCalendar />
           </div>
         </div>
       </div>
@@ -259,7 +278,12 @@ export default function Reservation() {
                     {/* </form> */}
                   </div>
                   <div className="sendChattingTextContainer">
-                    <input type="text" value={currentEmoji || ""} />
+                    <input
+                      type="text"
+                      // value={currentEmoji || ""}
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                    />
                     <button>보내기</button>
                   </div>
                   <div className="d-flex flex-column align-items-center">
@@ -269,6 +293,7 @@ export default function Reservation() {
                         position: "relative",
                       }}
                     >
+                      {/* 이모지 변경  */}
                       <div className="emojiBtnContainer">
                         <div className="emojiBtn " onClick={toggleEmoji}>
                           <i className="bx bx-smile"></i>
@@ -289,7 +314,7 @@ export default function Reservation() {
                             data={data}
                             previewPosition=""
                             onEmojiSelect={(e: any) => {
-                              setCurrentEmoji(e.native);
+                              setInputValue(inputValue + e.native);
                               setPickerVisible(!isPickerVisible);
                             }}
                           />

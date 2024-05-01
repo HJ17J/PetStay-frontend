@@ -77,7 +77,9 @@ const ChatPage = () => {
         onChange={(e) => setMessage(e.target.value)}
       />
       <input type="file" accept="image/*" onChange={handleFileChange} />
-      <button onClick={sendMessage}>전송</button>
+      <button className="chatPageBtn" onClick={sendMessage}>
+        전송
+      </button>
     </div>
   );
 };

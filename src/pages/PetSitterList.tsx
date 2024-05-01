@@ -18,10 +18,6 @@ export default function PetSitterList() {
         `${process.env.REACT_APP_API_SERVER}/sitter?${searchTarget}=${searchKeyword}`
       );
       setPetSitters(result.data.data);
-      // const filtered = petSitters.filter((sitter) =>
-      //   sitter.name.toLowerCase().includes(searchKeyword.toLowerCase())
-      // );
-      // setFilteredSitters(filtered);
     } catch (error) {
       console.error("Failed to get searched sitter lists", error);
     }
@@ -97,18 +93,12 @@ export default function PetSitterList() {
               <div className="sitter-info">
                 <div className="title-box">
                   <h2>{sitter.name}</h2>
-                  <div className="rating-box">
-                    <div className="stars">
-                      {Array.from({ length: 5 }, (_, index) => (
-                        <span
-                          key={index}
-                          style={{
-                            color: index < sitter.rating ? "gold" : "grey",
-                          }}
-                        >
-                          &#9733;
-                        </span>
-                      ))}
+                  <div className='rating-box'>
+                    <div className='stars'>
+                      <span className='base-star'>★★★★★</span>
+                      <span className='filled-star' style={{ width: `${sitter.rating * 20}%` }}>
+                        ★★★★★
+                      </span>
                     </div>
                     <span className="rating">{sitter.rating}</span>
                     <span className="rate-count">({sitter.reviewCount})</span>

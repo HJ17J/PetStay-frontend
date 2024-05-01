@@ -1,6 +1,6 @@
 import MainPage from "./pages/MainPage";
 import Reservation from "./pages/Reservation";
-// import "boxicons/css/boxicons.css";
+import "boxicons/css/boxicons.css";
 import { Provider } from "react-redux";
 import store from "./store/store";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -18,6 +18,7 @@ function App() {
             <Route path="/profile/:userid" element={<Mypage />} />
             <Route path="/pet-sitters" element={<PetSitterList />} />
             <Route path="/login" element={<Register />} />
+            <Route path="/calendar" element={<Reservation />} />
           </Routes>
         </div>
       </Router>

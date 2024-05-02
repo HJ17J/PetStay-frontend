@@ -5,8 +5,6 @@ import "../styles/MyCalender.scss";
 import axios from "axios";
 
 export default function MyCalendar() {
-  const [date, setDate] = useState<Date | [Date, Date]>(new Date());
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   // 예약 설정
   // 시간대 상태를 관리하는 useState 훅
   const [timeslots, setTimeslots] = useState([
@@ -14,14 +12,31 @@ export default function MyCalendar() {
     { time: "11:00", status: "inactive" },
     { time: "12:00", status: "inactive" },
     { time: "13:00", status: "inactive" },
-    // { time: "14:00", status: "inactive" },
-    // { time: "15:00", status: "inactive" },
-    // { time: "16:00", status: "inactive" },
-    // { time: "17:00", status: "inactive" },
-    // { time: "18:00", status: "inactive" },
-    // { time: "19:00", status: "inactive" },
-    // { time: "20:00", status: "inactive" },
+    { time: "14:00", status: "inactive" },
+    { time: "15:00", status: "inactive" },
+    { time: "16:00", status: "inactive" },
+    { time: "17:00", status: "inactive" },
+    { time: "18:00", status: "inactive" },
+    { time: "19:00", status: "inactive" },
+    { time: "20:00", status: "inactive" },
   ]);
+
+  const [date, setDate] = useState<Date | [Date, Date]>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  // 예약 시간 슬라이더
+  const [translation, setTranslation] = useState(0);
+
+  const NexthandleClick = () => {
+    console.log("Next", translation + 100);
+    setTranslation(translation + 100);
+  };
+
+  const PrevhandleClick = () => {
+    console.log("Preview", translation - 100);
+    setTranslation(translation - 100);
+  };
+
   const [startIdx, setStartIdx] = useState<null | number>(null); // 시작 시간 인덱스 상태
   const [endIdx, setEndIdx] = useState<null | number>(null); // 종료 시간 인덱스 상태
 
@@ -241,24 +256,34 @@ export default function MyCalendar() {
         />
       </div>
       <div className="calenderContainer2">
-        <div className="slider">
-          <div className="timeslotsList">
-            {timeslots.map((timeslot, index) => (
-              <div
-                key={index}
-                className={`timeslot ${
-                  timeslot.status === "active"
-                    ? "active"
-                    : timeslot.status === "done"
-                    ? "done"
-                    : "inactive"
-                }`}
-                onClick={() => handleTimeslotClick(index)}
-              >
-                {timeslot.time}
-              </div>
-            ))}
-          </div>
+        <div className="sliderBtnContainer">
+          <button onClick={PrevhandleClick} className="sliderBtn prev">
+            <i className="bx bx-chevron-left"></i>
+          </button>
+          <button onClick={NexthandleClick} className="sliderBtn next">
+            <i className="bx bx-chevron-right"></i>
+          </button>
+        </div>
+        <div className="timeList">
+          {timeslots.map((timeslot, index) => (
+            <div
+              key={index}
+              className={`times ${
+                timeslot.status === "active"
+                  ? "active"
+                  : timeslot.status === "done"
+                  ? "done"
+                  : "inactive"
+              }`}
+              style={{
+                transform: `translateX(${translation}px)`,
+                transition: "transform 0.5s ease", // Optional: Add transition for smooth animation
+              }}
+              onClick={() => handleTimeslotClick(index)}
+            >
+              {timeslot.time}
+            </div>
+          ))}
         </div>
       </div>
       <div className="calenderContainer3"></div>

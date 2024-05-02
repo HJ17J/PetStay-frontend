@@ -1,4 +1,5 @@
 import "../styles/Reservation.scss";
+import "../styles/ModalChat.scss";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import "boxicons/";
@@ -16,7 +17,7 @@ import { PetSitter } from "../types/PetSitterList";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { review } from "../types/review";
-import { ChatList, Chats } from "../types/chat";
+import { ChatList, Chats, Room } from "../types/chat";
 import { io } from "socket.io-client";
 
 // REACT_APP_API_SERVER가 정의되지 않았을 때를 대비하여 기본값을 설정
@@ -26,16 +27,17 @@ import { io } from "socket.io-client";
 // const socket = io(apiUrl, {
 //   autoConnect: false,
 // });
+const reader = new FileReader();
 const socket = io("http://localhost:8080", { autoConnect: false });
 export default function Reservation() {
   const initSocketConnect = () => {
     if (!socket.connected) socket.connect();
   };
-  if (socket.connected) {
-    console.log("Socket is connected");
-  } else {
-    console.log("Socket is not connected");
-  }
+  // if (socket.connected) {
+  //   console.log("Socket is connected");
+  // } else {
+  //   console.log("Socket is not connected");
+  // }
   const [inputValue, setInputValue] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
@@ -47,6 +49,11 @@ export default function Reservation() {
   const [chatData, setChatData] = useState<Chats[] | null>(null);
   //실시간 채팅 데이터 관리
   const [chatList, setChatList] = useState<ChatList[]>([]);
+  //roomidx관리
+  const [roomidx, setRoomidx] = useState<number>(0);
+  //rooms관리
+  const [roomList, setRoomList] = useState<Room[] | null>(null);
+  //이름관리
   const [userName, setUserName] = useState<string>("");
   const [sitterName, setSitterName] = useState<string>("");
 
@@ -83,13 +90,28 @@ export default function Reservation() {
   const addChatList = useCallback(
     (data: ChatList) => {
       console.log(data); //{message, nickname}
-      const newChatList = [
-        ...chatList,
-        {
-          nickname: data.nickname,
-          message: data.message,
-        },
-      ];
+      let newChatList;
+      if (data.img === "") {
+        //텍스트 데이터 일 때
+        newChatList = [
+          ...chatList,
+          {
+            nickname: data.nickname,
+            message: data.message,
+            img: "",
+          },
+        ];
+      } else {
+        //img데이터 일 때
+        newChatList = [
+          ...chatList,
+          {
+            nickname: data.nickname,
+            message: "",
+            img: data.img,
+          },
+        ];
+      }
       setChatList(newChatList);
     },
     [chatList]
@@ -103,6 +125,7 @@ export default function Reservation() {
   //실시간 채팅 진행 시 실행
   useEffect(() => {
     socket.on("message", addChatList);
+    socket.on("img", addChatList);
   }, [addChatList]);
 
   // This function will be triggered when the file field changes
@@ -111,15 +134,6 @@ export default function Reservation() {
       setSelectedImage(e.target.files[0]);
     }
   };
-
-  // const onSubmit = (e: SyntheticEvent) => {
-  //   e.preventDefault();
-  //   if (selectedImage) {
-  //     alert(URL.createObjectURL(selectedImage));
-  //   } else {
-  //     alert("No image selected!");
-  //   }
-  // };
 
   const toggleModal = async (e: SyntheticEvent) => {
     e.preventDefault();
@@ -130,13 +144,15 @@ export default function Reservation() {
     );
 
     console.log(chatData.data); //chats, msg, rooms
-    const { chats, msg, rooms, user, sitter } = chatData.data;
+    const { chats, msg, rooms, user, sitter, roomidx } = chatData.data;
     if (chats) {
       //채팅 있으면
       setChatData(chats);
     }
     setUserName(user.name);
     setSitterName(sitter.name);
+    setRoomidx(roomidx);
+    setRoomList(rooms);
 
     const roomName = `${userName}+${sitterName}`;
     // room생성
@@ -152,7 +168,7 @@ export default function Reservation() {
     setPickerVisible(!isPickerVisible);
   };
 
-  const sendMessage = (e: SyntheticEvent) => {
+  const sendMessage = async (e: SyntheticEvent) => {
     // alert("메시지 보냄!");
     e.preventDefault();
     //inputValue 전송
@@ -164,10 +180,73 @@ export default function Reservation() {
       myNick: userName,
     };
     socket.emit("send", sendData);
-
     setInputValue("");
+    //2. db에 저장
+    await axios.post(process.env.REACT_APP_API_SERVER + "/insertChat", {
+      content: inputValue,
+      roomidx: roomidx,
+    });
   };
 
+  //이미지전송
+  const sendImg = async (e: SyntheticEvent) => {
+    // alert("이미지 보냄!");
+    e.preventDefault();
+    // console.log(selectedImage?.name);
+
+    const formData = new FormData();
+    if (selectedImage) {
+      formData.append("chatFile", selectedImage);
+    }
+    formData.append("roomidx", String(roomidx));
+
+    const imgResponse = await axios.post(
+      process.env.REACT_APP_API_SERVER + "/insertImg",
+      formData
+    );
+
+    const imgSrc = imgResponse.data.saveChat.img;
+    //socket전송
+    const sendData = {
+      img: imgSrc,
+      myNick: userName,
+    };
+    socket.emit("image", sendData);
+
+    // console.log(imgSrc);
+    setSelectedImage(null);
+  };
+  console.log("room목록", roomList);
+
+  //room클릭시
+  const clickRoom = async (clickroomidx: number) => {
+    //room이 생기면 실시간 채팅 데이터를 초기화
+    setChatList([]);
+    let otherName;
+    roomList?.forEach((room) => {
+      if (room.roomidx === clickroomidx) {
+        otherName = room.User.name;
+      }
+    });
+
+    const roomName = `${userName}+${otherName}`;
+    // room생성
+    socket.emit("createRoom", roomName);
+    console.log(clickroomidx);
+    //1. 클릭한 roomidx로 검색한 채팅 데이터 가져옴
+    // axios-chat
+    const chatData = await axios.get(
+      process.env.REACT_APP_API_SERVER + `/chatRoom/${clickroomidx}`
+    );
+
+    console.log(chatData.data); //chats, msg, rooms
+    const { chats, msg, user, sitter, roomidx } = chatData.data;
+
+    setChatData(chats);
+    setUserName(user.name);
+    setSitterName(sitter.name);
+    setRoomidx(roomidx);
+  };
   return (
     <>
       <Header />
@@ -281,184 +360,265 @@ export default function Reservation() {
           <div className="trainerInfoContainer5">
             <MyCalendar />
             {/* Modal container */}
-            {showModal && (
-              <div id="modalbox" className="modal">
-                <div className="modalcontent">
-                  <div className="modalContent1">
-                    <div className="imageModalclose" onClick={toggleModal}>
-                      &times;
+          </div>
+        </div>
+      </div>
+      <Footer />
+      {showModal && (
+        <div id="modalbox" className="modal">
+          <div className="modalcontent">
+            <div className="modalContent1">
+              <div className="imageModalclose" onClick={toggleModal}>
+                &times;
+              </div>
+            </div>
+            <div className="modalContent2">
+              <div className="modalSection1 modals">
+                {/* <div className="searchContainer">
+                  <div className="searchTitle">채팅</div>
+                  <div className="searchInputIcon1 search">
+                    <input type="text" />
+                    <div className="searchDiv">
+                      <i className="bx bx-search"></i>
                     </div>
                   </div>
-                  <div className="modalContent2">
-                    <div className="modalSection1 modals">
-                      {/* <div className="searchContainer">
-                        <div className="searchTitle">채팅</div>
-                        <div className="searchInputIcon1 search">
-                          <input type="text" />
-                          <div className="searchDiv">
-                            <i className="bx bx-search"></i>
-                          </div>
-                        </div>
-                      </div> */}
-                      <div className="advertisementContainer"></div>
-                      <div className="chattingHistoryWrapper">
-                        <div className="chattingContainer">
-                          <div>
-                            <img
-                              className="chattingCustomerImage"
-                              src="https://picsum.photos/seed/picsum/200/300"
-                              alt=""
-                            />
-                          </div>
-                          <div className="chattingInformation">
-                            <div className="customerTitle">홍길동</div>
-                            <div>감사해요~~!</div>
-                          </div>
-                        </div>
-                      </div>
+                </div> */}
+                <div className="advertisementContainer"></div>
+                <div className="chattingHistoryWrapper">
+                  {/* <div className="chattingContainer">
+                    <div>
+                      <img
+                        className="chattingCustomerImage"
+                        src="https://picsum.photos/seed/picsum/200/300"
+                        alt=""
+                      />
                     </div>
-                    <div className="modalSection2 modals">
-                      {/* <div className="searchContainer">
-                        <div className="areaIcon">
-                          <i className="bx bx-left-arrow-alt"></i>
+                    <div className="chattingInformation">
+                      <div className="customerTitle">홍길동</div>
+                      <div>감사해요~~!</div>
+                    </div>
+                  </div> */}
+                  {roomList?.map((el) => {
+                    return (
+                      <div
+                        onClick={() => {
+                          clickRoom(el.roomidx);
+                        }}
+                        className="chattingContainer"
+                        key={el.roomidx}
+                      >
+                        <div>
+                          <img
+                            className="chattingCustomerImage"
+                            src={el.User.img}
+                            alt="프로필 이미지"
+                          />
                         </div>
-                        <div className="chattingName">채팅그룹</div>
-                        <div className="searchInputIcon2 search">
-                          <input type="text" />
-                          <div className="searchDiv">
-                            <i className="bx bx-search"></i>
-                          </div>
-                        </div>
-                      </div> */}
-                      <div className="groupChattingContainer1">
-                        <div className="chatterWrapper">
-                          <div className="chatterImageContainer">
-                            <img
-                              className="chatterImage"
-                              src="https://picsum.photos/seed/picsum/200/300"
-                              alt=""
-                            />
-                          </div>
-                          <div className="chatterInformation">
-                            {/* 기존 채팅 데이터 뿌리기 */}
-                            <div className="chatterName">홍길동</div>
-                            <div className="chatterText">안녕하세요!</div>
-                            {/* 실시간 채팅 */}
-                            {chatList.map((el, idx) => {
-                              return (
-                                <div key={idx}>
-                                  <div className="chatterName">
-                                    {el.nickname}
-                                  </div>
-                                  <div className="chatterText">
-                                    {el.message}
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
+                        <div className="chattingInformation">
+                          <div className="customerTitle">{el.User.name}</div>
+                          {/* <div>감사해요~~!</div> */}
                         </div>
                       </div>
-                      <div className="chattingInputContainer2">
-                        <div className="findImageContainer">
-                          {/* <form onSubmit={onSubmit} className="form-inline"> */}
-                          <label htmlFor="firstimg" className="label">
-                            <i className="bx bx-plus"></i>
-                          </label>
-                          <input
-                            type="file"
-                            id="firstimg"
-                            className="formControl"
-                            onChange={imageChange}
-                            accept="image/*"
-                          />
-                          {/* </form> */}
-                        </div>
-                        <div className="sendChattingTextContainer">
-                          <input
-                            type="text"
-                            // value={currentEmoji || ""}
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                          />
-                          <button onClick={sendMessage}>보내기</button>
-                        </div>
-                        <div className="d-flex flex-column align-items-center">
-                          <div
-                            className="mt-5 mb-5"
-                            style={{
-                              position: "relative",
-                            }}
-                          >
-                            {/* 이모지 변경  */}
-                            <div className="emojiBtnContainer">
-                              <div className="emojiBtn " onClick={toggleEmoji}>
-                                <i className="bx bx-smile"></i>
-                              </div>
-                            </div>
-                            {isPickerVisible && (
-                              // <div className={isPickerVisible ? "d-block" : "d-none"}>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="modalSection2 modals">
+                {/* <div className="searchContainer">
+                  <div className="areaIcon">
+                    <i className="bx bx-left-arrow-alt"></i>
+                  </div>
+                  <div className="chattingName">채팅그룹</div>
+                  <div className="searchInputIcon2 search">
+                    <input type="text" />
+                    <div className="searchDiv">
+                      <i className="bx bx-search"></i>
+                    </div>
+                  </div>
+                </div> */}
+                <div className="groupChattingContainer1">
+                  <div className="chatterWrapper">
+                    {/* <div className="chatterImageContainer">
+                      <img
+                        className="chatterImage"
+                        src="https://picsum.photos/seed/picsum/200/300"
+                        alt=""
+                      />
+                    </div> */}
+                    <div className="chatterInformation">
+                      {/* 기존 채팅 */}
+                      <div className="chatterName">홍길동</div>
+                      <div className="chatterText">안녕하세요!</div>
+                      {chatData &&
+                        chatData.map((el) => {
+                          if (el.img === null) {
+                            return (
                               <div
-                                className="border border-primary"
-                                style={{
-                                  position: "absolute",
-                                  bottom: "40px",
-                                  right: "0",
-                                  zIndex: 1,
-                                }}
+                                key={el.chatidx}
+                                className={
+                                  `${el.authoridx}` === `${useridx}`
+                                    ? "otherTalk"
+                                    : "meTalk"
+                                }
                               >
-                                <Picker
-                                  data={data}
-                                  previewPosition=""
-                                  onEmojiSelect={(e: any) => {
-                                    setInputValue(inputValue + e.native);
-                                    setPickerVisible(!isPickerVisible);
-                                  }}
-                                />
+                                <div className="chatterName">
+                                  {`${el.authoridx}` === `${useridx}`
+                                    ? sitterName
+                                    : userName}
+                                </div>
+                                <div className="chatterText">{el.content}</div>
                               </div>
-                            )}
-                          </div>
+                            );
+                          } else {
+                            return (
+                              <div
+                                key={el.chatidx}
+                                className={
+                                  `${el.authoridx}` === `${useridx}`
+                                    ? "otherTalk"
+                                    : "meTalk"
+                                }
+                              >
+                                <div className="chatterName">
+                                  {`${el.authoridx}` === `${useridx}`
+                                    ? sitterName
+                                    : userName}
+                                </div>
+                                <img className="chatterImg" src={el.img}></img>
+                              </div>
+                            );
+                          }
+                        })}
+                      {/* 실시간 채팅 */}
+                      {chatList.map((el, idx) => {
+                        if (el.img === "") {
+                          return (
+                            <div
+                              key={idx}
+                              className={
+                                el.nickname === userName
+                                  ? "meTalk"
+                                  : "otherTalk"
+                              }
+                            >
+                              <div className="chatterName">{el.nickname}</div>
+                              <div className="chatterText">{el.message}</div>
+                            </div>
+                          );
+                        } else {
+                          return (
+                            <div
+                              key={idx}
+                              className={
+                                el.nickname === userName
+                                  ? "meTalk"
+                                  : "otherTalk"
+                              }
+                            >
+                              <div className="chatterName">{el.nickname}</div>
+                              <img className="chatterImg" src={el.img}></img>
+                            </div>
+                          );
+                        }
+                      })}
+                    </div>
+                  </div>
+                </div>
+                <div className="chattingInputContainer2">
+                  <div className="findImageContainer">
+                    {/* <form onSubmit={onSubmit} className="form-inline"> */}
+                    <label htmlFor="firstimg" className="label">
+                      <i className="bx bx-plus"></i>
+                    </label>
+                    <input
+                      type="file"
+                      id="firstimg"
+                      className="formControl"
+                      onChange={imageChange}
+                      accept="image/*"
+                      name="chatFile"
+                    />
+                    {/* </form> */}
+                  </div>
+                  <div className="sendChattingTextContainer">
+                    <input
+                      type="text"
+                      // value={currentEmoji || ""}
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                    />
+                    <button onClick={sendMessage}>보내기</button>
+                  </div>
+                  <div className="d-flex flex-column align-items-center">
+                    <div
+                      className="mt-5 mb-5"
+                      style={{
+                        position: "relative",
+                      }}
+                    >
+                      {/* 이모지 변경  */}
+                      <div className="emojiBtnContainer">
+                        <div className="emojiBtn " onClick={toggleEmoji}>
+                          <i className="bx bx-smile"></i>
                         </div>
                       </div>
-                      {selectedImage && (
-                        <div id="imageModalbox" className="imageModal">
-                          <div className="imageModalContent">
-                            <div
-                              className="imageModalclose"
-                              onClick={() => setSelectedImage(null)}
-                            >
-                              &times;
-                            </div>
-                            <div className="imageModalTitle">파일 전송</div>
-                            <div className="imageModalBody">
-                              <div className="imageModalContainer">
-                                <div className="preview">
-                                  <img
-                                    src={URL.createObjectURL(selectedImage)}
-                                    className="chattingImage"
-                                    alt="Thumb"
-                                  />
-                                  <p className="fileName">
-                                    {selectedImage.name}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="imageModalBtn">
-                              <button>1개 전송</button>
-                            </div>
-                          </div>
+                      {isPickerVisible && (
+                        // <div className={isPickerVisible ? "d-block" : "d-none"}>
+                        <div
+                          className="border border-primary"
+                          style={{
+                            position: "absolute",
+                            bottom: "40px",
+                            right: "0",
+                            zIndex: 1,
+                          }}
+                        >
+                          <Picker
+                            data={data}
+                            previewPosition=""
+                            onEmojiSelect={(e: any) => {
+                              setInputValue(inputValue + e.native);
+                              setPickerVisible(!isPickerVisible);
+                            }}
+                          />
                         </div>
                       )}
                     </div>
                   </div>
                 </div>
+                {selectedImage && (
+                  <div id="imageModalbox" className="imageModal">
+                    <div className="imageModalContent">
+                      <div
+                        className="imageModalclose"
+                        onClick={() => setSelectedImage(null)}
+                      >
+                        &times;
+                      </div>
+                      <div className="imageModalTitle">파일 전송</div>
+                      <div className="imageModalBody">
+                        <div className="imageModalContainer">
+                          <div className="preview">
+                            <img
+                              src={URL.createObjectURL(selectedImage)}
+                              className="chattingImage"
+                              alt="Thumb"
+                            />
+                            <p className="fileName">{selectedImage.name}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="imageModalBtn">
+                        <button onClick={sendImg}>1개 전송</button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </div>
-      </div>
-      <Footer />
+      )}
     </>
   );
 }

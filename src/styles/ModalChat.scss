@@ -1,0 +1,19 @@
+.meTalk {
+  margin-left: auto;
+  .chatterText {
+    background-color: pink;
+    color: black;
+  }
+}
+.otherTalk {
+  margin-right: auto;
+  .chatterText {
+    background-color: gray;
+    color: white;
+  }
+}
+
+.chatterImg {
+  max-width: 50px;
+  max-height: 50px;
+}

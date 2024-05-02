@@ -28,13 +28,17 @@ export default function MyCalendar() {
   const [translation, setTranslation] = useState(0);
 
   const NexthandleClick = () => {
-    console.log("Next", translation + 100);
-    setTranslation(translation + 100);
+    if (translation !== 0) {
+      console.log("Next", translation >= 0);
+      setTranslation(translation + 100);
+    }
   };
 
   const PrevhandleClick = () => {
-    console.log("Preview", translation - 100);
-    setTranslation(translation - 100);
+    if (translation !== -500) {
+      console.log("Next", translation >= -500);
+      setTranslation(translation - 100);
+    }
   };
 
   const [startIdx, setStartIdx] = useState<null | number>(null); // 시작 시간 인덱스 상태

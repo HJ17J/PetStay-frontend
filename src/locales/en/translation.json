@@ -31,6 +31,7 @@
   "userSignUp": "User Form",
   "petSitterSignUp": "Pet Sitter Form",
   "socialPlatform": "Sign in with social platforms",
+  "type": "type",
   "puppy": "Dog",
   "cat": "Cat",
   "etc": "Others",
@@ -38,5 +39,15 @@
   "career": "Please fill in your career details.",
   "pay": "Hourly rate",
   "selfIntroduction": "Please introduce yourself.",
-  "oneLineIntro": "A brief one-line introduction"
+  "oneLineIntro": "A brief one-line introduction",
+  "mainPage.welcome": "Your pet's best friends, PetsStay sitters",
+  "mainPage.careDifference": "Filled with love and care, that's the PetsStay difference.",
+  "mainPage.everyPetVIP": "At PetsStay, every pet is a VIP.",
+  "mainPage.findBestSitter": "Find the perfect sitter for your beloved family member.",
+  "mainPage.teamTitle": "PetsStay Team Organization",
+  "teamMember.name.jinHyunJung": "Jin Hyunjung",
+  "teamMember.name.shinDongWon": "Shin Dongwon",
+  "teamMember.name.leeHyungSeok": "Lee Hyungseok",
+  "teamMember.name.limHakMin": "Lim Hakmin",
+  "teamMember.name.hongJuHee": "Hong Juhee"
 }

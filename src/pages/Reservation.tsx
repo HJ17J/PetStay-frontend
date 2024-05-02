@@ -183,10 +183,10 @@ export default function Reservation() {
       </div>
       <Footer />
       {showModal && (
-        <div id='modalbox' className='modal'>
-          <div className='modalcontent'>
-            <div className='modalContent1'>
-              <div className='imageModalclose' onClick={toggleModal}>
+        <div id="modalbox" className="modal">
+          <div className="modalcontent">
+            <div className="modalContent1">
+              <div className="chattingModalclose" onClick={toggleModal}>
                 &times;
               </div>
             </div>

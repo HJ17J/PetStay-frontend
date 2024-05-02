@@ -1,14 +1,4 @@
 /* 기본 시간대 스타일 */
-.timeslot {
-  background-color: white;
-  padding: 10px;
-  margin: 5px;
-  border: 1px solid black;
-  cursor: pointer;
-  width: 100px;
-  text-align: center;
-  display: inline-block;
-}
 
 /* 활성화된 시간대 스타일 */
 .timeslot.active {
@@ -57,6 +47,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  width: 600px;
   gap: 10px;
 }
 
@@ -74,29 +65,19 @@
 
 .calenderContainer2 {
   border: 1px solid #dcdcdc;
+  position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   padding: 5px;
   gap: 10px;
   padding: 5px;
   height: 90px;
   border-radius: 11px;
+  overflow: hidden;
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
     rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-}
-
-.timeslotsList {
-  display: flex;
-  transition: transform 0.5s ease;
-  gap: 5px;
-}
-.slider {
-  overflow: hidden;
-  position: relative;
-}
-
-.dataTime {
-  border: 1px solid black;
 }
 
 .calenderContainer3 {
@@ -165,4 +146,85 @@
   height: 57px;
   font-size: 18px;
   font-weight: bold;
+}
+
+/* 슬라이더 css*/
+// .wrapper {
+//   position: relative;
+//   border: 1px solid black;
+//   background-image: url("/public/marguerite-729510_1280.jpg");
+//   background-repeat: no-repeat;
+//   background-size: cover;
+//   background-position: center;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   width: 490px;
+//   height: 100px;
+//   /* overflow: hidden; */
+// }
+
+.sliderBtnContainer {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  width: 98%;
+  height: 92%;
+  z-index: 1;
+}
+
+.sliderBtn {
+  position: relative;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  color: black;
+  background: #fff;
+  opacity: 0.9;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.sliderBtn:active {
+  transform: scale(0.96);
+}
+
+.timeList {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  scroll-behavior: smooth;
+  left: 24px;
+  // width: auto;
+  height: 78px;
+  overflow: hidden;
+  gap: 26px;
+}
+
+.times {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  background: #fff;
+  width: 70px;
+  height: 40px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+}
+
+.times:active {
+  transform: scale(0.96);
 }

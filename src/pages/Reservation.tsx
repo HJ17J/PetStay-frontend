@@ -201,170 +201,168 @@ export default function Reservation() {
           <div className="trainerInfoContainer5">
             <MyCalendar />
             {/* Modal container */}
-            {showModal && (
-              <div id="modalbox" className="modal">
-                <div className="modalcontent">
-                  <div className="modalContent1">
-                    <div className="imageModalclose" onClick={toggleModal}>
-                      &times;
+          </div>
+        </div>
+      </div>
+      <Footer />
+      {showModal && (
+        <div id="modalbox" className="modal">
+          <div className="modalcontent">
+            <div className="modalContent1">
+              <div className="imageModalclose" onClick={toggleModal}>
+                &times;
+              </div>
+            </div>
+            <div className="modalContent2">
+              <div className="modalSection1 modals">
+                <div className="searchContainer">
+                  <div className="searchTitle">채팅</div>
+                  <div className="searchInputIcon1 search">
+                    <input type="text" />
+                    <div className="searchDiv">
+                      <i className="bx bx-search"></i>
                     </div>
                   </div>
-                  <div className="modalContent2">
-                    <div className="modalSection1 modals">
-                      <div className="searchContainer">
-                        <div className="searchTitle">채팅</div>
-                        <div className="searchInputIcon1 search">
-                          <input type="text" />
-                          <div className="searchDiv">
-                            <i className="bx bx-search"></i>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="advertisementContainer"></div>
-                      <div className="chattingHistoryWrapper">
-                        <div className="chattingContainer">
-                          <div>
-                            <img
-                              className="chattingCustomerImage"
-                              src="https://picsum.photos/seed/picsum/200/300"
-                              alt=""
-                            />
-                          </div>
-                          <div className="chattingInformation">
-                            <div className="customerTitle">홍길동</div>
-                            <div>감사해요~~!</div>
-                          </div>
-                        </div>
-                      </div>
+                </div>
+                <div className="advertisementContainer"></div>
+                <div className="chattingHistoryWrapper">
+                  <div className="chattingContainer">
+                    <div>
+                      <img
+                        className="chattingCustomerImage"
+                        src="https://picsum.photos/seed/picsum/200/300"
+                        alt=""
+                      />
                     </div>
-                    <div className="modalSection2 modals">
-                      <div className="searchContainer">
-                        <div className="areaIcon">
-                          <i className="bx bx-left-arrow-alt"></i>
-                        </div>
-                        <div className="chattingName">채팅그룹</div>
-                        <div className="searchInputIcon2 search">
-                          <input type="text" />
-                          <div className="searchDiv">
-                            <i className="bx bx-search"></i>
-                          </div>
+                    <div className="chattingInformation">
+                      <div className="customerTitle">홍길동</div>
+                      <div>감사해요~~!</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="modalSection2 modals">
+                <div className="searchContainer">
+                  <div className="areaIcon">
+                    <i className="bx bx-left-arrow-alt"></i>
+                  </div>
+                  <div className="chattingName">채팅그룹</div>
+                  <div className="searchInputIcon2 search">
+                    <input type="text" />
+                    <div className="searchDiv">
+                      <i className="bx bx-search"></i>
+                    </div>
+                  </div>
+                </div>
+                <div className="groupChattingContainer1">
+                  <div className="chatterWrapper">
+                    <div className="chatterImageContainer">
+                      <img
+                        className="chatterImage"
+                        src="https://picsum.photos/seed/picsum/200/300"
+                        alt=""
+                      />
+                    </div>
+                    <div className="chatterInformation">
+                      <div className="chatterName">홍길동</div>
+                      <div className="chatterText">안녕하세요!</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="chattingInputContainer2">
+                  <div className="findImageContainer">
+                    {/* <form onSubmit={onSubmit} className="form-inline"> */}
+                    <label htmlFor="firstimg" className="label">
+                      <i className="bx bx-plus"></i>
+                    </label>
+                    <input
+                      type="file"
+                      id="firstimg"
+                      className="formControl"
+                      onChange={imageChange}
+                      accept="image/*"
+                    />
+                    {/* </form> */}
+                  </div>
+                  <div className="sendChattingTextContainer">
+                    <input
+                      type="text"
+                      // value={currentEmoji || ""}
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                    />
+                    <button>보내기</button>
+                  </div>
+                  <div className="d-flex flex-column align-items-center">
+                    <div
+                      className="mt-5 mb-5"
+                      style={{
+                        position: "relative",
+                      }}
+                    >
+                      {/* 이모지 변경  */}
+                      <div className="emojiBtnContainer">
+                        <div className="emojiBtn " onClick={toggleEmoji}>
+                          <i className="bx bx-smile"></i>
                         </div>
                       </div>
-                      <div className="groupChattingContainer1">
-                        <div className="chatterWrapper">
-                          <div className="chatterImageContainer">
-                            <img
-                              className="chatterImage"
-                              src="https://picsum.photos/seed/picsum/200/300"
-                              alt=""
-                            />
-                          </div>
-                          <div className="chatterInformation">
-                            <div className="chatterName">홍길동</div>
-                            <div className="chatterText">안녕하세요!</div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="chattingInputContainer2">
-                        <div className="findImageContainer">
-                          {/* <form onSubmit={onSubmit} className="form-inline"> */}
-                          <label htmlFor="firstimg" className="label">
-                            <i className="bx bx-plus"></i>
-                          </label>
-                          <input
-                            type="file"
-                            id="firstimg"
-                            className="formControl"
-                            onChange={imageChange}
-                            accept="image/*"
-                          />
-                          {/* </form> */}
-                        </div>
-                        <div className="sendChattingTextContainer">
-                          <input
-                            type="text"
-                            // value={currentEmoji || ""}
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                          />
-                          <button>보내기</button>
-                        </div>
-                        <div className="d-flex flex-column align-items-center">
-                          <div
-                            className="mt-5 mb-5"
-                            style={{
-                              position: "relative",
+                      {isPickerVisible && (
+                        // <div className={isPickerVisible ? "d-block" : "d-none"}>
+                        <div
+                          className="border border-primary"
+                          style={{
+                            position: "absolute",
+                            bottom: "40px",
+                            right: "0",
+                            zIndex: 1,
+                          }}
+                        >
+                          <Picker
+                            data={data}
+                            previewPosition=""
+                            onEmojiSelect={(e: any) => {
+                              setInputValue(inputValue + e.native);
+                              setPickerVisible(!isPickerVisible);
                             }}
-                          >
-                            {/* 이모지 변경  */}
-                            <div className="emojiBtnContainer">
-                              <div className="emojiBtn " onClick={toggleEmoji}>
-                                <i className="bx bx-smile"></i>
-                              </div>
-                            </div>
-                            {isPickerVisible && (
-                              // <div className={isPickerVisible ? "d-block" : "d-none"}>
-                              <div
-                                className="border border-primary"
-                                style={{
-                                  position: "absolute",
-                                  bottom: "40px",
-                                  right: "0",
-                                  zIndex: 1,
-                                }}
-                              >
-                                <Picker
-                                  data={data}
-                                  previewPosition=""
-                                  onEmojiSelect={(e: any) => {
-                                    setInputValue(inputValue + e.native);
-                                    setPickerVisible(!isPickerVisible);
-                                  }}
-                                />
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      {selectedImage && (
-                        <div id="imageModalbox" className="imageModal">
-                          <div className="imageModalContent">
-                            <div
-                              className="imageModalclose"
-                              onClick={() => setSelectedImage(null)}
-                            >
-                              &times;
-                            </div>
-                            <div className="imageModalTitle">파일 전송</div>
-                            <div className="imageModalBody">
-                              <div className="imageModalContainer">
-                                <div className="preview">
-                                  <img
-                                    src={URL.createObjectURL(selectedImage)}
-                                    className="chattingImage"
-                                    alt="Thumb"
-                                  />
-                                  <p className="fileName">
-                                    {selectedImage.name}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="imageModalBtn">
-                              <button>1개 전송</button>
-                            </div>
-                          </div>
+                          />
                         </div>
                       )}
                     </div>
                   </div>
                 </div>
+                {selectedImage && (
+                  <div id="imageModalbox" className="imageModal">
+                    <div className="imageModalContent">
+                      <div
+                        className="imageModalclose"
+                        onClick={() => setSelectedImage(null)}
+                      >
+                        &times;
+                      </div>
+                      <div className="imageModalTitle">파일 전송</div>
+                      <div className="imageModalBody">
+                        <div className="imageModalContainer">
+                          <div className="preview">
+                            <img
+                              src={URL.createObjectURL(selectedImage)}
+                              className="chattingImage"
+                              alt="Thumb"
+                            />
+                            <p className="fileName">{selectedImage.name}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="imageModalBtn">
+                        <button>1개 전송</button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </div>
-      </div>
-      <Footer />
+      )}
     </>
   );
 }

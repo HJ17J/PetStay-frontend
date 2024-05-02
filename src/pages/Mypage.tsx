@@ -17,11 +17,11 @@ export default function Mypage() {
       <div className="myPageWrapper">
         <div className="myPageContainer1">
           <div className="imageContainer">
-            <img src="" alt="Profile Image" className="image profile_image" />
+            <img src="" alt="Profile Image" className="myPage_profile_image" />
             <input
               type="file"
               name="profile_img"
-              className="image image_input"
+              className="myPage_image_input"
             />
             <div className="image_button_container">
               <button type="button">프로필 변경</button>

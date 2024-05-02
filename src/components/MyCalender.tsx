@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import Calendar, { CalendarProps } from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import "../styles/Calender.scss";
+import "../styles/MyCalender.scss";
 import axios from "axios";
 
 export default function MyCalendar() {
@@ -281,53 +281,7 @@ export default function MyCalendar() {
           <button className="reservationBtn">취소</button>
         </div>
       </div>
-      <div>
-        {/* 예약 창 골격 */}
-        {/* <div className="resvDay">
-          <div className="timeslots-container">
-            {timeslots.map((timeslot, index) => (
-              <div
-                key={index}
-                className={`timeslot ${
-                  timeslot.status === "active"
-                    ? "active"
-                    : timeslot.status === "done"
-                    ? "done"
-                    : "inactive"
-                }`}
-                onClick={() => handleTimeslotClick(index)}
-              >
-                {timeslot.time}
-              </div>
-            ))}
-          </div> */}
-        {/* <div className="">
-            <div>예약 동물 타입이랑, 마릿수, 부연설명 데이터를 전송합니다</div>
-            <input
-              type="text"
-              placeholder="동물타입입력 강아지 등등.."
-              name="type"
-              ref={typeRef}
-            />
-            <br />
-            <input
-              type="number"
-              placeholder="마릿수 입력, 숫자"
-              name="animalNumber"
-              ref={animalNumberRef}
-            />
-            <br />
-            <textarea
-              name="content"
-              placeholder="부연 설명 텍스트 입력"
-              ref={contentRef}
-            ></textarea>
-            <button type="button" onClick={insertResv}>
-              예약 요청
-            </button>
-          </div> */}
-        {/* </div> */}
-      </div>
+      <div></div>
     </div>
   );
 }

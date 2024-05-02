@@ -13,7 +13,7 @@ import {
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import MyCalendar from "../components/MyCalender";
-import { PetSitter } from "../types/PetSitterList";
+import type { PetSitterDetail } from "../types/PetSitter";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { review } from "../types/review";
@@ -43,7 +43,7 @@ export default function Reservation() {
   const [showImageModal, setShowImageModal] = useState(false);
   const [isPickerVisible, setPickerVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [sitterData, setSitterData] = useState<PetSitter | null>(null);
+  const [sitterData, setSitterData] = useState<PetSitterDetail>();
   const [reviewData, setReviewData] = useState<review[] | null>(null);
   //이전 채팅 데이터 관리
   const [chatData, setChatData] = useState<Chats[] | null>(null);
@@ -61,27 +61,12 @@ export default function Reservation() {
   //sitter정보 받아오는 함수
   const getSitterData = async () => {
     try {
-      const response = await axios.get(
+      const result = await axios.get(
         process.env.REACT_APP_API_SERVER + `/sitter/${useridx}`
       );
-      // console.log("data>", response.data);
-      const transformedData: PetSitter = {
-        useridx: response.data.sitterInfo.useridx,
-        name: response.data.sitterInfo.name,
-        img: response.data.sitterInfo.img,
-        address: response.data.sitterInfo.address,
-        selfIntroduction: response.data.sitterInfo.oneLineIntro,
-        career: response.data.sitterInfo.career,
-        license: response.data.sitterInfo.license,
-        shortIntro: response.data.sitterInfo.selfIntroduction,
-        pay: response.data.sitterInfo.pay,
-        rating: response.data.rvNumberData[0].averageRating,
-        reviewCount: response.data.rvNumberData[0].reviewCount,
-        animalType: response.data.sitterInfo.type,
-      };
-
-      setSitterData(transformedData);
-      setReviewData(response.data.reviews);
+      console.log("data>", result.data);
+      setSitterData(result.data.data);
+      setReviewData(result.data.reviews);
     } catch (error) {
       console.error("Error fetching sitter data:", error);
       throw error;
@@ -140,7 +125,7 @@ export default function Reservation() {
     setShowModal(!showModal);
     // axios-chat
     const chatData = await axios.get(
-      process.env.REACT_APP_API_SERVER + `/chat/${sitterData?.useridx}`
+      process.env.REACT_APP_API_SERVER + `/chat/${useridx}`
     );
 
     console.log(chatData.data); //chats, msg, rooms
@@ -366,13 +351,11 @@ export default function Reservation() {
       <Footer />
       {showModal && (
         <div id="modalbox" className="modal">
-          <div className="modalcontent">
-            <div className="modalContent1">
-              <div className="imageModalclose" onClick={toggleModal}>
-                &times;
-              </div>
-            </div>
-            <div className="modalContent2">
+          <div className="modalCloseBtn" onClick={toggleModal}>
+            &times;
+          </div>
+          <div className="modalContainer">
+            <div className="modalContent">
               <div className="modalSection1 modals">
                 {/* <div className="searchContainer">
                   <div className="searchTitle">채팅</div>
@@ -387,14 +370,10 @@ export default function Reservation() {
                 <div className="chattingHistoryWrapper">
                   {/* <div className="chattingContainer">
                     <div>
-                      <img
-                        className="chattingCustomerImage"
-                        src="https://picsum.photos/seed/picsum/200/300"
-                        alt=""
-                      />
+                      <img className='chattingCustomerImage' src='https://picsum.photos/seed/picsum/200/300' alt='' />
                     </div>
-                    <div className="chattingInformation">
-                      <div className="customerTitle">홍길동</div>
+                    <div className='chattingInformation'>
+                      <div className='customerTitle'>홍길동</div>
                       <div>감사해요~~!</div>
                     </div>
                   </div> */}
@@ -428,11 +407,11 @@ export default function Reservation() {
                   <div className="areaIcon">
                     <i className="bx bx-left-arrow-alt"></i>
                   </div>
-                  <div className="chattingName">채팅그룹</div>
-                  <div className="searchInputIcon2 search">
-                    <input type="text" />
-                    <div className="searchDiv">
-                      <i className="bx bx-search"></i>
+                  <div className='chattingName'>채팅그룹</div>
+                  <div className='searchInputIcon2 search'>
+                    <input type='text' />
+                    <div className='searchDiv'>
+                      <i className='bx bx-search'></i>
                     </div>
                   </div>
                 </div> */}

@@ -1,8 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { PetSitter } from "../types/PetSitterList";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { PetSitterList, PetSitterDetail } from '../types/PetSitter';
 
 interface PetSitterState {
-  petSitters: PetSitter[];
+  petSitters: PetSitterList[];
 }
 
 const initialState: PetSitterState = {
@@ -10,13 +10,13 @@ const initialState: PetSitterState = {
 };
 
 export const petSitterSlice = createSlice({
-  name: "petSitter",
+  name: 'petSitter',
   initialState,
   reducers: {
-    setPetSitters: (state, action: PayloadAction<PetSitter[]>) => {
+    setPetSitters: (state, action: PayloadAction<PetSitterList[]>) => {
       state.petSitters = action.payload;
     },
-    addPetSitter: (state, action: PayloadAction<PetSitter>) => {
+    addPetSitter: (state, action: PayloadAction<PetSitterDetail>) => {
       state.petSitters.push(action.payload);
     },
   },

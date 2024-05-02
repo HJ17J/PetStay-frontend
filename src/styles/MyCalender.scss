@@ -1,15 +1,6 @@
 /* 기본 시간대 스타일 */
 
 /* 활성화된 시간대 스타일 */
-.timeslot.active {
-  background-color: lightblue;
-}
-.timeslot.inactive {
-  background-color: lightgray;
-}
-.timeslot.done {
-  background-color: gray;
-}
 
 .react-calendar {
   width: unset !important;
@@ -165,14 +156,14 @@
 // }
 
 .sliderBtnContainer {
-  position: absolute;
+  // position: absolute;
+  // background: black;
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: absolute;
   width: 98%;
   height: 92%;
-  z-index: 1;
 }
 
 .sliderBtn {
@@ -190,6 +181,7 @@
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   cursor: pointer;
   transition: transform 0.2s ease;
+  z-index: 1;
 }
 
 .sliderBtn:active {
@@ -225,6 +217,14 @@
     rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
 }
 
-.times:active {
+.times.active {
   transform: scale(0.96);
+  background-color: lightblue;
+}
+
+.times.inactive {
+  background-color: #fff;
+}
+.times.done {
+  background-color: gray;
 }

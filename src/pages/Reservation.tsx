@@ -184,20 +184,18 @@ export default function Reservation() {
       <Footer />
       {showModal && (
         <div id="modalbox" className="modal">
-          <div className="modalcontent">
-            <div className="modalContent1">
-              <div className="chattingModalclose" onClick={toggleModal}>
-                &times;
-              </div>
-            </div>
-            <div className='modalContent2'>
-              <div className='modalSection1 modals'>
-                <div className='searchContainer'>
-                  <div className='searchTitle'>채팅</div>
-                  <div className='searchInputIcon1 search'>
-                    <input type='text' />
-                    <div className='searchDiv'>
-                      <i className='bx bx-search'></i>
+          <div className="modalCloseBtn" onClick={toggleModal}>
+            &times;
+          </div>
+          <div className="modalContainer">
+            <div className="modalContent">
+              <div className="modalSection1 modals">
+                <div className="searchContainer">
+                  <div className="searchTitle">채팅</div>
+                  <div className="searchInputIcon1 search">
+                    <input type="text" />
+                    <div className="searchDiv">
+                      <i className="bx bx-search"></i>
                     </div>
                   </div>
                 </div>

@@ -198,6 +198,7 @@ export default function Reservation() {
               <div>₩ {sitterData?.pay}원</div>
             </div>
           </div>
+        </div>
         <div className="trainerInfoContainer5">
           <MyCalendar />
         </div>

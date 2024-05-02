@@ -182,25 +182,24 @@ export default function Reservation() {
             </div>
           </div>
         </div>
-        <div className="reservationSection2">
-          <div className="trainerInfoContainer4">
-            <div className="priceContainer">
-              <div className="priceTitle">이용 금액</div>
-              <hr />
-              <div className="detailPriceWrapper">
-                <div className="detailPriceContainer">
-                  <div className="sixtyMins">
-                    <span>60분</span>
-                  </div>
-                  <div>방문 교육</div>
+      </div>
+      <div className="reservationSection2">
+        <div className="trainerInfoContainer4">
+          <div className="priceContainer">
+            <div className="priceTitle">이용 금액</div>
+            <hr />
+            <div className="detailPriceWrapper">
+              <div className="detailPriceContainer">
+                <div className="sixtyMins">
+                  <span>60분</span>
                 </div>
-                <div>₩ {sitterData?.pay}원</div>
+                <div>방문 교육</div>
               </div>
+              <div>₩ {sitterData?.pay}원</div>
             </div>
           </div>
-          <div className="trainerInfoContainer5">
-            <MyCalendar />
-          </div>
+        <div className="trainerInfoContainer5">
+          <MyCalendar />
         </div>
         {/* Modal container */}
         {showModal && (

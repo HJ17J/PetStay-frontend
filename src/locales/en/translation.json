@@ -3,6 +3,7 @@
   "header.myPage": "My Page",
   "header.login": "Login",
   "header.logout": "Logout",
+  "header.logoutSuccess": "You have been logged out.",
   "signUp.title": "Sign Up",
   "signIn.title": "Sign In",
   "newHere": "New here?",

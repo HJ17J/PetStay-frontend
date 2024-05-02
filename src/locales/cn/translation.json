@@ -3,6 +3,7 @@
   "header.myPage": "我的页面",
   "header.login": "登录",
   "header.logout": "登出",
+  "header.logoutSuccess": "您已登出。",
   "signUp.title": "注册",
   "signIn.title": "登录",
   "newHere": "新来的吗？",

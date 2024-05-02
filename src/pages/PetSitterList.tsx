@@ -1,9 +1,11 @@
 import React from 'react';
-import styles from '../styles/PetSitterList.scss';
+import '../styles/PetSitterList.scss';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import type { PetSitterList } from '../types/PetSitter';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 export default function PetSitterList() {
   const [petSitters, setPetSitters] = useState<PetSitterList[]>([]);
@@ -43,11 +45,7 @@ export default function PetSitterList() {
 
   return (
     <div>
-      <header className={styles.header}>
-        <nav>
-          <ul className={styles.menu}>{/* 메뉴 항목들 */}</ul>
-        </nav>
-      </header>
+      <Header />
       <main className='sitter-main'>
         <h1>진심을 다하는 돌봄, 여러분의 반려동물을 위한 최선의 선택</h1>
         <div className='sitter-search-box'>
@@ -122,6 +120,7 @@ export default function PetSitterList() {
           ))}
         </section>
       </main>
+      <Footer />
     </div>
   );
 }

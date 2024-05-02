@@ -753,6 +753,16 @@ a {
   justify-content: end;
   font-size: 22px;
   padding: 5px;
+  cursor: pointer;
+}
+
+.chattingModalclose {
+  color: #999999;
+  display: flex;
+  justify-content: end;
+  font-size: 22px;
+  padding: 5px;
+  cursor: pointer;
 }
 
 .imageModalTitle {

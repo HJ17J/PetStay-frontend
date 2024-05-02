@@ -12,8 +12,6 @@ import axios from "axios";
 import { review } from "../types/review";
 
 export default function Reservation() {
-  const { useridx } = useParams();
-  // console.log("sitteridx>>", useridx);
   const [inputValue, setInputValue] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
@@ -22,6 +20,7 @@ export default function Reservation() {
   const [sitterData, setSitterData] = useState<PetSitter | null>(null);
   const [reviewData, setReviewData] = useState<review[] | null>(null);
 
+  const { useridx } = useParams();
   //sitter정보 받아오는 함수
   const getSitterData = async () => {
     try {
@@ -99,12 +98,7 @@ export default function Reservation() {
               <img
                 src="https://picsum.photos/200/300?grayscale"
                 alt="Profile Image"
-                className="image profile_image"
-              />
-              <input
-                type="file"
-                name="profile_img"
-                className="image image_input"
+                className="reservation_profile_image"
               />
               <div className="image_button_container">
                 <div className="trainerName">{sitterData?.name}</div>
@@ -185,28 +179,6 @@ export default function Reservation() {
                   </div>
                 );
               })}
-              {/* <div className="reviewListContainer">
-                <div className="reviewSection">
-                  <div className="info1">
-                    <img
-                      src="https://picsum.photos/seed/picsum/200/300"
-                      alt=""
-                      className="info1Img"
-                    />
-                  </div>
-                  <div className="info2">
-                    <div className="info2Text">서◯리 님 (슈나우저·9살)</div>
-                    <div className="info2Text">⭐⭐⭐⭐⭐6시간 전</div>
-                  </div>
-                </div>
-                <div className="hr"></div>
-                <div className="content">
-                  쉽게 이해할 수 있도록 설명해주셨어요! 알려주신 기본기부터
-                  아이랑 재밌게 해보겠습니다! 어제 교육 내내 까몽이 성향때문에
-                  저도 마음을 단단히 먹어야겠다고 많이 생각했네요.. 시간이 좀
-                  걸리더라도 잘 배워보려고 합니다! 너무 잘 알려주셔서
-                  감사했습니다 잘 해볼게요 ㅋㅋㅋ ㅎㅎ
-                // </div>*/}
             </div>
           </div>
         </div>
@@ -226,186 +198,169 @@ export default function Reservation() {
               <div>₩ {sitterData?.pay}원</div>
             </div>
           </div>
-        </div>
         <div className="trainerInfoContainer5">
           <MyCalendar />
-          <div className="trainerInfoContainer5"></div>
-          <div className="trainerInfoContainer6"></div>
-          <div className="trainerInfoContainer7"></div>
-          <div className="trainerInfoContainer8">
-            <div className="priceTitle">예약정보확인</div>
-            {/* myCalendr컴포넌트불러오기 */}
-            <div className="selectedReservation"></div>
-          </div>
-          <div className="trainerInfoContainer9">
-            <button className="reservationBtn">예약</button>
-            <button className="reservationBtn">취소</button>
-          </div>
         </div>
-      </div>
-      {/* Modal container */}
-      {showModal && (
-        <div id="modalbox" className="modal">
-          <div className="modalcontent">
-            <div className="modalContent1">
-              <div className="imageModalclose" onClick={toggleModal}>
-                &times;
-              </div>
-            </div>
-            <div className="modalContent2">
-              <div className="modalSection1 modals">
-                <div className="searchContainer">
-                  <div className="searchTitle">채팅</div>
-                  <div className="searchInputIcon1 search">
-                    <input type="text" />
-                    <div className="searchDiv">
-                      <i className="bx bx-search"></i>
-                    </div>
-                  </div>
-                </div>
-                <div className="advertisementContainer"></div>
-                <div className="chattingHistoryWrapper">
-                  <div className="chattingContainer">
-                    <div>
-                      <img
-                        className="chattingCustomerImage"
-                        src="https://picsum.photos/seed/picsum/200/300"
-                        alt=""
-                      />
-                    </div>
-                    <div className="chattingInformation">
-                      <div className="customerTitle">홍길동</div>
-                      <div>감사해요~~!</div>
-                    </div>
-                  </div>
+        {/* Modal container */}
+        {showModal && (
+          <div id="modalbox" className="modal">
+            <div className="modalcontent">
+              <div className="modalContent1">
+                <div className="imageModalclose" onClick={toggleModal}>
+                  &times;
                 </div>
               </div>
-              <div className="modalSection2 modals">
-                <div className="searchContainer">
-                  <div className="areaIcon">
-                    <i className="bx bx-left-arrow-alt"></i>
-                  </div>
-                  <div className="chattingName">채팅그룹</div>
-                  <div className="searchInputIcon2 search">
-                    <input type="text" />
-                    <div className="searchDiv">
-                      <i className="bx bx-search"></i>
-                    </div>
-                  </div>
-                </div>
-                {/* <div className="chattingInformation">
-                    <div className="customerTitle">홍길동</div>
-                    <div>감사해요~~!</div>
-              </div> */}
-                <div className="groupChattingContainer1">
-                  <div className="chatterWrapper">
-                    <div className="chatterImageContainer">
-                      <img
-                        className="chatterImage"
-                        src="https://picsum.photos/seed/picsum/200/300"
-                        alt=""
-                      />
-                    </div>
-                    <div className="chatterInformation">
-                      <div className="chatterName">홍길동</div>
-                      <div className="chatterText">안녕하세요!</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="chattingInputContainer2">
-                  <div className="findImageContainer">
-                    {/* <form onSubmit={onSubmit} className="form-inline"> */}
-                    <label htmlFor="firstimg" className="label">
-                      <i className="bx bx-plus"></i>
-                    </label>
-                    <input
-                      type="file"
-                      id="firstimg"
-                      className="formControl"
-                      onChange={imageChange}
-                      accept="image/*"
-                    />
-                    {/* </form> */}
-                  </div>
-                  <div className="sendChattingTextContainer">
-                    <input
-                      type="text"
-                      // value={currentEmoji || ""}
-                      value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
-                    />
-                    <button>보내기</button>
-                  </div>
-                  <div className="d-flex flex-column align-items-center">
-                    <div
-                      className="mt-5 mb-5"
-                      style={{
-                        position: "relative",
-                      }}
-                    >
-                      {/* 이모지 변경  */}
-                      <div className="emojiBtnContainer">
-                        <div className="emojiBtn " onClick={toggleEmoji}>
-                          <i className="bx bx-smile"></i>
-                        </div>
+              <div className="modalContent2">
+                <div className="modalSection1 modals">
+                  <div className="searchContainer">
+                    <div className="searchTitle">채팅</div>
+                    <div className="searchInputIcon1 search">
+                      <input type="text" />
+                      <div className="searchDiv">
+                        <i className="bx bx-search"></i>
                       </div>
-                      {isPickerVisible && (
-                        // <div className={isPickerVisible ? "d-block" : "d-none"}>
-                        <div
-                          className="border border-primary"
-                          style={{
-                            position: "absolute",
-                            bottom: "40px",
-                            right: "0",
-                            zIndex: 1,
-                          }}
-                        >
-                          <Picker
-                            data={data}
-                            previewPosition=""
-                            onEmojiSelect={(e: any) => {
-                              setInputValue(inputValue + e.native);
-                              setPickerVisible(!isPickerVisible);
-                            }}
-                          />
-                        </div>
-                      )}
+                    </div>
+                  </div>
+                  <div className="advertisementContainer"></div>
+                  <div className="chattingHistoryWrapper">
+                    <div className="chattingContainer">
+                      <div>
+                        <img
+                          className="chattingCustomerImage"
+                          src="https://picsum.photos/seed/picsum/200/300"
+                          alt=""
+                        />
+                      </div>
+                      <div className="chattingInformation">
+                        <div className="customerTitle">홍길동</div>
+                        <div>감사해요~~!</div>
+                      </div>
                     </div>
                   </div>
                 </div>
-                {selectedImage && (
-                  <div id="imageModalbox" className="imageModal">
-                    <div className="imageModalContent">
+                <div className="modalSection2 modals">
+                  <div className="searchContainer">
+                    <div className="areaIcon">
+                      <i className="bx bx-left-arrow-alt"></i>
+                    </div>
+                    <div className="chattingName">채팅그룹</div>
+                    <div className="searchInputIcon2 search">
+                      <input type="text" />
+                      <div className="searchDiv">
+                        <i className="bx bx-search"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="groupChattingContainer1">
+                    <div className="chatterWrapper">
+                      <div className="chatterImageContainer">
+                        <img
+                          className="chatterImage"
+                          src="https://picsum.photos/seed/picsum/200/300"
+                          alt=""
+                        />
+                      </div>
+                      <div className="chatterInformation">
+                        <div className="chatterName">홍길동</div>
+                        <div className="chatterText">안녕하세요!</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="chattingInputContainer2">
+                    <div className="findImageContainer">
+                      {/* <form onSubmit={onSubmit} className="form-inline"> */}
+                      <label htmlFor="firstimg" className="label">
+                        <i className="bx bx-plus"></i>
+                      </label>
+                      <input
+                        type="file"
+                        id="firstimg"
+                        className="formControl"
+                        onChange={imageChange}
+                        accept="image/*"
+                      />
+                      {/* </form> */}
+                    </div>
+                    <div className="sendChattingTextContainer">
+                      <input
+                        type="text"
+                        // value={currentEmoji || ""}
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                      />
+                      <button>보내기</button>
+                    </div>
+                    <div className="d-flex flex-column align-items-center">
                       <div
-                        className="imageModalclose"
-                        onClick={() => setSelectedImage(null)}
+                        className="mt-5 mb-5"
+                        style={{
+                          position: "relative",
+                        }}
                       >
-                        &times;
-                      </div>
-                      <div className="imageModalTitle">파일 전송</div>
-                      <div className="imageModalBody">
-                        <div className="imageModalContainer">
-                          <div className="preview">
-                            <img
-                              src={URL.createObjectURL(selectedImage)}
-                              className="chattingImage"
-                              alt="Thumb"
-                            />
-                            <p className="fileName">{selectedImage.name}</p>
+                        {/* 이모지 변경  */}
+                        <div className="emojiBtnContainer">
+                          <div className="emojiBtn " onClick={toggleEmoji}>
+                            <i className="bx bx-smile"></i>
                           </div>
                         </div>
-                      </div>
-                      <div className="imageModalBtn">
-                        <button>1개 전송</button>
+                        {isPickerVisible && (
+                          // <div className={isPickerVisible ? "d-block" : "d-none"}>
+                          <div
+                            className="border border-primary"
+                            style={{
+                              position: "absolute",
+                              bottom: "40px",
+                              right: "0",
+                              zIndex: 1,
+                            }}
+                          >
+                            <Picker
+                              data={data}
+                              previewPosition=""
+                              onEmojiSelect={(e: any) => {
+                                setInputValue(inputValue + e.native);
+                                setPickerVisible(!isPickerVisible);
+                              }}
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
-                )}
+                  {selectedImage && (
+                    <div id="imageModalbox" className="imageModal">
+                      <div className="imageModalContent">
+                        <div
+                          className="imageModalclose"
+                          onClick={() => setSelectedImage(null)}
+                        >
+                          &times;
+                        </div>
+                        <div className="imageModalTitle">파일 전송</div>
+                        <div className="imageModalBody">
+                          <div className="imageModalContainer">
+                            <div className="preview">
+                              <img
+                                src={URL.createObjectURL(selectedImage)}
+                                className="chattingImage"
+                                alt="Thumb"
+                              />
+                              <p className="fileName">{selectedImage.name}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="imageModalBtn">
+                          <button>1개 전송</button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
       <Footer />
     </>
   );

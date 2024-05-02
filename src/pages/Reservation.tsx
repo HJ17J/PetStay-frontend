@@ -2,7 +2,13 @@ import "../styles/Reservation.scss";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import "boxicons/";
-import { useState, SyntheticEvent, ChangeEvent, useEffect } from "react";
+import {
+  useState,
+  SyntheticEvent,
+  ChangeEvent,
+  useEffect,
+  useCallback,
+} from "react";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import MyCalendar from "../components/MyCalender";
@@ -10,8 +16,26 @@ import { PetSitter } from "../types/PetSitterList";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { review } from "../types/review";
+import { ChatList, Chats } from "../types/chat";
+import { io } from "socket.io-client";
 
+// REACT_APP_API_SERVER가 정의되지 않았을 때를 대비하여 기본값을 설정
+// const apiUrl =
+//   process.env.REACT_APP_API_SERVER || "http://127.0.0.1:8080/api-server";
+
+// const socket = io(apiUrl, {
+//   autoConnect: false,
+// });
+const socket = io("http://localhost:8080", { autoConnect: false });
 export default function Reservation() {
+  const initSocketConnect = () => {
+    if (!socket.connected) socket.connect();
+  };
+  if (socket.connected) {
+    console.log("Socket is connected");
+  } else {
+    console.log("Socket is not connected");
+  }
   const [inputValue, setInputValue] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
@@ -19,6 +43,12 @@ export default function Reservation() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [sitterData, setSitterData] = useState<PetSitter | null>(null);
   const [reviewData, setReviewData] = useState<review[] | null>(null);
+  //이전 채팅 데이터 관리
+  const [chatData, setChatData] = useState<Chats[] | null>(null);
+  //실시간 채팅 데이터 관리
+  const [chatList, setChatList] = useState<ChatList[]>([]);
+  const [userName, setUserName] = useState<string>("");
+  const [sitterName, setSitterName] = useState<string>("");
 
   const { useridx } = useParams();
   //sitter정보 받아오는 함수
@@ -50,13 +80,30 @@ export default function Reservation() {
       throw error;
     }
   };
+  const addChatList = useCallback(
+    (data: ChatList) => {
+      console.log(data); //{message, nickname}
+      const newChatList = [
+        ...chatList,
+        {
+          nickname: data.nickname,
+          message: data.message,
+        },
+      ];
+      setChatList(newChatList);
+    },
+    [chatList]
+  );
 
   //useEffect로 mount시 실행
   useEffect(() => {
     getSitterData();
+    initSocketConnect();
   }, []);
-  // console.log("sitterData>>>", sitterData);
-  // console.log("reviewData>>>", reviewData);
+  //실시간 채팅 진행 시 실행
+  useEffect(() => {
+    socket.on("message", addChatList);
+  }, [addChatList]);
 
   // This function will be triggered when the file field changes
   const imageChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -74,9 +121,26 @@ export default function Reservation() {
   //   }
   // };
 
-  const toggleModal = (e: SyntheticEvent) => {
+  const toggleModal = async (e: SyntheticEvent) => {
     e.preventDefault();
     setShowModal(!showModal);
+    // axios-chat
+    const chatData = await axios.get(
+      process.env.REACT_APP_API_SERVER + `/chat/${sitterData?.useridx}`
+    );
+
+    console.log(chatData.data); //chats, msg, rooms
+    const { chats, msg, rooms, user, sitter } = chatData.data;
+    if (chats) {
+      //채팅 있으면
+      setChatData(chats);
+    }
+    setUserName(user.name);
+    setSitterName(sitter.name);
+
+    const roomName = `${userName}+${sitterName}`;
+    // room생성
+    socket.emit("createRoom", roomName);
   };
   const toggleImageModal = (e: SyntheticEvent) => {
     e.preventDefault();
@@ -86,6 +150,22 @@ export default function Reservation() {
   const toggleEmoji = (e: SyntheticEvent) => {
     e.preventDefault();
     setPickerVisible(!isPickerVisible);
+  };
+
+  const sendMessage = (e: SyntheticEvent) => {
+    // alert("메시지 보냄!");
+    e.preventDefault();
+    //inputValue 전송
+    //1. socket으로 전송
+    if (inputValue.trim() === "") return setInputValue("");
+
+    const sendData = {
+      msg: inputValue,
+      myNick: userName,
+    };
+    socket.emit("send", sendData);
+
+    setInputValue("");
   };
 
   return (
@@ -211,7 +291,7 @@ export default function Reservation() {
                   </div>
                   <div className="modalContent2">
                     <div className="modalSection1 modals">
-                      <div className="searchContainer">
+                      {/* <div className="searchContainer">
                         <div className="searchTitle">채팅</div>
                         <div className="searchInputIcon1 search">
                           <input type="text" />
@@ -219,7 +299,7 @@ export default function Reservation() {
                             <i className="bx bx-search"></i>
                           </div>
                         </div>
-                      </div>
+                      </div> */}
                       <div className="advertisementContainer"></div>
                       <div className="chattingHistoryWrapper">
                         <div className="chattingContainer">
@@ -238,7 +318,7 @@ export default function Reservation() {
                       </div>
                     </div>
                     <div className="modalSection2 modals">
-                      <div className="searchContainer">
+                      {/* <div className="searchContainer">
                         <div className="areaIcon">
                           <i className="bx bx-left-arrow-alt"></i>
                         </div>
@@ -249,7 +329,7 @@ export default function Reservation() {
                             <i className="bx bx-search"></i>
                           </div>
                         </div>
-                      </div>
+                      </div> */}
                       <div className="groupChattingContainer1">
                         <div className="chatterWrapper">
                           <div className="chatterImageContainer">
@@ -260,8 +340,22 @@ export default function Reservation() {
                             />
                           </div>
                           <div className="chatterInformation">
+                            {/* 기존 채팅 데이터 뿌리기 */}
                             <div className="chatterName">홍길동</div>
                             <div className="chatterText">안녕하세요!</div>
+                            {/* 실시간 채팅 */}
+                            {chatList.map((el, idx) => {
+                              return (
+                                <div key={idx}>
+                                  <div className="chatterName">
+                                    {el.nickname}
+                                  </div>
+                                  <div className="chatterText">
+                                    {el.message}
+                                  </div>
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
                       </div>
@@ -287,7 +381,7 @@ export default function Reservation() {
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                           />
-                          <button>보내기</button>
+                          <button onClick={sendMessage}>보내기</button>
                         </div>
                         <div className="d-flex flex-column align-items-center">
                           <div

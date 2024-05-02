@@ -5,3 +5,8 @@ export interface Chats {
   img: string;
   authorIdx: number;
 }
+
+export interface ChatList {
+  nickname: string;
+  message: string;
+}

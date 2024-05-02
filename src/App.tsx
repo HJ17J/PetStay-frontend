@@ -21,6 +21,7 @@ function App() {
             <Route path="/login" element={<Register />} />
             <Route path="/calender" element={<MyCalendar />} />
             <Route path="/petsitter/:useridx" element={<Reservation />} />
+            <Route path="/mycalender" element={<Reservation />} />
           </Routes>
         </div>
       </Router>

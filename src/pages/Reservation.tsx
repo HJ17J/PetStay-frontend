@@ -1,8 +1,17 @@
+import "boxicons/";
 import "../styles/Reservation.scss";
 import "../styles/ModalChat.scss";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
-import "boxicons/";
+import MyCalendar from "../components/MyCalender";
+import Picker from "@emoji-mart/react";
+import data from "@emoji-mart/data";
+import { useParams } from "react-router-dom";
+import { review } from "../types/review";
+import type { PetSitterDetail } from "../types/PetSitter";
+import { ChatList, Chats, Room } from "../types/chat";
+import { io } from "socket.io-client";
+import axios from "axios";
 import {
   useState,
   SyntheticEvent,
@@ -10,15 +19,6 @@ import {
   useEffect,
   useCallback,
 } from "react";
-import Picker from "@emoji-mart/react";
-import data from "@emoji-mart/data";
-import MyCalendar from "../components/MyCalender";
-import type { PetSitterDetail } from "../types/PetSitter";
-import { useParams } from "react-router-dom";
-import axios from "axios";
-import { review } from "../types/review";
-import { ChatList, Chats, Room } from "../types/chat";
-import { io } from "socket.io-client";
 
 // REACT_APP_API_SERVER가 정의되지 않았을 때를 대비하여 기본값을 설정
 // const apiUrl =
@@ -38,6 +38,7 @@ export default function Reservation() {
   // } else {
   //   console.log("Socket is not connected");
   // }
+  
   const [inputValue, setInputValue] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
@@ -61,11 +62,13 @@ export default function Reservation() {
   //sitter정보 받아오는 함수
   const getSitterData = async () => {
     try {
-      const result = await axios.get(
-        process.env.REACT_APP_API_SERVER + `/sitter/${useridx}`
-      );
-      console.log("data>", result.data);
-      setSitterData(result.data.data);
+      const result = await axios.get(process.env.REACT_APP_API_SERVER + `/sitter/${useridx}`);
+      console.log("data>", result);
+      if (result.data.sitterInfo.length === 0) {
+        alert("데이터를 불러올 수 없습니다.");
+        return;
+      }
+      setSitterData(result.data.sitterInfo);
       setReviewData(result.data.reviews);
     } catch (error) {
       console.error("Error fetching sitter data:", error);
@@ -240,7 +243,7 @@ export default function Reservation() {
           <div className="trainerInfoContainer1">
             <div className="imageContainer">
               <img
-                src="https://picsum.photos/200/300?grayscale"
+                src={sitterData?.img}
                 alt="Profile Image"
                 className="reservation_profile_image"
               />
@@ -252,9 +255,7 @@ export default function Reservation() {
               {/* <div className="trainerTitle">
                 <span>자기소개</span>
               </div> */}
-              <div className="selfIntroductionText">
-                {sitterData?.shortIntro}
-              </div>
+              <div className="selfIntroductionText">{sitterData?.selfIntroduction}</div>
             </div>
             <div className="btn-box">
               <a
@@ -310,9 +311,7 @@ export default function Reservation() {
                         <img src={el.img} alt="" className="info1Img" />
                       </div>
                       <div className="info2">
-                        <div className="info2Text">
-                          {el.name} (슈나우저·9살)
-                        </div>
+                        <div className="info2Text">{el.name} (슈나우저·9살)</div>
                         <div className="info2Text">
                           {el.rate} 점 {el.createdAt}
                         </div>
@@ -343,7 +342,7 @@ export default function Reservation() {
             </div>
           </div>
           <div className="trainerInfoContainer5">
-            <MyCalendar />
+            <MyCalendar sitteridx={sitterData?.useridx} pay={sitterData?.pay} />
             {/* Modal container */}
           </div>
         </div>
@@ -370,10 +369,14 @@ export default function Reservation() {
                 <div className="chattingHistoryWrapper">
                   {/* <div className="chattingContainer">
                     <div>
-                      <img className='chattingCustomerImage' src='https://picsum.photos/seed/picsum/200/300' alt='' />
+                      <img
+                        className="chattingCustomerImage"
+                        src="https://picsum.photos/seed/picsum/200/300"
+                        alt=""
+                      />
                     </div>
-                    <div className='chattingInformation'>
-                      <div className='customerTitle'>홍길동</div>
+                    <div className="chattingInformation">
+                      <div className="customerTitle">홍길동</div>
                       <div>감사해요~~!</div>
                     </div>
                   </div> */}
@@ -407,11 +410,11 @@ export default function Reservation() {
                   <div className="areaIcon">
                     <i className="bx bx-left-arrow-alt"></i>
                   </div>
-                  <div className='chattingName'>채팅그룹</div>
-                  <div className='searchInputIcon2 search'>
-                    <input type='text' />
-                    <div className='searchDiv'>
-                      <i className='bx bx-search'></i>
+                  <div className="chattingName">채팅그룹</div>
+                  <div className="searchInputIcon2 search">
+                    <input type="text" />
+                    <div className="searchDiv">
+                      <i className="bx bx-search"></i>
                     </div>
                   </div>
                 </div> */}

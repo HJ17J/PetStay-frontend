@@ -2,7 +2,10 @@ import { useRef, useState } from "react";
 import Calendar, { CalendarProps } from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "../styles/MyCalender.scss";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 
 interface MyCalendarProps {
   sitteridx: number | undefined;
@@ -164,17 +167,21 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
 
   // 예약 등록
   const makeReservation = async () => {
-    try {
-      const isReserve = confirm("예약하시겠습니까?");
-      if (!isReserve) {
-        return;
-      }
-
+    if (!isLoggedIn) {
+      alert(t("header.loginRequired"));
+      return;
+    } else {
+      try {
+        const isReserve = confirm("예약하시겠습니까?");
+        if (!isReserve) {
+          return;
+        }
+        
       const startTime = formatTime(timeslots.filter((el) => el.status === "active")[0].time);
       const endTime = formatTime(timeslots.filter((el) => el.status === "active").pop()!.time) + 1;
-
       console.log("시작시간", startTime);
       console.log("종료시간", endTime);
+          
       // 유효성 검사
       if (!selectedDate) {
         alert("날짜를 선택해주세요.");
@@ -247,55 +254,118 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
     } catch (error) {
       console.log(error);
     }
+  }
+  
+    // const onClickDay = (value: Date) => {
+    //   const newTimeslots = timeslots.map((timeslot) => {
+    //     return { ...timeslot, status: "inactive" };
+    //   });
+
+    //   // timeslots 상태 업데이트
+    //   setTimeslots(newTimeslots);
+    //   // console.log("Selected date:", value);
+    //   const date = formatDate(value);
+    //   console.log(">>>>>", date);
+    //   // console.log(process.env.REACT_APP_API_SERVER + "/resv/date");
+    //   // axios
+    //   axios
+    //     .post(process.env.REACT_APP_API_SERVER + "/resvDate/4", { date: date }) //sitteridx props로 변경필수!!!!
+    //     .then((response) => {
+    //       console.log("Response:", response.data);
+    //       const resvDate = response.data.reservation;
+
+    //       //예약 내역에 따라 예약 state변경
+    //       for (let i = 0; i < resvDate.length; i++) {
+    //         const startTime = resvDate[i].startTime;
+    //         const endTime = resvDate[i].endTime;
+
+    //         // startTime과 endTime을 시간 형식으로 변환
+    //         const formattedStartTime = formatTime(startTime);
+    //         const formattedEndTime = formatTime(endTime);
+
+    //         // timeslots 배열을 반복하여 해당하는 시간대를 찾고 상태를 변경
+    //         setTimeslots((prevTimeslots) => {
+    //           // const newTimeslots = [...prevTimeslots];
+    //           return prevTimeslots.map((timeslot) => {
+    //             // timeslot의 시간이 startTime과 endTime 사이에 있는지 확인
+    //             if (
+    //               compareTime(timeslot.time, formattedStartTime) >= 0 &&
+    //               compareTime(timeslot.time, formattedEndTime) <= 0
+    //             ) {
+    //               return { ...timeslot, status: "done" };
+    //             }
+    //             return timeslot;
+    //           });
+    //         });
+    //       }
+    //       // }
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error:", error);
+    //     });
+    // };
+
+    // //예약 신청 함수
+    // const insertResv = () => {
+    //   let date;
+    //   if (!selectedDate) {
+    //     return alert("날짜를 선택해주세요");
+    //   } else {
+    //     date = formatDate(selectedDate);
+    //   }
+    //   //전송에 필요한 데이터 정리
+    //   const type = typeRef.current?.value;
+    //   const animalNumber = animalNumberRef.current?.value;
+    //   const content = contentRef.current?.value;
+
+    //   // active 상태인 요소들을 필터링
+    //   const activeSlots = timeslots.filter((slot) => slot.status === "active");
+
+    //   // active 상태인 요소들 중에서 최소값과 최대값을 찾음
+    //   const startTime =
+    //     activeSlots.length > 0
+    //       ? Math.min(...activeSlots.map((slot) => parseInt(slot.time)))
+    //       : null;
+    //   const endTime =
+    //     activeSlots.length > 0
+    //       ? Math.max(...activeSlots.map((slot) => parseInt(slot.time)))
+    //       : null;
+
+    //   if (startTime !== null && endTime !== null) {
+    //     // 최소값과 최대값 출력
+    //     console.log("Min time:", startTime);
+    //     console.log("Max time:", endTime);
+    //     if (startTime === endTime) {
+    //       alert("두 시간 이상 예약을 설정해주세요");
+    //       return;
+    //     } else {
+    //       //axios요청 전송
+    //       const data = {
+    //         content,
+    //         date,
+    //         startTime,
+    //         endTime,
+    //         type,
+    //         animalNumber,
+    //       };
+
+    //       axios
+    //         .post(process.env.REACT_APP_API_SERVER + "/resv/4", { data }) // 주소 /resv/sitteridx로 수정필수!!!!
+    //         .then((response) => {
+    //           console.log(response.data);
+    //         });
+    //     }
+    //   } else {
+    //     alert("예약 시간대를 설정해주세요");
+    //     return;
+    //   }
+    // };
   };
-  // const onClickDay = (value: Date) => {
-  //   const newTimeslots = timeslots.map((timeslot) => {
-  //     return { ...timeslot, status: "inactive" };
-  //   });
+  // 번역
+  const { t } = useTranslation();
 
-  //   // timeslots 상태 업데이트
-  //   setTimeslots(newTimeslots);
-  //   // console.log("Selected date:", value);
-  //   const date = formatDate(value);
-  //   console.log(">>>>>", date);
-  //   // console.log(process.env.REACT_APP_API_SERVER + "/resv/date");
-  //   // axios
-  //   axios
-  //     .post(process.env.REACT_APP_API_SERVER + "/resvDate/4", { date: date }) //sitteridx props로 변경필수!!!!
-  //     .then((response) => {
-  //       console.log("Response:", response.data);
-  //       const resvDate = response.data.reservation;
-
-  //       //예약 내역에 따라 예약 state변경
-  //       for (let i = 0; i < resvDate.length; i++) {
-  //         const startTime = resvDate[i].startTime;
-  //         const endTime = resvDate[i].endTime;
-
-  //         // startTime과 endTime을 시간 형식으로 변환
-  //         const formattedStartTime = formatTime(startTime);
-  //         const formattedEndTime = formatTime(endTime);
-
-  //         // timeslots 배열을 반복하여 해당하는 시간대를 찾고 상태를 변경
-  //         setTimeslots((prevTimeslots) => {
-  //           // const newTimeslots = [...prevTimeslots];
-  //           return prevTimeslots.map((timeslot) => {
-  //             // timeslot의 시간이 startTime과 endTime 사이에 있는지 확인
-  //             if (
-  //               compareTime(timeslot.time, formattedStartTime) >= 0 &&
-  //               compareTime(timeslot.time, formattedEndTime) <= 0
-  //             ) {
-  //               return { ...timeslot, status: "done" };
-  //             }
-  //             return timeslot;
-  //           });
-  //         });
-  //       }
-  //       // }
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error:", error);
-  //     });
-  // };
+  // 로그인 확인
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
   return (
     <div className="calenderWrapper">

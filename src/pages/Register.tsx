@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faLock,
@@ -9,7 +9,6 @@ import {
   faBriefcase,
   faComment,
   faPencilAlt,
-  faDollarSign,
   faPaw,
   faWonSign,
 } from "@fortawesome/free-solid-svg-icons";
@@ -28,6 +27,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import { useTranslation } from "react-i18next";
+import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from "@react-oauth/google";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -164,6 +164,30 @@ export default function Register() {
     }
   };
 
+  // 구글 소셜 로그인
+  const handleGoogleSuccess = (credentialResponse: CredentialResponse) => {
+    console.log(credentialResponse);
+  };
+
+  const handleGoogleFailure = () => {
+    console.error("Login Failed");
+  };
+
+  const [initiateLogin, setInitiateLogin] = useState(false);
+
+  useEffect(() => {
+    if (initiateLogin) {
+      // 로그인 시도
+      // GoogleLogin 컴포넌트는 내부적으로 로그인 프로세스를 처리
+      setInitiateLogin(false); // 로그인 시도 후 state 초기화
+    }
+  }, [initiateLogin]);
+
+  // if (!process.env.REACT_APP_GOOGLE_CLIENT_ID) {
+  //   console.error("Google Client ID is undefined.");
+  //   return <div>Configuration Error</div>;
+  // }
+
   // 일반 보호자 - 회원가입
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -295,7 +319,7 @@ export default function Register() {
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_API_SERVER}/join`, // 환경 변수로 설정된 서버 주소 확인
+        `${process.env.REACT_APP_API_SERVER}/join`,
         {
           userid,
           userpw,
@@ -334,11 +358,7 @@ export default function Register() {
     } catch (error) {
       // 서버 응답이 400 등의 오류일 경우 처리
       const axiosError = error as AxiosError<SignupErrorPayload>;
-      alert(
-        `회원가입 오류: ${
-          axiosError.response?.data?.message || "자세한 정보 없음"
-        }`
-      );
+      alert(`회원가입 오류: ${axiosError.response?.data?.message || "자세한 정보 없음"}`);
       dispatch(
         signupFailure({
           userid: axiosError.response?.data.userid || "회원가입 오류",
@@ -349,437 +369,336 @@ export default function Register() {
   };
 
   return (
-    <div className="container">
-      <Header />
-      <div className="forms-container">
-        <div className="signin-signup">
-          {formToShow === "signIn" && (
-            <form className="sign-in-form" onSubmit={handleLogin}>
-              <h2 className="title">{t("signIn.title")}</h2>
-              <div className="input-field">
-                <FontAwesomeIcon icon={faUser} className="icon-style" />
-                <input
-                  type="text"
-                  placeholder={t("enterUserId")}
-                  value={userid}
-                  onChange={(e) => setUserid(e.target.value)}
-                />
-                {error.userid && <p style={{ color: "red" }}>{error.userid}</p>}
-              </div>
-              <div className="input-field">
-                <FontAwesomeIcon icon={faLock} className="icon-style" />
-                <input
-                  type="password"
-                  placeholder={t("enterPassword")}
-                  value={userpw}
-                  onChange={(e) => setUserpw(e.target.value)}
-                />
-                {error.userpw && <p style={{ color: "red" }}>{error.userpw}</p>}
-              </div>
-              <input
-                type="submit"
-                value={t("signIn.title")}
-                className="btn solid"
-              />
-              <p className="social-text">{t("socialPlatform")}</p>
-              <div className="social-media">
-                <a href="#" className="social-icon">
-                  <img
-                    className="social"
-                    src="/register/images/kakaotalk_logo.png"
-                    alt=""
-                  />
-                </a>
-                <a href="#" className="social-icon">
-                  <img
-                    className="social"
-                    src="/register/images/naver_logo.png"
-                    alt=""
-                  />
-                </a>
-                <a href="#" className="social-icon">
-                  <img
-                    className="social"
-                    src="/register/images/google_logo.png"
-                    alt=""
-                  />
-                </a>
-                <a href="#" className="social-icon">
-                  <img
-                    className="social"
-                    src="/register/images/apple_logo.png"
-                    alt=""
-                  />
-                </a>
-              </div>
-            </form>
-          )}
-          {formToShow === "signUp" && (
-            <form className="sign-up-form" onSubmit={handleSignup}>
-              <h2 className="title">{t("signUp.title")}</h2>
-              <div className="input-field">
-                <FontAwesomeIcon icon={faUser} className="icon-style" />
-                <input
-                  type="text"
-                  placeholder={t("enterUserId")}
-                  value={userid}
-                  onChange={(e) => setUserid(e.target.value)}
-                  required
-                />
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={checkUserIdAvailability}
-                >
-                  {t("check")}
-                </button>
-              </div>
-
-              <div className="input-field">
-                <FontAwesomeIcon icon={faIdBadge} className="icon-style" />
-                <input
-                  type="text"
-                  placeholder={t("enterUserName")}
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={checkNameAvailability}
-                >
-                  {t("check")}
-                </button>
-              </div>
-
-              <div className="input-field">
-                <FontAwesomeIcon icon={faLock} className="icon-style" />
-                <input
-                  type="password"
-                  placeholder={t("enterPassword")}
-                  value={userpw}
-                  onChange={(e) => setUserpw(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="input-field">
-                <FontAwesomeIcon icon={faLock} className="icon-style" />
-                <input
-                  type="password"
-                  placeholder={t("confirmPassWord")}
-                  value={confirmUserpw}
-                  onChange={(e) => setConfirmUserpw(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="input-field">
-                <FontAwesomeIcon icon={faHome} className="icon-style" />
-                <input
-                  type="text"
-                  placeholder={t("enterAddress")}
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="button-container">
-                <button type="button" className="btn" onClick={showSignUpForm}>
-                  {t("userSignUp")}
-                </button>
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={showPetSitterForm}
-                >
-                  {t("petSitterSignUp")}
-                </button>
-              </div>
-              <input type="submit" className="btn" value={t("signUp.title")} />
-              <p className="social-text">{t("socialPlatform")}</p>
-              <div className="social-media">
-                <a href="#" className="social-icon">
-                  <img
-                    className="social"
-                    src="/register/images/kakaotalk_logo.png"
-                    alt=""
-                  />
-                </a>
-                <a href="#" className="social-icon">
-                  <img
-                    className="social"
-                    src="/register/images/naver_logo.png"
-                    alt=""
-                  />
-                </a>
-                <a href="#" className="social-icon">
-                  <img
-                    className="social"
-                    src="/register/images/google_logo.png"
-                    alt=""
-                  />
-                </a>
-                <a href="#" className="social-icon">
-                  <img
-                    className="social"
-                    src="/register/images/apple_logo.png"
-                    alt=""
-                  />
-                </a>
-              </div>
-            </form>
-          )}
-          {formToShow === "petSitter" && (
-            <form className="petsitter-form" onSubmit={handlePetSitterSignup}>
-              <h2 className="title">{t("signUp.title")}</h2>
-              <div className="input-field">
-                <FontAwesomeIcon icon={faUser} className="icon-style" />
-                <input
-                  type="text"
-                  placeholder={t("enterUserId")}
-                  value={userid}
-                  onChange={(e) => setUserid(e.target.value)}
-                  required
-                />
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={checkUserIdAvailability}
-                >
-                  {t("check")}
-                </button>
-              </div>
-              <div className="input-field">
-                <FontAwesomeIcon icon={faIdBadge} className="icon-style" />
-                <input
-                  type="text"
-                  placeholder={t("enterUserName")}
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={checkNameAvailability}
-                >
-                  {t("check")}
-                </button>
-              </div>
-              <div className="input-field">
-                <FontAwesomeIcon icon={faLock} className="icon-style" />
-                <input
-                  type="password"
-                  placeholder={t("enterPassword")}
-                  value={userpw}
-                  onChange={(e) => setUserpw(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="input-field">
-                <FontAwesomeIcon icon={faLock} className="icon-style" />
-                <input
-                  type="password"
-                  placeholder={t("confirmPassWord")}
-                  value={confirmUserpw}
-                  onChange={(e) => setConfirmUserpw(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="input-field">
-                <FontAwesomeIcon icon={faHome} className="icon-style" />
-                <input
-                  type="text"
-                  placeholder={t("enterAddress")}
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="input-field">
-                <FontAwesomeIcon icon={faPaw} className="icon-style" />
-                <span>{t("type")}</span>&nbsp;&nbsp;
-                <label>
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID ?? ""}>
+      <div className="container">
+        <Header />
+        <div className="forms-container">
+          <div className="signin-signup">
+            {formToShow === "signIn" && (
+              <form className="sign-in-form" onSubmit={handleLogin}>
+                <h2 className="title">{t("signIn.title")}</h2>
+                <div className="input-field">
+                  <FontAwesomeIcon icon={faUser} className="icon-style" />
                   <input
-                    type="checkbox"
-                    name="animalType"
-                    value="dog"
-                    onChange={handleAnimalTypeChange}
+                    type="text"
+                    placeholder={t("enterUserId")}
+                    value={userid}
+                    onChange={(e) => setUserid(e.target.value)}
                   />
-                  {t("puppy")}
-                </label>
-                &nbsp;&nbsp;
-                <label>
+                  {error.userid && <p style={{ color: "red" }}>{error.userid}</p>}
+                </div>
+                <div className="input-field">
+                  <FontAwesomeIcon icon={faLock} className="icon-style" />
                   <input
-                    type="checkbox"
-                    name="animalType"
-                    value="cat"
-                    onChange={handleAnimalTypeChange}
+                    type="password"
+                    placeholder={t("enterPassword")}
+                    value={userpw}
+                    onChange={(e) => setUserpw(e.target.value)}
                   />
-                  {t("cat")}
-                </label>
-                &nbsp;&nbsp;
-                <label>
+                  {error.userpw && <p style={{ color: "red" }}>{error.userpw}</p>}
+                </div>
+                <input type="submit" value={t("signIn.title")} className="btn solid" />
+                <p className="social-text">{t("socialPlatform")}</p>
+                <div className="social-media">
+                  <img
+                    className="social"
+                    src="images/google.png"
+                    alt="Login with Google"
+                    onClick={() => setInitiateLogin(true)}
+                    style={{ cursor: "pointer" }}
+                  />
+                  {initiateLogin && (
+                    <div style={{ display: "none" }}>
+                      {/* 컴포넌트 숨기기 위한 컨테이너 */}
+                      <GoogleLogin
+                        onSuccess={handleGoogleSuccess}
+                        onError={handleGoogleFailure}
+                        useOneTap={true}
+                      />
+                    </div>
+                  )}
+                </div>
+              </form>
+            )}
+            {formToShow === "signUp" && (
+              <form className="sign-up-form" onSubmit={handleSignup}>
+                <h2 className="title">{t("signUp.title")}</h2>
+                <div className="input-field">
+                  <FontAwesomeIcon icon={faUser} className="icon-style" />
                   <input
-                    type="checkbox"
-                    name="animalType"
-                    value="other"
-                    onChange={handleAnimalTypeChange}
+                    type="text"
+                    placeholder={t("enterUserId")}
+                    value={userid}
+                    onChange={(e) => setUserid(e.target.value)}
+                    required
                   />
-                  {t("etc")}
-                </label>
-              </div>
-              <div className="input-field">
-                <FontAwesomeIcon icon={faCertificate} className="icon-style" />
-                <input
-                  type="text"
-                  placeholder={t("license")}
-                  value={license}
-                  onChange={(e) => setLicense(e.target.value)}
-                />
-              </div>
-              <div className="input-field">
-                <FontAwesomeIcon icon={faBriefcase} className="icon-style" />
-                <input
-                  type="text"
-                  placeholder={t("career")}
-                  value={career}
-                  onChange={(e) => setCareer(e.target.value)}
-                />
-              </div>
-              <div className="input-field">
-                <FontAwesomeIcon icon={faComment} className="icon-style" />
-                <input
-                  type="text"
-                  placeholder={t("oneLineIntro")}
-                  value={oneLineIntro}
-                  onChange={(e) => setOneLineIntro(e.target.value)}
-                />
-              </div>
-              <div className="input-field-selfIntro">
-                <FontAwesomeIcon icon={faPencilAlt} className="icon-style" />
-                <textarea
-                  placeholder={t("selfIntroduction")}
-                  value={selfIntroduction}
-                  onChange={(e) => setSelfIntroduction(e.target.value)}
-                  required
-                ></textarea>
-              </div>
-              <div className="input-field">
-                <FontAwesomeIcon icon={faWonSign} className="icon-style" />
-                <input
-                  type="number"
-                  placeholder={t("pay")}
-                  value={pay}
-                  onChange={(e) => setPay(e.target.value)}
-                  required
-                  step="1000"
-                />
-              </div>
-              <div className="button-container">
-                <button type="button" className="btn" onClick={showSignUpForm}>
-                  {t("userSignUp")}
-                </button>
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={showPetSitterForm}
-                >
-                  {t("petSitterSignUp")}
-                </button>
-              </div>
-              <input type="submit" className="btn" value={t("signUp.title")} />
-              <p className="social-text">{t("socialPlatform")}</p>
-              <div className="social-media">
-                <a href="#" className="social-icon">
-                  <img
-                    className="social"
-                    src="/register/images/kakaotalk_logo.png"
-                    alt=""
+                  <button type="button" className="btn" onClick={checkUserIdAvailability}>
+                    {t("check")}
+                  </button>
+                </div>
+
+                <div className="input-field">
+                  <FontAwesomeIcon icon={faIdBadge} className="icon-style" />
+                  <input
+                    type="text"
+                    placeholder={t("enterUserName")}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
                   />
-                </a>
-                <a href="#" className="social-icon">
-                  <img
-                    className="social"
-                    src="/register/images/naver_logo.png"
-                    alt=""
+                  <button type="button" className="btn" onClick={checkNameAvailability}>
+                    {t("check")}
+                  </button>
+                </div>
+
+                <div className="input-field">
+                  <FontAwesomeIcon icon={faLock} className="icon-style" />
+                  <input
+                    type="password"
+                    placeholder={t("enterPassword")}
+                    value={userpw}
+                    onChange={(e) => setUserpw(e.target.value)}
+                    required
                   />
-                </a>
-                <a href="#" className="social-icon">
-                  <img
-                    className="social"
-                    src="/register/images/google_logo.png"
-                    alt=""
+                </div>
+                <div className="input-field">
+                  <FontAwesomeIcon icon={faLock} className="icon-style" />
+                  <input
+                    type="password"
+                    placeholder={t("confirmPassWord")}
+                    value={confirmUserpw}
+                    onChange={(e) => setConfirmUserpw(e.target.value)}
+                    required
                   />
-                </a>
-                <a href="#" className="social-icon">
-                  <img
-                    className="social"
-                    src="/register/images/apple_logo.png"
-                    alt=""
+                </div>
+
+                <div className="input-field">
+                  <FontAwesomeIcon icon={faHome} className="icon-style" />
+                  <input
+                    type="text"
+                    placeholder={t("enterAddress")}
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    required
                   />
-                </a>
-              </div>
-            </form>
-          )}
+                </div>
+                <div className="button-container">
+                  <button type="button" className="btn" onClick={showSignUpForm}>
+                    {t("userSignUp")}
+                  </button>
+                  <button type="button" className="btn" onClick={showPetSitterForm}>
+                    {t("petSitterSignUp")}
+                  </button>
+                </div>
+                <input type="submit" className="btn" value={t("signUp.title")} />
+              </form>
+            )}
+            {formToShow === "petSitter" && (
+              <form className="petsitter-form" onSubmit={handlePetSitterSignup}>
+                <h2 className="title">{t("signUp.title")}</h2>
+                <div className="input-field">
+                  <FontAwesomeIcon icon={faUser} className="icon-style" />
+                  <input
+                    type="text"
+                    placeholder={t("enterUserId")}
+                    value={userid}
+                    onChange={(e) => setUserid(e.target.value)}
+                    required
+                  />
+                  <button type="button" className="btn" onClick={checkUserIdAvailability}>
+                    {t("check")}
+                  </button>
+                </div>
+                <div className="input-field">
+                  <FontAwesomeIcon icon={faIdBadge} className="icon-style" />
+                  <input
+                    type="text"
+                    placeholder={t("enterUserName")}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                  />
+                  <button type="button" className="btn" onClick={checkNameAvailability}>
+                    {t("check")}
+                  </button>
+                </div>
+                <div className="input-field">
+                  <FontAwesomeIcon icon={faLock} className="icon-style" />
+                  <input
+                    type="password"
+                    placeholder={t("enterPassword")}
+                    value={userpw}
+                    onChange={(e) => setUserpw(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="input-field">
+                  <FontAwesomeIcon icon={faLock} className="icon-style" />
+                  <input
+                    type="password"
+                    placeholder={t("confirmPassWord")}
+                    value={confirmUserpw}
+                    onChange={(e) => setConfirmUserpw(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="input-field">
+                  <FontAwesomeIcon icon={faHome} className="icon-style" />
+                  <input
+                    type="text"
+                    placeholder={t("enterAddress")}
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="input-field">
+                  <FontAwesomeIcon icon={faPaw} className="icon-style" />
+                  <span>{t("type")}</span>&nbsp;&nbsp;
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="animalType"
+                      value="dog"
+                      onChange={handleAnimalTypeChange}
+                    />
+                    {t("puppy")}
+                  </label>
+                  &nbsp;&nbsp;
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="animalType"
+                      value="cat"
+                      onChange={handleAnimalTypeChange}
+                    />
+                    {t("cat")}
+                  </label>
+                  &nbsp;&nbsp;
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="animalType"
+                      value="other"
+                      onChange={handleAnimalTypeChange}
+                    />
+                    {t("etc")}
+                  </label>
+                </div>
+                <div className="input-field">
+                  <FontAwesomeIcon icon={faCertificate} className="icon-style" />
+                  <input
+                    type="text"
+                    placeholder={t("license")}
+                    value={license}
+                    onChange={(e) => setLicense(e.target.value)}
+                  />
+                </div>
+                <div className="input-field">
+                  <FontAwesomeIcon icon={faBriefcase} className="icon-style" />
+                  <input
+                    type="text"
+                    placeholder={t("career")}
+                    value={career}
+                    onChange={(e) => setCareer(e.target.value)}
+                  />
+                </div>
+                <div className="input-field">
+                  <FontAwesomeIcon icon={faComment} className="icon-style" />
+                  <input
+                    type="text"
+                    placeholder={t("oneLineIntro")}
+                    value={oneLineIntro}
+                    onChange={(e) => setOneLineIntro(e.target.value)}
+                  />
+                </div>
+                <div className="input-field-selfIntro">
+                  <FontAwesomeIcon icon={faPencilAlt} className="icon-style" />
+                  <textarea
+                    placeholder={t("selfIntroduction")}
+                    value={selfIntroduction}
+                    onChange={(e) => setSelfIntroduction(e.target.value)}
+                    required
+                    cols={300}
+                    rows={10}
+                  ></textarea>
+                </div>
+                <div className="input-field">
+                  <FontAwesomeIcon icon={faWonSign} className="icon-style" />
+                  <input
+                    type="number"
+                    placeholder={t("pay")}
+                    value={pay}
+                    onChange={(e) => setPay(e.target.value)}
+                    required
+                    step="1000"
+                  />
+                </div>
+                <div className="button-container">
+                  <button type="button" className="btn" onClick={showSignUpForm}>
+                    {t("userSignUp")}
+                  </button>
+                  <button type="button" className="btn" onClick={showPetSitterForm}>
+                    {t("petSitterSignUp")}
+                  </button>
+                </div>
+                <input type="submit" className="btn" value={t("signUp.title")} />
+              </form>
+            )}
+          </div>
+        </div>
+
+        <div className="panels-container">
+          <div className="panel left-panel">
+            <div className="content">
+              <h3>{t("newHere")}</h3>
+              <br />
+              <p>
+                {t("newHere.description.one")}
+                <br />
+                <br />
+                {t("newHere.description.two")}
+                <br />
+                <br />
+                {t("newHere.description.three")}
+              </p>
+              <br />
+              <button className="btn transparent" id="sign-up-btn" onClick={handleSignUpMode}>
+                {t("signUp.title")}
+              </button>
+            </div>
+            <img src="/register/images/login.svg" className="image" alt="" />
+          </div>
+          <div className="panel right-panel">
+            <div className="content">
+              <h3>{t("alreadyMember")}</h3>
+              <br />
+              <p>
+                {t("welcomeBack.one")}
+                <br />
+                <br />
+                {t("welcomeBack.two")}
+                <br />
+                <br />
+                {t("welcomeBack.three")}
+              </p>
+              <br />
+              <button
+                className="btn transparent"
+                id="sign-in-btn"
+                onClick={() => {
+                  const container = document.querySelector(".container");
+                  container?.classList.remove("sign-up-mode");
+                  setFormToShow("signIn");
+                }}
+              >
+                {t("signIn.title")}
+              </button>
+            </div>
+            <img src="/register/images/reg.svg" className="image" alt="" />
+          </div>
         </div>
       </div>
-
-      <div className="panels-container">
-        <div className="panel left-panel">
-          <div className="content">
-            <h3>{t("newHere")}</h3>
-            <br />
-            <p>
-              {t("newHere.description.one")}
-              <br />
-              <br />
-              {t("newHere.description.two")}
-              <br />
-              <br />
-              {t("newHere.description.three")}
-            </p>
-            <br />
-            <button
-              className="btn transparent"
-              id="sign-up-btn"
-              onClick={handleSignUpMode}
-            >
-              {t("signUp.title")}
-            </button>
-          </div>
-          <img src="/register/images/login.svg" className="image" alt="" />
-        </div>
-        <div className="panel right-panel">
-          <div className="content">
-            <h3>{t("alreadyMember")}</h3>
-            <br />
-            <p>
-              {t("welcomeBack.one")}
-              <br />
-              <br />
-              {t("welcomeBack.two")}
-              <br />
-              <br />
-              {t("welcomeBack.three")}
-            </p>
-            <br />
-            <button
-              className="btn transparent"
-              id="sign-in-btn"
-              onClick={() => {
-                const container = document.querySelector(".container");
-                container?.classList.remove("sign-up-mode");
-                setFormToShow("signIn");
-              }}
-            >
-              {t("signIn.title")}
-            </button>
-          </div>
-          <img src="/register/images/reg.svg" className="image" alt="" />
-        </div>
-      </div>
-    </div>
+    </GoogleOAuthProvider>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "../styles/Header.scss";
 import { useSelector, useDispatch } from "react-redux";
@@ -8,6 +8,7 @@ import { RootState } from "../store/store";
 
 const Header: React.FC = () => {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
 
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
@@ -17,6 +18,15 @@ const Header: React.FC = () => {
     dispatch(logout());
     alert(t("header.logoutSuccess"));
     i18n.changeLanguage("ko");
+  };
+
+  const handleMyPageClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+    if (isLoggedIn) {
+      navigate("/profile/:userid"); // 로그인 상태면 마이페이지로 이동
+    } else {
+      alert(t("header.loginRequired")); // 로그인 안 했으면 알림창 띄우기
+    }
   };
 
   return (
@@ -29,7 +39,7 @@ const Header: React.FC = () => {
         <Link to="/petsitters" className="myLink">
           {t("header.petSitter")}
         </Link>
-        <Link to="/profile/:userid" className="myLink">
+        <Link to="/profile/:userid" className="myLink" onClick={handleMyPageClick}>
           {t("header.myPage")}
         </Link>
         {isLoggedIn ? (

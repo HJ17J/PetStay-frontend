@@ -13,6 +13,9 @@ import { ChatList, Chats, Room } from "../types/chat";
 import { io } from "socket.io-client";
 import axios from "axios";
 import { useState, SyntheticEvent, ChangeEvent, useEffect, useCallback } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import { useTranslation } from "react-i18next";
 
 // REACT_APP_API_SERVER가 정의되지 않았을 때를 대비하여 기본값을 설정
 // const apiUrl =
@@ -224,6 +227,21 @@ export default function Reservation() {
     setSitterName(sitter.name);
     setRoomidx(roomidx);
   };
+
+  // 번역
+  const { t } = useTranslation();
+
+  // 로그인 확인
+  const isLoogedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const handleClick = (e: SyntheticEvent) => {
+    e.preventDefault();
+    if (isLoogedIn) {
+      toggleModal(e);
+    } else {
+      alert(t("header.loginRequired"));
+    }
+  };
+
   return (
     <>
       <Header />
@@ -247,13 +265,7 @@ export default function Reservation() {
               <div className="selfIntroductionText">{sitterData?.selfIntroduction}</div>
             </div>
             <div className="btn-box">
-              <a
-                href=""
-                className="reservationBtn"
-                onClick={(e) => {
-                  toggleModal(e);
-                }}
-              >
+              <a href="" className="reservationBtn" onClick={handleClick}>
                 문의하기
               </a>
             </div>

@@ -6,6 +6,7 @@ import axios, { AxiosError } from "axios";
 import type { PetSitterList } from "../types/PetSitter";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { DisplayStarRating } from "../components/StarRatingView";
 
 export default function PetSitterList() {
   const [petSitters, setPetSitters] = useState<PetSitterList[]>([]);
@@ -90,15 +91,12 @@ export default function PetSitterList() {
               <div className="sitter-info">
                 <div className="title-box">
                   <h2>{sitter.name}</h2>
-                  <div className="rating-box">
-                    <div className="stars">
-                      <span className="base-star">★★★★★</span>
-                      <span className="filled-star" style={{ width: `${sitter.rating * 20}%` }}>
-                        ★★★★★
-                      </span>
-                    </div>
+                  <DisplayStarRating rating={sitter.rating} size={"middle"} />
+                  <div className="num-rating-box">
                     <span className="rating">{sitter.rating}</span>
-                    <span className="rate-count">({sitter.reviewCount})</span>
+                    <span className="rate-count">
+                      ({sitter.reviewCount < 999 ? sitter.reviewCount : "999+"})
+                    </span>
                   </div>
                 </div>
                 <div className="location">

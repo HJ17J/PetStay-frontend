@@ -10,6 +10,9 @@ import { io } from "socket.io-client";
 import data from "@emoji-mart/data";
 import axios from "axios";
 import { UserData, Reservation } from "../types/reservation";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faTimes, faQuestion } from "@fortawesome/free-solid-svg-icons";
+import StarRating from "../components/StarRating";
 
 const socket = io("http://localhost:8080", { autoConnect: false });
 
@@ -91,6 +94,43 @@ export default function Mypage() {
     socket.on("message", addChatList);
     socket.on("img", addChatList);
   }, [addChatList]);
+
+  // 리뷰
+  const [reviewContent, setReviewContent] = useState("");
+  const [reviewImage, setReviewImage] = useState<File | null>(null);
+  const [reviewRate, setReviewRate] = useState(0);
+
+  const { resvidx } = useParams<{ resvidx: string }>();
+
+  // 리뷰 등록
+  const submitReview = async () => {
+    if (!resvidx) return;
+    const formData = new FormData();
+
+    formData.append("content", reviewContent);
+    if (reviewImage) {
+      formData.append("img", reviewImage, reviewImage.name);
+    }
+    formData.append("rate", reviewRate.toString());
+
+    try {
+      await axios.post(`${process.env.REACT_APP_API_SERVER}/review/${resvidx}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      alert("리뷰가 등록되었습니다.");
+      setShowReviewModal(false); // 모달 닫기
+    } catch (error) {
+      console.error("리뷰 등록 실패:", error);
+      alert("리뷰 등록에 실패했습니다.");
+    }
+  };
+
+  // 모달 닫기
+  const closeModal = () => {
+    setShowReviewModal(false);
+  };
 
   const toggleEmoji = (e: SyntheticEvent) => {
     e.preventDefault();
@@ -211,26 +251,32 @@ export default function Mypage() {
     setShowReviewModal(!showReviewModal);
   };
 
-  // useEffect(() => {
-  //   const fetchSitterData = async () => {
-  //     try {
-  //       console.log("userid:", userid); // Log useridx to check if it's populated
-  //       const response = await axios.get(`${process.env.REACT_APP_API_SERVER}/sitter/${userid}`);
-  //       console.log("response:", response); // Log response to check if it's received
-  //       setSitterData(response.data);
-  //     } catch (error) {
-  //       console.error("Error fetching sitter data:", error);
-  //     }
-  //   };
+  // 예약 삭제
+  const handleDeleteReservation = async (reservationId: number) => {
+    // 사용자에게 삭제 확인 요청
+    if (window.confirm("삭제하시겠습니까?")) {
+      try {
+        const url = `${process.env.REACT_APP_API_SERVER}/reservation/${reservationId}/delete`;
+        await axios.delete(url);
 
-  //   console.log(userid);
-  //   if (userid) {
-  //     console.log("working..");
-  //     // Check if useridx is defined before making the request
-  //     fetchSitterData();
-  //   }
-  // }, [userid]);
-  // console.log(sitterData);
+        // 상태 업데이트로 UI에서 해당 예약 제거
+        setReservations((prevReservations) =>
+          prevReservations.filter((reservation) => reservation.resvidx !== reservationId)
+        );
+      } catch (error) {
+        console.error("Failed to delete reservation", error);
+        alert("예약 삭제에 실패했습니다.");
+      }
+    } else {
+      // 사용자가 취소를 선택했을 때
+      console.log("삭제가 취소되었습니다.");
+    }
+  };
+
+  const handleStarChange = (rating: number) => {
+    setReviewRate(rating);
+  };
+
   return (
     <>
       <Header />
@@ -304,26 +350,59 @@ export default function Mypage() {
                 <div className="cell">펫시터</div>
                 <div className="cell">날짜</div>
                 <div className="cell">요금</div>
-                <div className="cell">button</div>
-                <div className="cell">button</div>
+                <div className="cell">삭제</div>
+                <div className="cell">예약 상태</div>
               </div>
-              {reservations.map((reservation, index) => (
-                <div className="row" key={index}>
-                  <div className="cell">{index + 1}</div>
-                  <div className="cell">{reservation.sittername}</div>
-                  <div className="cell">{reservation.date}</div>
-                  <div className="cell">{reservation.price}</div>
-                  <div className="cell myPagedeleteBtn">
-                    <button>삭제</button>
+              {reservations
+                .filter((reservation) => reservation.confirm !== "done")
+                .map((reservation, index) => (
+                  <div className="row" key={index}>
+                    <div className="cell">{index + 1}</div>
+                    <div className="cell">{reservation.sittername}</div>
+                    <div className="cell">{reservation.date}</div>
+                    <div className="cell">{reservation.price}</div>
+                    <div className="cell myPagedeleteBtn">
+                      <button onClick={() => handleDeleteReservation(reservation.resvidx)}>
+                        삭제
+                      </button>
+                    </div>
+                    <div className="cell">
+                      {reservation.confirm === "approved" ? (
+                        <FontAwesomeIcon icon={faCheck} style={{ color: "green" }} /> // 체크 표시
+                      ) : reservation.confirm === "refused" ? (
+                        <FontAwesomeIcon icon={faTimes} style={{ color: "red" }} /> // X 표시
+                      ) : (
+                        <FontAwesomeIcon icon={faQuestion} style={{ color: "blue" }} /> // ? 표시
+                      )}
+                    </div>
                   </div>
-                  <div className="cell myPageReviewBtn">
-                    <button onClick={(e) => handleReviewClick(e)}>리뷰하기</button>
-                  </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
-          <div className="reservationTable2"></div>
+          <div className="reservationTable2">
+            <div className="table">
+              <div className="row tableHeader">
+                <div className="cell">No.</div>
+                <div className="cell">펫시터</div>
+                <div className="cell">날짜</div>
+                <div className="cell">요금</div>
+                <div className="cell">리뷰</div>
+              </div>
+              {reservations
+                .filter((reservation) => reservation.confirm === "done")
+                .map((reservation, index) => (
+                  <div className="row" key={index}>
+                    <div className="cell">{index + 1}</div>
+                    <div className="cell">{reservation.sittername}</div>
+                    <div className="cell">{reservation.date}</div>
+                    <div className="cell">{reservation.price}</div>
+                    <div className="cell myPageReviewBtn">
+                      <button onClick={(e) => handleReviewClick(e)}>리뷰하기</button>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -337,22 +416,32 @@ export default function Mypage() {
               </div>
               <div className="reviewtitle">리뷰쓰기</div>
               <div className="reviewSubtitle">어떤 점이 좋았나요?</div>
+              <StarRating value={reviewRate} onChange={setReviewRate} />
               <div className="reviewtextArea">
-                <textarea></textarea>
+                <textarea
+                  value={reviewContent}
+                  onChange={(e) => setReviewContent(e.target.value)}
+                ></textarea>
               </div>
               <div className="reviewAddImage">
                 <label htmlFor="reviewImage" className="reviewlabel">
                   <i className="bx bxs-camera"></i>
                   <div className="reviewImageTitle">사진/동영상 첨부하기</div>
                 </label>
-                <input type="file" id="reviewImage" className="reviewInput" accept="image/*" />
+                <input
+                  type="file"
+                  id="reviewImage"
+                  className="reviewInput"
+                  accept="image/*"
+                  onChange={(e) => setReviewImage(e.target.files ? e.target.files[0] : null)}
+                />
               </div>
               <div className="reviewImageContainer">
                 <img src="https://picsum.photos/200/300?grayscale" alt="" />
               </div>
               <div className="reviewBtn">
-                <button>등록</button>
-                <button>취소</button>
+                <button onClick={submitReview}>등록</button>
+                <button onClick={closeModal}>취소</button>
               </div>
             </div>
           </div>

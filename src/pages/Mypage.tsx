@@ -9,6 +9,7 @@ import { ChatList, Chats, Room } from "../types/chat";
 import { io } from "socket.io-client";
 import data from "@emoji-mart/data";
 import axios from "axios";
+import { UserData, Reservation } from "../types/reservation";
 
 const socket = io("http://localhost:8080", { autoConnect: false });
 
@@ -26,6 +27,8 @@ export default function Mypage() {
   const [sitterName, setSitterName] = useState<string>("");
   const [roomidx, setRoomidx] = useState<number>(0);
   const { useridx } = useParams();
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
 
   const toggleEmoji = (e: SyntheticEvent) => {
     e.preventDefault();
@@ -102,10 +105,7 @@ export default function Mypage() {
     }
     formData.append("roomidx", String(roomidx));
 
-    const imgResponse = await axios.post(
-      process.env.REACT_APP_API_SERVER + "/insertImg",
-      formData
-    );
+    const imgResponse = await axios.post(process.env.REACT_APP_API_SERVER + "/insertImg", formData);
 
     const imgSrc = imgResponse.data.saveChat.img;
     //socket전송
@@ -134,29 +134,40 @@ export default function Mypage() {
   };
   const { userid } = useParams();
   const [sitterData, setSitterData] = useState(null);
-
-  useEffect(() => {
-    const fetchSitterData = async () => {
-      try {
-        console.log("userid:", userid); // Log useridx to check if it's populated
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_SERVER}/sitter/${userid}`
-        );
-        console.log("response:", response); // Log response to check if it's received
-        setSitterData(response.data);
-      } catch (error) {
-        console.error("Error fetching sitter data:", error);
-      }
-    };
-
-    console.log(userid);
-    if (userid) {
-      console.log("working..");
-      // Check if useridx is defined before making the request
-      fetchSitterData();
+  const fetchUserData = async () => {
+    try {
+      // console.log("userid:", userid); // Log useridx to check if it's populated
+      const response = await axios.post(`${process.env.REACT_APP_API_SERVER}/profile`);
+      console.log("response:", response.data); // Log response to check if it's received
+      setUserData(response.data);
+      setReservations(response.data.resvData);
+    } catch (error) {
+      console.error("Error fetching sitter data:", error);
     }
-  }, [userid]);
-  console.log(sitterData);
+  };
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+  // useEffect(() => {
+  //   const fetchSitterData = async () => {
+  //     try {
+  //       console.log("userid:", userid); // Log useridx to check if it's populated
+  //       const response = await axios.get(`${process.env.REACT_APP_API_SERVER}/sitter/${userid}`);
+  //       console.log("response:", response); // Log response to check if it's received
+  //       setSitterData(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching sitter data:", error);
+  //     }
+  //   };
+
+  //   console.log(userid);
+  //   if (userid) {
+  //     console.log("working..");
+  //     // Check if useridx is defined before making the request
+  //     fetchSitterData();
+  //   }
+  // }, [userid]);
+  // console.log(sitterData);
   return (
     <>
       <Header />
@@ -227,26 +238,26 @@ export default function Mypage() {
             <div className="table">
               <div className="row tableHeader">
                 <div className="cell">No.</div>
-                <div className="cell">성함</div>
+                <div className="cell">펫시터</div>
                 <div className="cell">날짜</div>
-                <div className="cell">제목</div>
+                <div className="cell">요금</div>
                 <div className="cell">button</div>
                 <div className="cell">button</div>
               </div>
-              <div className="row">
-                <div className="cell">John</div>
-                <div className="cell">Doe</div>
-                <div className="cell">24</div>
-                <div className="cell">KOREA</div>
-                <div className="cell myPagedeleteBtn">
-                  <button>삭제</button>
+              {reservations.map((reservation, index) => (
+                <div className="row" key={index}>
+                  <div className="cell">{index + 1}</div>
+                  <div className="cell">{reservation.sittername}</div>
+                  <div className="cell">{reservation.date}</div>
+                  <div className="cell">{reservation.price}</div>
+                  <div className="cell myPagedeleteBtn">
+                    <button>삭제</button>
+                  </div>
+                  <div className="cell myPageReviewBtn">
+                    <button onClick={(e) => handleReviewClick(e)}>리뷰하기</button>
+                  </div>
                 </div>
-                <div className="cell myPageReviewBtn">
-                  <button onClick={(e) => handleReviewClick(e)}>
-                    리뷰하기
-                  </button>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
           <div className="reservationTable2"></div>
@@ -271,12 +282,7 @@ export default function Mypage() {
                   <i className="bx bxs-camera"></i>
                   <div className="reviewImageTitle">사진/동영상 첨부하기</div>
                 </label>
-                <input
-                  type="file"
-                  id="reviewImage"
-                  className="reviewInput"
-                  accept="image/*"
-                />
+                <input type="file" id="reviewImage" className="reviewInput" accept="image/*" />
               </div>
               <div className="reviewImageContainer">
                 <img src="https://picsum.photos/200/300?grayscale" alt="" />
@@ -376,15 +382,11 @@ export default function Mypage() {
                               <div
                                 key={el.chatidx}
                                 className={
-                                  `${el.authoridx}` === `${useridx}`
-                                    ? "otherTalk"
-                                    : "meTalk"
+                                  `${el.authoridx}` === `${useridx}` ? "otherTalk" : "meTalk"
                                 }
                               >
                                 <div className="chatterName">
-                                  {`${el.authoridx}` === `${useridx}`
-                                    ? sitterName
-                                    : userName}
+                                  {`${el.authoridx}` === `${useridx}` ? sitterName : userName}
                                 </div>
                                 <div className="chatterText">{el.content}</div>
                               </div>
@@ -394,15 +396,11 @@ export default function Mypage() {
                               <div
                                 key={el.chatidx}
                                 className={
-                                  `${el.authoridx}` === `${useridx}`
-                                    ? "otherTalk"
-                                    : "meTalk"
+                                  `${el.authoridx}` === `${useridx}` ? "otherTalk" : "meTalk"
                                 }
                               >
                                 <div className="chatterName">
-                                  {`${el.authoridx}` === `${useridx}`
-                                    ? sitterName
-                                    : userName}
+                                  {`${el.authoridx}` === `${useridx}` ? sitterName : userName}
                                 </div>
                                 <img className="chatterImg" src={el.img}></img>
                               </div>
@@ -415,11 +413,7 @@ export default function Mypage() {
                           return (
                             <div
                               key={idx}
-                              className={
-                                el.nickname === userName
-                                  ? "meTalk"
-                                  : "otherTalk"
-                              }
+                              className={el.nickname === userName ? "meTalk" : "otherTalk"}
                             >
                               <div className="chatterName">{el.nickname}</div>
                               <div className="chatterText">{el.message}</div>
@@ -429,11 +423,7 @@ export default function Mypage() {
                           return (
                             <div
                               key={idx}
-                              className={
-                                el.nickname === userName
-                                  ? "meTalk"
-                                  : "otherTalk"
-                              }
+                              className={el.nickname === userName ? "meTalk" : "otherTalk"}
                             >
                               <div className="chatterName">{el.nickname}</div>
                               <img className="chatterImg" src={el.img}></img>
@@ -509,10 +499,7 @@ export default function Mypage() {
                 {selectedImage && (
                   <div id="imageModalbox" className="imageModal">
                     <div className="imageModalContent">
-                      <div
-                        className="imageModalclose"
-                        onClick={() => setSelectedImage(null)}
-                      >
+                      <div className="imageModalclose" onClick={() => setSelectedImage(null)}>
                         &times;
                       </div>
                       <div className="imageModalTitle">파일 전송</div>

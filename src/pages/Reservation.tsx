@@ -17,24 +17,11 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { useTranslation } from "react-i18next";
 
-// REACT_APP_API_SERVER가 정의되지 않았을 때를 대비하여 기본값을 설정
-// const apiUrl =
-//   process.env.REACT_APP_API_SERVER || "http://127.0.0.1:8080/api-server";
-
-// const socket = io(apiUrl, {
-//   autoConnect: false,
-// });
-const reader = new FileReader();
 const socket = io("http://localhost:8080", { autoConnect: false });
 export default function Reservation() {
   const initSocketConnect = () => {
     if (!socket.connected) socket.connect();
   };
-  // if (socket.connected) {
-  //   console.log("Socket is connected");
-  // } else {
-  //   console.log("Socket is not connected");
-  // }
 
   const [inputValue, setInputValue] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -119,10 +106,9 @@ export default function Reservation() {
       setSelectedImage(e.target.files[0]);
     }
   };
-
   const toggleModal = async (e: SyntheticEvent) => {
     e.preventDefault();
-    setShowModal(!showModal);
+
     // axios-chat
     const chatData = await axios.get(process.env.REACT_APP_API_SERVER + `/chat/${useridx}`);
 
@@ -140,6 +126,9 @@ export default function Reservation() {
     const roomName = `${userName}+${sitterName}`;
     // room생성
     socket.emit("createRoom", roomName);
+    if (roomList) {
+      setShowModal(!showModal);
+    }
   };
   const toggleImageModal = (e: SyntheticEvent) => {
     e.preventDefault();
@@ -357,30 +346,8 @@ export default function Reservation() {
           <div className="modalContainer">
             <div className="modalContent">
               <div className="modalSection1 modals">
-                {/* <div className="searchContainer">
-                  <div className="searchTitle">채팅</div>
-                  <div className="searchInputIcon1 search">
-                    <input type="text" />
-                    <div className="searchDiv">
-                      <i className="bx bx-search"></i>
-                    </div>
-                  </div>
-                </div> */}
                 <div className="advertisementContainer"></div>
                 <div className="chattingHistoryWrapper">
-                  {/* <div className="chattingContainer">
-                    <div>
-                      <img
-                        className="chattingCustomerImage"
-                        src="https://picsum.photos/seed/picsum/200/300"
-                        alt=""
-                      />
-                    </div>
-                    <div className="chattingInformation">
-                      <div className="customerTitle">홍길동</div>
-                      <div>감사해요~~!</div>
-                    </div>
-                  </div> */}
                   {roomList?.map((el) => {
                     return (
                       <div
@@ -391,15 +358,18 @@ export default function Reservation() {
                         key={el.roomidx}
                       >
                         <div>
-                          <img
-                            className="chattingCustomerImage"
-                            src={el.User.img}
-                            alt="프로필 이미지"
-                          />
+                          {el.User && el.User.img && (
+                            <img
+                              className="chattingCustomerImage"
+                              src={el.User.img}
+                              alt="프로필 이미지"
+                            />
+                          )}
                         </div>
                         <div className="chattingInformation">
-                          <div className="customerTitle">{el.User.name}</div>
-                          {/* <div>감사해요~~!</div> */}
+                          {el.User && el.User.name && (
+                            <div className="customerTitle">{el.User.name}</div>
+                          )}
                         </div>
                       </div>
                     );
@@ -407,31 +377,10 @@ export default function Reservation() {
                 </div>
               </div>
               <div className="modalSection2 modals">
-                {/* <div className="searchContainer">
-                  <div className="areaIcon">
-                    <i className="bx bx-left-arrow-alt"></i>
-                  </div>
-                  <div className="chattingName">채팅그룹</div>
-                  <div className="searchInputIcon2 search">
-                    <input type="text" />
-                    <div className="searchDiv">
-                      <i className="bx bx-search"></i>
-                    </div>
-                  </div>
-                </div> */}
                 <div className="groupChattingContainer1">
                   <div className="chatterWrapper">
-                    {/* <div className="chatterImageContainer">
-                      <img
-                        className="chatterImage"
-                        src="https://picsum.photos/seed/picsum/200/300"
-                        alt=""
-                      />
-                    </div> */}
                     <div className="chatterInformation">
                       {/* 기존 채팅 */}
-                      <div className="chatterName">홍길동</div>
-                      <div className="chatterText">안녕하세요!</div>
                       {chatData &&
                         chatData.map((el) => {
                           if (el.img === null) {

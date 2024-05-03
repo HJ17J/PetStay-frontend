@@ -9,7 +9,6 @@ import {
   faBriefcase,
   faComment,
   faPencilAlt,
-  faDollarSign,
   faPaw,
   faWonSign,
 } from "@fortawesome/free-solid-svg-icons";
@@ -28,11 +27,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import { useTranslation } from "react-i18next";
-import {
-  GoogleOAuthProvider,
-  GoogleLogin,
-  CredentialResponse,
-} from "@react-oauth/google";
+import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from "@react-oauth/google";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -363,11 +358,7 @@ export default function Register() {
     } catch (error) {
       // 서버 응답이 400 등의 오류일 경우 처리
       const axiosError = error as AxiosError<SignupErrorPayload>;
-      alert(
-        `회원가입 오류: ${
-          axiosError.response?.data?.message || "자세한 정보 없음"
-        }`
-      );
+      alert(`회원가입 오류: ${axiosError.response?.data?.message || "자세한 정보 없음"}`);
       dispatch(
         signupFailure({
           userid: axiosError.response?.data.userid || "회원가입 오류",
@@ -378,9 +369,7 @@ export default function Register() {
   };
 
   return (
-    <GoogleOAuthProvider
-      clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID ?? ""}
-    >
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID ?? ""}>
       <div className="container">
         <Header />
         <div className="forms-container">
@@ -396,9 +385,7 @@ export default function Register() {
                     value={userid}
                     onChange={(e) => setUserid(e.target.value)}
                   />
-                  {error.userid && (
-                    <p style={{ color: "red" }}>{error.userid}</p>
-                  )}
+                  {error.userid && <p style={{ color: "red" }}>{error.userid}</p>}
                 </div>
                 <div className="input-field">
                   <FontAwesomeIcon icon={faLock} className="icon-style" />
@@ -408,15 +395,9 @@ export default function Register() {
                     value={userpw}
                     onChange={(e) => setUserpw(e.target.value)}
                   />
-                  {error.userpw && (
-                    <p style={{ color: "red" }}>{error.userpw}</p>
-                  )}
+                  {error.userpw && <p style={{ color: "red" }}>{error.userpw}</p>}
                 </div>
-                <input
-                  type="submit"
-                  value={t("signIn.title")}
-                  className="btn solid"
-                />
+                <input type="submit" value={t("signIn.title")} className="btn solid" />
                 <p className="social-text">{t("socialPlatform")}</p>
                 <div className="social-media">
                   <img
@@ -451,11 +432,7 @@ export default function Register() {
                     onChange={(e) => setUserid(e.target.value)}
                     required
                   />
-                  <button
-                    type="button"
-                    className="btn"
-                    onClick={checkUserIdAvailability}
-                  >
+                  <button type="button" className="btn" onClick={checkUserIdAvailability}>
                     {t("check")}
                   </button>
                 </div>
@@ -469,11 +446,7 @@ export default function Register() {
                     onChange={(e) => setName(e.target.value)}
                     required
                   />
-                  <button
-                    type="button"
-                    className="btn"
-                    onClick={checkNameAvailability}
-                  >
+                  <button type="button" className="btn" onClick={checkNameAvailability}>
                     {t("check")}
                   </button>
                 </div>
@@ -510,36 +483,14 @@ export default function Register() {
                   />
                 </div>
                 <div className="button-container">
-                  <button
-                    type="button"
-                    className="btn"
-                    onClick={showSignUpForm}
-                  >
+                  <button type="button" className="btn" onClick={showSignUpForm}>
                     {t("userSignUp")}
                   </button>
-                  <button
-                    type="button"
-                    className="btn"
-                    onClick={showPetSitterForm}
-                  >
+                  <button type="button" className="btn" onClick={showPetSitterForm}>
                     {t("petSitterSignUp")}
                   </button>
                 </div>
-                <input
-                  type="submit"
-                  className="btn"
-                  value={t("signUp.title")}
-                />
-                <p className="social-text">{t("socialPlatform")}</p>
-                <div className="social-media">
-                  <a href="#" className="social-icon">
-                    <img
-                      className="social"
-                      src="/register/images/google_logo.png"
-                      alt=""
-                    />
-                  </a>
-                </div>
+                <input type="submit" className="btn" value={t("signUp.title")} />
               </form>
             )}
             {formToShow === "petSitter" && (
@@ -554,11 +505,7 @@ export default function Register() {
                     onChange={(e) => setUserid(e.target.value)}
                     required
                   />
-                  <button
-                    type="button"
-                    className="btn"
-                    onClick={checkUserIdAvailability}
-                  >
+                  <button type="button" className="btn" onClick={checkUserIdAvailability}>
                     {t("check")}
                   </button>
                 </div>
@@ -571,11 +518,7 @@ export default function Register() {
                     onChange={(e) => setName(e.target.value)}
                     required
                   />
-                  <button
-                    type="button"
-                    className="btn"
-                    onClick={checkNameAvailability}
-                  >
+                  <button type="button" className="btn" onClick={checkNameAvailability}>
                     {t("check")}
                   </button>
                 </div>
@@ -643,10 +586,7 @@ export default function Register() {
                   </label>
                 </div>
                 <div className="input-field">
-                  <FontAwesomeIcon
-                    icon={faCertificate}
-                    className="icon-style"
-                  />
+                  <FontAwesomeIcon icon={faCertificate} className="icon-style" />
                   <input
                     type="text"
                     placeholder={t("license")}
@@ -679,6 +619,8 @@ export default function Register() {
                     value={selfIntroduction}
                     onChange={(e) => setSelfIntroduction(e.target.value)}
                     required
+                    cols={300}
+                    rows={10}
                   ></textarea>
                 </div>
                 <div className="input-field">
@@ -693,36 +635,14 @@ export default function Register() {
                   />
                 </div>
                 <div className="button-container">
-                  <button
-                    type="button"
-                    className="btn"
-                    onClick={showSignUpForm}
-                  >
+                  <button type="button" className="btn" onClick={showSignUpForm}>
                     {t("userSignUp")}
                   </button>
-                  <button
-                    type="button"
-                    className="btn"
-                    onClick={showPetSitterForm}
-                  >
+                  <button type="button" className="btn" onClick={showPetSitterForm}>
                     {t("petSitterSignUp")}
                   </button>
                 </div>
-                <input
-                  type="submit"
-                  className="btn"
-                  value={t("signUp.title")}
-                />
-                <p className="social-text">{t("socialPlatform")}</p>
-                <div className="social-media">
-                  <a href="#" className="social-icon">
-                    <img
-                      className="social"
-                      src="/register/images/google_logo.png"
-                      alt=""
-                    />
-                  </a>
-                </div>
+                <input type="submit" className="btn" value={t("signUp.title")} />
               </form>
             )}
           </div>
@@ -743,11 +663,7 @@ export default function Register() {
                 {t("newHere.description.three")}
               </p>
               <br />
-              <button
-                className="btn transparent"
-                id="sign-up-btn"
-                onClick={handleSignUpMode}
-              >
+              <button className="btn transparent" id="sign-up-btn" onClick={handleSignUpMode}>
                 {t("signUp.title")}
               </button>
             </div>

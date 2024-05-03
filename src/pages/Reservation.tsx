@@ -16,6 +16,7 @@ import { useState, SyntheticEvent, ChangeEvent, useEffect, useCallback } from "r
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { useTranslation } from "react-i18next";
+import { DisplayStarRating } from "../components/StarRatingView";
 
 const socket = io("http://localhost:8080", { autoConnect: false });
 export default function Reservation() {
@@ -280,14 +281,7 @@ export default function Reservation() {
                 <span>경력·자격</span>
               </div>
               <div className="certiContainer">
-                <div className="textField">
-                  <img
-                    src="https://picsum.photos/seed/picsum/200/300"
-                    alt=""
-                    style={{ width: "120px", height: "76px" }}
-                  />
-                  {sitterData?.license}
-                </div>
+                <div className="textField">{sitterData?.license}</div>
               </div>
             </div>
           </div>
@@ -301,9 +295,10 @@ export default function Reservation() {
                         <img src={el.img} alt="" className="info1Img" />
                       </div>
                       <div className="info2">
-                        <div className="info2Text">{el.name} (슈나우저·9살)</div>
+                        <div className="info2Text">{el.name}</div>
                         <div className="info2Text">
-                          {el.rate} 점 {el.createdAt}
+                          <DisplayStarRating rating={el.rate} size={"small"} />
+                          <span>{el.rate}</span> {el.createdAt}
                         </div>
                       </div>
                     </div>

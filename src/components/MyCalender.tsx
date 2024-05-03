@@ -284,7 +284,6 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
   //         // startTime과 endTime을 시간 형식으로 변환
   //         const formattedStartTime = formatTime(startTime);
   //         const formattedEndTime = formatTime(endTime);
-
   //         // timeslots 배열을 반복하여 해당하는 시간대를 찾고 상태를 변경
   //         setTimeslots((prevTimeslots) => {
   //           // const newTimeslots = [...prevTimeslots];
@@ -305,62 +304,6 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
   //     .catch((error) => {
   //       console.error("Error:", error);
   //     });
-  // };
-
-  // //예약 신청 함수
-  // const insertResv = () => {
-  //   let date;
-  //   if (!selectedDate) {
-  //     return alert("날짜를 선택해주세요");
-  //   } else {
-  //     date = formatDate(selectedDate);
-  //   }
-  //   //전송에 필요한 데이터 정리
-  //   const type = typeRef.current?.value;
-  //   const animalNumber = animalNumberRef.current?.value;
-  //   const content = contentRef.current?.value;
-
-  //   // active 상태인 요소들을 필터링
-  //   const activeSlots = timeslots.filter((slot) => slot.status === "active");
-
-  //   // active 상태인 요소들 중에서 최소값과 최대값을 찾음
-  //   const startTime =
-  //     activeSlots.length > 0
-  //       ? Math.min(...activeSlots.map((slot) => parseInt(slot.time)))
-  //       : null;
-  //   const endTime =
-  //     activeSlots.length > 0
-  //       ? Math.max(...activeSlots.map((slot) => parseInt(slot.time)))
-  //       : null;
-
-  //   if (startTime !== null && endTime !== null) {
-  //     // 최소값과 최대값 출력
-  //     console.log("Min time:", startTime);
-  //     console.log("Max time:", endTime);
-  //     if (startTime === endTime) {
-  //       alert("두 시간 이상 예약을 설정해주세요");
-  //       return;
-  //     } else {
-  //       //axios요청 전송
-  //       const data = {
-  //         content,
-  //         date,
-  //         startTime,
-  //         endTime,
-  //         type,
-  //         animalNumber,
-  //       };
-
-  //       axios
-  //         .post(process.env.REACT_APP_API_SERVER + "/resv/4", { data }) // 주소 /resv/sitteridx로 수정필수!!!!
-  //         .then((response) => {
-  //           console.log(response.data);
-  //         });
-  //     }
-  //   } else {
-  //     alert("예약 시간대를 설정해주세요");
-  //     return;
-  //   }
   // };
   // 번역
   const { t } = useTranslation();

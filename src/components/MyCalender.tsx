@@ -2,7 +2,10 @@ import { useRef, useState } from "react";
 import Calendar, { CalendarProps } from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "../styles/MyCalender.scss";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 
 interface MyCalendarProps {
   sitteridx: number | undefined;
@@ -164,61 +167,67 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
 
   // 예약 등록
   const makeReservation = async () => {
-    try {
-      const isReserve = confirm("예약하시겠습니까?");
-      if (!isReserve) {
-        return;
-      }
+    if (!isLoggedIn) {
+      alert(t("header.loginRequired"));
+      return;
+    } else {
+      try {
+        const isReserve = confirm("예약하시겠습니까?");
+        if (!isReserve) {
+          return;
+        }
 
-      const startTime = formatTime(timeslots.filter((el) => el.status === "active")[0].time);
-      const endTime = formatTime(timeslots.filter((el) => el.status === "active").pop()!.time) + 1;
+        const startTime = formatTime(timeslots.filter((el) => el.status === "active")[0].time);
+        const endTime =
+          formatTime(timeslots.filter((el) => el.status === "active").pop()!.time) + 1;
+        console.log("시작시간", startTime);
+        console.log("종료시간", endTime);
 
-      console.log("시작시간", startTime);
-      console.log("종료시간", endTime);
-      // 유효성 검사
-      if (!selectedDate) {
-        alert("날짜를 선택해주세요.");
-        return;
-      }
-      if (!startTime) {
-        alert("시간을 선택해주세요.");
-        return;
-      }
-      if (!animalType) {
-        alert("반려동물의 종류를 선택해주세요.");
-        return;
-      }
-      if (!animalNum) {
-        alert("맡길 동물 친구의 수를 선택해주세요.");
-        return;
-      }
+        // 유효성 검사
+        if (!selectedDate) {
+          alert("날짜를 선택해주세요.");
+          return;
+        }
+        if (!startTime) {
+          alert("시간을 선택해주세요.");
+          return;
+        }
+        if (!animalType) {
+          alert("반려동물의 종류를 선택해주세요.");
+          return;
+        }
+        if (!animalNum) {
+          alert("맡길 동물 친구의 수를 선택해주세요.");
+          return;
+        }
 
-      const data = {
-        date: selectedDate,
-        startTime: startTime,
-        endTime: endTime,
-        content: txtRef.current?.value,
-        type: animalType,
-        animalNumber: animalNum,
-      };
-      console.log(data);
+        const data = {
+          date: selectedDate,
+          startTime: startTime,
+          endTime: endTime,
+          content: txtRef.current?.value,
+          type: animalType,
+          animalNumber: animalNum,
+        };
+        console.log(data);
 
-      const result = await axios({
-        method: "post",
-        url: `${process.env.REACT_APP_API_SERVER}/resv/${sitteridx}`,
-        data: data,
-      });
-      console.log(result);
-      if (result.status === 200) {
-        alert("예약이 완료되었습니다.");
-        // 데이터 리셋
-        resetReservation();
-      }
-    } catch (error: any) {
-      if (error.response.status === 401) {
-        alert("세션이 만료되었습니다.\n다시 로그인해주세요.");
-      } else {
-        alert("예약을 완료하지 못했습니다.");
+        const result = await axios({
+          method: "post",
+          url: `${process.env.REACT_APP_API_SERVER}/resv/${sitteridx}`,
+          data: data,
+        });
+        console.log(result);
+        if (result.status === 200) {
+          alert("예약이 완료되었습니다.");
+          // 데이터 리셋
+          resetReservation();
+        }
+      } catch (error: any) {
+        if (error.response.status === 401) {
+          alert("세션이 만료되었습니다.\n다시 로그인해주세요.");
+        } else {
+          alert("예약을 완료하지 못했습니다.");
+        }
       }
     }
   };
@@ -248,6 +257,7 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
       console.log(error);
     }
   };
+
   // const onClickDay = (value: Date) => {
   //   const newTimeslots = timeslots.map((timeslot) => {
   //     return { ...timeslot, status: "inactive" };
@@ -296,6 +306,67 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
   //       console.error("Error:", error);
   //     });
   // };
+
+  // //예약 신청 함수
+  // const insertResv = () => {
+  //   let date;
+  //   if (!selectedDate) {
+  //     return alert("날짜를 선택해주세요");
+  //   } else {
+  //     date = formatDate(selectedDate);
+  //   }
+  //   //전송에 필요한 데이터 정리
+  //   const type = typeRef.current?.value;
+  //   const animalNumber = animalNumberRef.current?.value;
+  //   const content = contentRef.current?.value;
+
+  //   // active 상태인 요소들을 필터링
+  //   const activeSlots = timeslots.filter((slot) => slot.status === "active");
+
+  //   // active 상태인 요소들 중에서 최소값과 최대값을 찾음
+  //   const startTime =
+  //     activeSlots.length > 0
+  //       ? Math.min(...activeSlots.map((slot) => parseInt(slot.time)))
+  //       : null;
+  //   const endTime =
+  //     activeSlots.length > 0
+  //       ? Math.max(...activeSlots.map((slot) => parseInt(slot.time)))
+  //       : null;
+
+  //   if (startTime !== null && endTime !== null) {
+  //     // 최소값과 최대값 출력
+  //     console.log("Min time:", startTime);
+  //     console.log("Max time:", endTime);
+  //     if (startTime === endTime) {
+  //       alert("두 시간 이상 예약을 설정해주세요");
+  //       return;
+  //     } else {
+  //       //axios요청 전송
+  //       const data = {
+  //         content,
+  //         date,
+  //         startTime,
+  //         endTime,
+  //         type,
+  //         animalNumber,
+  //       };
+
+  //       axios
+  //         .post(process.env.REACT_APP_API_SERVER + "/resv/4", { data }) // 주소 /resv/sitteridx로 수정필수!!!!
+  //         .then((response) => {
+  //           console.log(response.data);
+  //         });
+  //     }
+  //   } else {
+  //     alert("예약 시간대를 설정해주세요");
+  //     return;
+  //   }
+  // };
+  // 번역
+  const { t } = useTranslation();
+
+  // 로그인 확인
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
   return (
     <div className="calenderWrapper">

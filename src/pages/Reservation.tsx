@@ -12,13 +12,7 @@ import type { PetSitterDetail } from "../types/PetSitter";
 import { ChatList, Chats, Room } from "../types/chat";
 import { io } from "socket.io-client";
 import axios from "axios";
-import {
-  useState,
-  SyntheticEvent,
-  ChangeEvent,
-  useEffect,
-  useCallback,
-} from "react";
+import { useState, SyntheticEvent, ChangeEvent, useEffect, useCallback } from "react";
 
 // REACT_APP_API_SERVER가 정의되지 않았을 때를 대비하여 기본값을 설정
 // const apiUrl =
@@ -38,7 +32,7 @@ export default function Reservation() {
   // } else {
   //   console.log("Socket is not connected");
   // }
-  
+
   const [inputValue, setInputValue] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
@@ -127,9 +121,7 @@ export default function Reservation() {
     e.preventDefault();
     setShowModal(!showModal);
     // axios-chat
-    const chatData = await axios.get(
-      process.env.REACT_APP_API_SERVER + `/chat/${useridx}`
-    );
+    const chatData = await axios.get(process.env.REACT_APP_API_SERVER + `/chat/${useridx}`);
 
     console.log(chatData.data); //chats, msg, rooms
     const { chats, msg, rooms, user, sitter, roomidx } = chatData.data;
@@ -188,10 +180,7 @@ export default function Reservation() {
     }
     formData.append("roomidx", String(roomidx));
 
-    const imgResponse = await axios.post(
-      process.env.REACT_APP_API_SERVER + "/insertImg",
-      formData
-    );
+    const imgResponse = await axios.post(process.env.REACT_APP_API_SERVER + "/insertImg", formData);
 
     const imgSrc = imgResponse.data.saveChat.img;
     //socket전송
@@ -438,15 +427,11 @@ export default function Reservation() {
                               <div
                                 key={el.chatidx}
                                 className={
-                                  `${el.authoridx}` === `${useridx}`
-                                    ? "otherTalk"
-                                    : "meTalk"
+                                  `${el.authoridx}` === `${useridx}` ? "otherTalk" : "meTalk"
                                 }
                               >
                                 <div className="chatterName">
-                                  {`${el.authoridx}` === `${useridx}`
-                                    ? sitterName
-                                    : userName}
+                                  {`${el.authoridx}` === `${useridx}` ? sitterName : userName}
                                 </div>
                                 <div className="chatterText">{el.content}</div>
                               </div>
@@ -456,15 +441,11 @@ export default function Reservation() {
                               <div
                                 key={el.chatidx}
                                 className={
-                                  `${el.authoridx}` === `${useridx}`
-                                    ? "otherTalk"
-                                    : "meTalk"
+                                  `${el.authoridx}` === `${useridx}` ? "otherTalk" : "meTalk"
                                 }
                               >
                                 <div className="chatterName">
-                                  {`${el.authoridx}` === `${useridx}`
-                                    ? sitterName
-                                    : userName}
+                                  {`${el.authoridx}` === `${useridx}` ? sitterName : userName}
                                 </div>
                                 <img className="chatterImg" src={el.img}></img>
                               </div>
@@ -477,11 +458,7 @@ export default function Reservation() {
                           return (
                             <div
                               key={idx}
-                              className={
-                                el.nickname === userName
-                                  ? "meTalk"
-                                  : "otherTalk"
-                              }
+                              className={el.nickname === userName ? "meTalk" : "otherTalk"}
                             >
                               <div className="chatterName">{el.nickname}</div>
                               <div className="chatterText">{el.message}</div>
@@ -491,11 +468,7 @@ export default function Reservation() {
                           return (
                             <div
                               key={idx}
-                              className={
-                                el.nickname === userName
-                                  ? "meTalk"
-                                  : "otherTalk"
-                              }
+                              className={el.nickname === userName ? "meTalk" : "otherTalk"}
                             >
                               <div className="chatterName">{el.nickname}</div>
                               <img className="chatterImg" src={el.img}></img>
@@ -571,10 +544,7 @@ export default function Reservation() {
                 {selectedImage && (
                   <div id="imageModalbox" className="imageModal">
                     <div className="imageModalContent">
-                      <div
-                        className="imageModalclose"
-                        onClick={() => setSelectedImage(null)}
-                      >
+                      <div className="imageModalclose" onClick={() => setSelectedImage(null)}>
                         &times;
                       </div>
                       <div className="imageModalTitle">파일 전송</div>

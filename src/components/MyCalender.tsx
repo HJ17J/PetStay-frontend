@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import Calendar, { CalendarProps } from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "../styles/MyCalender.scss";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 interface MyCalendarProps {
   sitteridx: number | undefined;
@@ -26,6 +26,8 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
     { time: "20:00", status: "inactive" },
   ];
   const [timeslots, setTimeslots] = useState(initTimeslot);
+  const [startIdx, setStartIdx] = useState<null | number>(null); // 시작 시간 인덱스 상태
+  const [endIdx, setEndIdx] = useState<null | number>(null); // 종료 시간 인덱스 상태
 
   const [date, setDate] = useState<Date | [Date, Date]>(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -49,9 +51,6 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
       setTranslation(translation - 100);
     }
   };
-
-  const [startIdx, setStartIdx] = useState<null | number>(null); // 시작 시간 인덱스 상태
-  const [endIdx, setEndIdx] = useState<null | number>(null); // 종료 시간 인덱스 상태
 
   // 예약 시간 클릭 이벤트 핸들러 함수
   const handleTimeslotClick = (index: number) => {
@@ -116,18 +115,20 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
     }
   };
 
-  //형식변환 함수
+  // Date 포맷팅 함수
   const formatDate = (date: Date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
+
   // 시간 형식을 변환하는 함수
-  const formatTime = (time: number) => {
+  const formatTime = (time: string) => {
     // 두 자리 숫자로 포맷팅하여 반환
-    return ("0" + time).slice(-2) + ":00";
+    return Number(time.replace(":00", ""));
   };
+
   // 두 개의 시간을 비교하여 결과를 반환하는 함수
   function compareTime(time1: string, time2: string) {
     const [hour1, minute1] = time1.split(":").map(Number);
@@ -150,6 +151,17 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
     }
   }
 
+  // 예약 초기화
+  const resetReservation = () => {
+    setSelectedDate(null);
+    setAnimalType("");
+    setAnimalNum(0);
+    setStartIdx(null);
+    setEndIdx(null);
+    setTimeslots(initTimeslot);
+    txtRef.current && (txtRef.current.value = "");
+  };
+
   // 예약 등록
   const makeReservation = async () => {
     try {
@@ -158,9 +170,11 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
         return;
       }
 
-      const startTime = timeslots.filter((el) => el.status === "active")[0];
-      const endTime = timeslots.filter((el) => el.status === "active").pop();
+      const startTime = formatTime(timeslots.filter((el) => el.status === "active")[0].time);
+      const endTime = formatTime(timeslots.filter((el) => el.status === "active").pop()!.time) + 1;
 
+      console.log("시작시간", startTime);
+      console.log("종료시간", endTime);
       // 유효성 검사
       if (!selectedDate) {
         alert("날짜를 선택해주세요.");
@@ -181,8 +195,8 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
 
       const data = {
         date: selectedDate,
-        startTime: startTime.time,
-        endTime: endTime?.time,
+        startTime: startTime,
+        endTime: endTime,
         content: txtRef.current?.value,
         type: animalType,
         animalNumber: animalNum,
@@ -197,28 +211,41 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
       console.log(result);
       if (result.status === 200) {
         alert("예약이 완료되었습니다.");
-
         // 데이터 리셋
         resetReservation();
       }
-    } catch (error) {
-      console.log("Cannot make Reservation.", error);
-      throw error;
+    } catch (error: any) {
+      if (error.response.status === 401) {
+        alert("세션이 만료되었습니다.\n다시 로그인해주세요.");
+      } else {
+        alert("예약을 완료하지 못했습니다.");
+      }
     }
   };
 
-  // 예약 초기화
-  const resetReservation = () => {
+  // 초기화 버튼 클릭
+  const clickReset = () => {
     const isReset = confirm("예약 중인 정보가 초기화됩니다.");
     if (isReset) {
-      // 데이터 리셋
-      setSelectedDate(null);
-      setAnimalType("");
-      setAnimalNum(0);
-      setStartIdx(null);
-      setEndIdx(null);
-      setTimeslots(initTimeslot);
-      txtRef.current && (txtRef.current.value = "");
+      resetReservation();
+    }
+  };
+
+  const getReservations = async (
+    value: Date,
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    console.log("시터번호", sitteridx);
+    console.log("날짜??", value);
+    try {
+      const result = await axios({
+        method: "post",
+        url: `${process.env.REACT_APP_API_SERVER}/resvDate/${sitteridx}`,
+        data: { date: value },
+      });
+      console.log(result.data);
+    } catch (error) {
+      console.log(error);
     }
   };
   // const onClickDay = (value: Date) => {
@@ -269,66 +296,6 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
   //       console.error("Error:", error);
   //     });
   // };
-  //예약 신청 관련 ref
-  // const typeRef = useRef<HTMLInputElement | null>(null);
-  // const animalNumberRef = useRef<HTMLInputElement | null>(null);
-  // const contentRef = useRef<HTMLTextAreaElement | null>(null);
-
-  // //예약 신청 함수
-  // const insertResv = () => {
-  //   let date;
-  //   if (!selectedDate) {
-  //     return alert("날짜를 선택해주세요");
-  //   } else {
-  //     date = formatDate(selectedDate);
-  //   }
-  //   //전송에 필요한 데이터 정리
-  //   const type = typeRef.current?.value;
-  //   const animalNumber = animalNumberRef.current?.value;
-  //   const content = contentRef.current?.value;
-
-  //   // active 상태인 요소들을 필터링
-  //   const activeSlots = timeslots.filter((slot) => slot.status === "active");
-
-  //   // active 상태인 요소들 중에서 최소값과 최대값을 찾음
-  //   const startTime =
-  //     activeSlots.length > 0
-  //       ? Math.min(...activeSlots.map((slot) => parseInt(slot.time)))
-  //       : null;
-  //   const endTime =
-  //     activeSlots.length > 0
-  //       ? Math.max(...activeSlots.map((slot) => parseInt(slot.time)))
-  //       : null;
-
-  //   if (startTime !== null && endTime !== null) {
-  //     // 최소값과 최대값 출력
-  //     console.log("Min time:", startTime);
-  //     console.log("Max time:", endTime);
-  //     if (startTime === endTime) {
-  //       alert("두 시간 이상 예약을 설정해주세요");
-  //       return;
-  //     } else {
-  //       //axios요청 전송
-  //       const data = {
-  //         content,
-  //         date,
-  //         startTime,
-  //         endTime,
-  //         type,
-  //         animalNumber,
-  //       };
-
-  //       axios
-  //         .post(process.env.REACT_APP_API_SERVER + "/resv/4", { data }) // 주소 /resv/sitteridx로 수정필수!!!!
-  //         .then((response) => {
-  //           console.log(response.data);
-  //         });
-  //     }
-  //   } else {
-  //     alert("예약 시간대를 설정해주세요");
-  //     return;
-  //   }
-  // };
 
   return (
     <div className="calenderWrapper">
@@ -337,6 +304,7 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
         <hr />
         <Calendar
           onChange={onChange as CalendarProps["onChange"]}
+          onClickDay={getReservations}
           value={date}
           // onClickDay={onClickDay}
         />
@@ -464,7 +432,7 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
           <div>
             <span className="optionDetail">총 금액 </span>
             <span>
-              {pay && animalNum != 0 && startIdx
+              {pay && animalNum != 0 && startIdx != null
                 ? pay * animalNum * (endIdx ? endIdx - startIdx + 1 : 1)
                 : "-"}
             </span>
@@ -474,7 +442,7 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
           <button className="reservationBtn" onClick={makeReservation}>
             예약
           </button>
-          <button className="reservationBtn" onClick={resetReservation}>
+          <button className="reservationBtn" onClick={clickReset}>
             초기화
           </button>
         </div>

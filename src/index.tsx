@@ -3,7 +3,6 @@ import App from "./App";
 import "./config/i18n";
 import axios from "axios";
 
-
 console.log(process.env.REACT_APP_GOOGLE_CLIENT_ID);
 axios.defaults.withCredentials = true;
 

@@ -78,6 +78,7 @@
   border-radius: 11px;
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 
+  // 동물 종류 선택
   .animalTypeContainer {
     width: 30%;
     height: 50px;
@@ -88,7 +89,6 @@
       margin-right: 10px;
       font-weight: 600;
     }
-    // 동물 종류 선택 셀렉트 박스
     .animalTypeSelect {
       width: 80px;
       height: 40px;
@@ -96,9 +96,9 @@
       font-size: 15px;
     }
   }
-
+  // 맡길 동물 숫자 선택
   .animalNumContainer {
-    width: 60%;
+    width: 70%;
     display: flex;
     justify-content: center;
     gap: 15px;
@@ -106,8 +106,6 @@
     span {
       font-weight: 600;
     }
-
-    // 맡길 동물 숫자 선택 버튼
     .animalNumBtn {
       width: 70px;
       height: 40px;
@@ -118,9 +116,12 @@
       transition: transform 0.2s ease;
       box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
       &:hover {
-        background-color: #dcdcdc;
+        background-color: #ebebeb;
         cursor: pointer;
       }
+    }
+    .selected {
+      background-color: #c0dae3;
     }
   }
 }
@@ -223,7 +224,7 @@
 
 .times.active {
   transform: scale(0.96);
-  background-color: lightblue;
+  background-color: #c0dae3;
 }
 
 .times.inactive {
@@ -244,34 +245,50 @@
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }
 
-.reservationDetail {
-  border: 1px solid black;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 172px;
-}
-.reservationBtnContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .calenderContainer5 {
   display: flex;
   justify-content: center;
   gap: 5px;
-}
 
-.reservationBtn {
-  background-color: white;
-  border: 1px solid #dcdcdc;
-  color: #000;
-  border-radius: 5px;
-  font-size: 15px;
-  font-weight: bold;
-  width: 160px;
-  height: 50px;
-  cursor: pointer;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+  .reservationDetail {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    h3 {
+      height: 40px;
+      line-height: 40px;
+    }
+    hr {
+      margin: 10px 0;
+    }
+    .optionDetail {
+      display: inline-block;
+      width: 200px;
+      padding: 2px 0px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+  }
+  .reservationBtnContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .reservationBtn {
+      background-color: white;
+      border: 1px solid #dcdcdc;
+      color: #000;
+      border-radius: 5px;
+      font-size: 15px;
+      font-weight: bold;
+      width: 160px;
+      height: 50px;
+      cursor: pointer;
+      box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+      &:hover {
+        background-color: #ebebeb;
+      }
+    }
+  }
 }

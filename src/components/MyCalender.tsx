@@ -4,10 +4,15 @@ import "react-calendar/dist/Calendar.css";
 import "../styles/MyCalender.scss";
 import axios from "axios";
 
-export default function MyCalendar() {
+interface MyCalendarProps {
+  sitteridx: number | undefined;
+  pay: number | undefined;
+}
+
+const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
   // 예약 설정
   // 시간대 상태를 관리하는 useState 훅
-  const [timeslots, setTimeslots] = useState([
+  const initTimeslot = [
     { time: "10:00", status: "inactive" },
     { time: "11:00", status: "inactive" },
     { time: "12:00", status: "inactive" },
@@ -19,7 +24,8 @@ export default function MyCalendar() {
     { time: "18:00", status: "inactive" },
     { time: "19:00", status: "inactive" },
     { time: "20:00", status: "inactive" },
-  ]);
+  ];
+  const [timeslots, setTimeslots] = useState(initTimeslot);
 
   const [date, setDate] = useState<Date | [Date, Date]>(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -43,7 +49,7 @@ export default function MyCalendar() {
   const [startIdx, setStartIdx] = useState<null | number>(null); // 시작 시간 인덱스 상태
   const [endIdx, setEndIdx] = useState<null | number>(null); // 종료 시간 인덱스 상태
 
-  // 클릭 이벤트 핸들러 함수
+  // 예약 시간 클릭 이벤트 핸들러 함수
   const handleTimeslotClick = (index: number) => {
     // 클릭한 시간대의 상태 가져오기
     const clickedTimeslot = timeslots[index];
@@ -181,12 +187,22 @@ export default function MyCalendar() {
 
       const result = await axios({
         method: "post",
-        url: `${process.env.REACT_APP_API_SERVER}/resv/5`,
+        url: `${process.env.REACT_APP_API_SERVER}/resv/${sitteridx}`,
         data: data,
       });
       console.log(result);
-      if (result.data.isSuccess) {
+      if (result.status === 200) {
         alert("예약이 완료되었습니다.");
+
+        // 데이터 리셋
+        setSelectedDate(null);
+        setAnimalType("");
+        setAnimalNum(0);
+        setStartIdx(null);
+        setEndIdx(null);
+        setTimeslots(initTimeslot);
+        txtRef.current && (txtRef.current.value = "");
+        console.log("reset?", data);
       }
     } catch (error) {
       console.log("Cannot make Reservation.", error);
@@ -305,8 +321,8 @@ export default function MyCalendar() {
 
   return (
     <div className="calenderWrapper">
-      {/* <h1>Calendar</h1> */}
       <div className="calenderContainer1">
+        <h4>날짜</h4>
         <Calendar
           onChange={onChange as CalendarProps["onChange"]}
           value={date}
@@ -350,25 +366,36 @@ export default function MyCalendar() {
           <select
             name="animalType"
             className="animalTypeSelect"
+            value={animalType}
+            defaultValue={""}
             onChange={(e) => {
               setAnimalType(e.target.value);
             }}
           >
-            <option disabled selected></option>
+            <option disabled value=""></option>
             <option value="dog">강아지</option>
             <option value="cat">고양이</option>
             <option value="etc">그외</option>
           </select>
         </div>
         <div className="animalNumContainer">
-          <span>마릿수</span>
-          <button className="animalNumBtn" onClick={(e) => setAnimalNum(1)}>
+          <span>맡길 아이 수</span>
+          <button
+            className={`animalNumBtn ${animalNum === 1 ? "selected" : ""}`}
+            onClick={(e) => setAnimalNum(1)}
+          >
             1
           </button>
-          <button className="animalNumBtn" onClick={(e) => setAnimalNum(2)}>
+          <button
+            className={`animalNumBtn ${animalNum === 2 ? "selected" : ""}`}
+            onClick={(e) => setAnimalNum(2)}
+          >
             2
           </button>
-          <button className="animalNumBtn" onClick={(e) => setAnimalNum(3)}>
+          <button
+            className={`animalNumBtn ${animalNum === 3 ? "selected" : ""}`}
+            onClick={(e) => setAnimalNum(3)}
+          >
             3
           </button>
         </div>
@@ -384,53 +411,67 @@ export default function MyCalendar() {
         ></textarea>
       </div>
       <div className="calenderContainer5">
-        <div className="priceTitle">예약 정보 확인</div>
         <div className="reservationDetail">
+          <h3>예약 정보 확인</h3>
+          <hr />
           <div>
-            <span>
-              <strong>예약 날짜 </strong>
-            </span>
-            <span>{selectedDate && formatDate(selectedDate)}</span>
+            <span className="optionDetail">예약 날짜 </span>
+            <span>{selectedDate ? selectedDate && formatDate(selectedDate) : "-"}</span>
           </div>
           <div>
+            <span className="optionDetail">예약 시간 </span>
             <span>
-              <strong>예약 시간</strong>
+              {timeslots.some((timeslot) => timeslot.status === "active") ? (
+                timeslots.map((timeslot, idx) => {
+                  if (timeslot.status === "active") {
+                    return <span key={idx}>{timeslot.time} </span>;
+                  }
+                })
+              ) : (
+                <span>-</span>
+              )}
+              {/* { timeslots.some(timeslot => timeslot.status === "active") ? 
+              (timeslots.map((timeslot, index) => {
+                if (timeslot.status === "active") {
+                  return <span key={index}>{timeslot.time} </span>;
+                }} ):(<span>"-"</span>)
+              } */}
             </span>
-            {timeslots.map((timeslot, index) => {
-              if (timeslot.status === "active") {
-                return <span key={index}>{timeslot.time} </span>;
-              } else {
-                return null;
-              }
-            })}
           </div>
           <div>
+            <span className="optionDetail">반려동물 종류 </span>
             <span>
-              <strong>반려동물 종류 </strong>
               {animalType === "dog"
                 ? "강아지"
                 : animalType === "cat"
                 ? "고양이"
                 : animalType === "etc"
                 ? "그 외"
-                : ""}
+                : "-"}
             </span>
           </div>
           <div>
+            <span className="optionDetail">반려동물 수 </span>
+            <span>{animalNum === 0 ? "-" : animalNum + "마리"}</span>
+          </div>
+          <div>
+            <span className="optionDetail">총 금액 </span>
             <span>
-              <strong>반려동물 수 </strong>
+              {pay && animalNum != 0 && startIdx
+                ? pay * animalNum * (endIdx ? endIdx - startIdx + 1 : 1)
+                : "-"}
             </span>
-            {animalNum}마리
           </div>
         </div>
         <div className="reservationBtnContainer">
           <button className="reservationBtn" onClick={makeReservation}>
             예약
           </button>
-          <button className="reservationBtn">취소</button>
         </div>
       </div>
       <div></div>
     </div>
   );
-}
+};
+
+export default MyCalendar;

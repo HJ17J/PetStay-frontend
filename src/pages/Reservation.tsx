@@ -32,8 +32,6 @@ export default function Reservation() {
       }
       setSitterData(result.data.sitterInfo);
       setReviewData(result.data.reviews);
-      await console.log(result.data.sitterInfo);
-      await console.log(reviewData);
     } catch (error) {
       console.error("Error fetching sitter data:", error);
       throw error;
@@ -182,7 +180,7 @@ export default function Reservation() {
             </div>
           </div>
           <div className="trainerInfoContainer5">
-            <MyCalendar />
+            <MyCalendar sitteridx={sitterData?.useridx} pay={sitterData?.pay} />
             {/* Modal container */}
           </div>
         </div>

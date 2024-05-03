@@ -19,7 +19,7 @@ function App() {
             <Route path="/profile/:userid" element={<Mypage />} />
             <Route path="/petsitters" element={<PetSitterList />} />
             <Route path="/login" element={<Register />} />
-            <Route path="/calender" element={<MyCalendar />} />
+            <Route path="/calender" element={<MyCalendar sitteridx={5} pay={10000} />} />
             <Route path="/petsitter/:useridx" element={<Reservation />} />
             <Route path="/mycalender" element={<Reservation />} />
           </Routes>

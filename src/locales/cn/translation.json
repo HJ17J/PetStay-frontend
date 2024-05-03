@@ -31,6 +31,7 @@
   "userSignUp": "用户注册",
   "petSitterSignUp": "宠物保姆注册",
   "socialPlatform": "通过社交平台登录",
+  "type": "种类",
   "puppy": "狗",
   "cat": "猫",
   "etc": "其他",
@@ -38,5 +39,15 @@
   "career": "请填写您的职业经历。",
   "pay": "每小时费率",
   "selfIntroduction": "请介绍一下自己。",
-  "oneLineIntro": "简单一句介绍"
+  "oneLineIntro": "简单一句介绍",
+  "mainPage.welcome": "您的宠物最好的朋友，PetsStay宠物看护",
+  "mainPage.careDifference": "充满爱与关怀，这就是PetsStay的不同。",
+  "mainPage.everyPetVIP": "在PetsStay，每一只宠物都是VIP。",
+  "mainPage.findBestSitter": "为您珍贵的家庭成员找到最佳宠物看护。",
+  "mainPage.teamTitle": "PetsStay团队组织",
+  "teamMember.name.jinHyunJung": "金贤静",
+  "teamMember.name.shinDongWon": "申东原",
+  "teamMember.name.leeHyungSeok": "李炯锡",
+  "teamMember.name.limHakMin": "林学民",
+  "teamMember.name.hongJuHee": "洪周喜"
 }

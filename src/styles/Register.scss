@@ -16,7 +16,7 @@ input {
   width: 100%;
   background-color: #fff;
   min-height: 100vh;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .headerContainer {
@@ -42,6 +42,7 @@ input {
   display: grid;
   grid-template-columns: 1fr;
   z-index: 5;
+  overflow: auto;
 }
 
 form {
@@ -51,7 +52,6 @@ form {
   flex-direction: column;
   padding: 0rem 5rem;
   transition: all 0.2s 0.7s;
-  overflow: auto;
   grid-column: 1 / 2;
   grid-row: 1 / 2;
 }
@@ -68,7 +68,6 @@ form.sign-in-form {
 form.petsitter-form {
   transform: translate(0, 20%);
   transition: 1s 0.7s ease-in-out;
-  overflow: auto;
   height: 90vh;
 }
 
@@ -107,7 +106,22 @@ form.petsitter-form {
     white-space: nowrap; // 버튼 텍스트가 줄바꿈되지 않도록 설정
   }
 }
-
+.input-field-selfIntro {
+  max-width: 380px;
+  width: 100%;
+  background-color: #f0f0f0;
+  margin: 10px 0;
+  height: auto;
+  border-radius: 55px;
+  display: flex; // Flexbox를 사용하여 자식 요소들을 나란히 배열
+  align-items: center; // 세로 중앙 정렬
+  padding: 0 0.4rem;
+  position: relative;
+  textarea {
+    width: 100%;
+    height: 100%;
+  }
+}
 .button-container {
   display: flex;
   justify-content: center; // 버튼을 중앙 정렬
@@ -135,6 +149,10 @@ form.petsitter-form {
   font-weight: 600;
   font-size: 1.1rem;
   color: #333;
+}
+
+.input-field span {
+  color: #808080;
 }
 
 .input-field input::placeholder {
@@ -269,6 +287,17 @@ form.petsitter-form {
 .right-panel .image,
 .right-panel .content {
   transform: translateX(800px);
+}
+
+.input-field textarea {
+  width: 100%;
+  height: 80%;
+  font-size: 1.1rem;
+}
+
+.icon-style {
+  color: #6c63ff;
+  font-size: 24px;
 }
 
 /* ANIMATION */

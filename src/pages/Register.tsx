@@ -1,4 +1,18 @@
 import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faLock,
+  faIdBadge,
+  faHome,
+  faUser,
+  faCertificate,
+  faBriefcase,
+  faComment,
+  faPencilAlt,
+  faDollarSign,
+  faPaw,
+  faWonSign,
+} from "@fortawesome/free-solid-svg-icons";
 import "../styles/Register.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess, loginFailure, signupFailure } from "../store/authSlice";
@@ -343,7 +357,7 @@ export default function Register() {
             <form className="sign-in-form" onSubmit={handleLogin}>
               <h2 className="title">{t("signIn.title")}</h2>
               <div className="input-field">
-                <i className="fas fa-user"></i>
+                <FontAwesomeIcon icon={faUser} className="icon-style" />
                 <input
                   type="text"
                   placeholder={t("enterUserId")}
@@ -353,7 +367,7 @@ export default function Register() {
                 {error.userid && <p style={{ color: "red" }}>{error.userid}</p>}
               </div>
               <div className="input-field">
-                <i className="fas fa-lock"></i>
+                <FontAwesomeIcon icon={faLock} className="icon-style" />
                 <input
                   type="password"
                   placeholder={t("enterPassword")}
@@ -404,7 +418,7 @@ export default function Register() {
             <form className="sign-up-form" onSubmit={handleSignup}>
               <h2 className="title">{t("signUp.title")}</h2>
               <div className="input-field">
-                <i className="fas fa-user"></i>
+                <FontAwesomeIcon icon={faUser} className="icon-style" />
                 <input
                   type="text"
                   placeholder={t("enterUserId")}
@@ -422,7 +436,7 @@ export default function Register() {
               </div>
 
               <div className="input-field">
-                <i className="fas fa-envelope"></i>
+                <FontAwesomeIcon icon={faIdBadge} className="icon-style" />
                 <input
                   type="text"
                   placeholder={t("enterUserName")}
@@ -440,7 +454,7 @@ export default function Register() {
               </div>
 
               <div className="input-field">
-                <i className="fas fa-lock"></i>
+                <FontAwesomeIcon icon={faLock} className="icon-style" />
                 <input
                   type="password"
                   placeholder={t("enterPassword")}
@@ -450,7 +464,7 @@ export default function Register() {
                 />
               </div>
               <div className="input-field">
-                <i className="fas fa-confirm"></i>
+                <FontAwesomeIcon icon={faLock} className="icon-style" />
                 <input
                   type="password"
                   placeholder={t("confirmPassWord")}
@@ -461,7 +475,7 @@ export default function Register() {
               </div>
 
               <div className="input-field">
-                <i className="fas fa-address"></i>
+                <FontAwesomeIcon icon={faHome} className="icon-style" />
                 <input
                   type="text"
                   placeholder={t("enterAddress")}
@@ -520,7 +534,7 @@ export default function Register() {
             <form className="petsitter-form" onSubmit={handlePetSitterSignup}>
               <h2 className="title">{t("signUp.title")}</h2>
               <div className="input-field">
-                <i className="fas fa-user"></i>
+                <FontAwesomeIcon icon={faUser} className="icon-style" />
                 <input
                   type="text"
                   placeholder={t("enterUserId")}
@@ -537,7 +551,7 @@ export default function Register() {
                 </button>
               </div>
               <div className="input-field">
-                <i className="fas fa-envelope"></i>
+                <FontAwesomeIcon icon={faIdBadge} className="icon-style" />
                 <input
                   type="text"
                   placeholder={t("enterUserName")}
@@ -554,7 +568,7 @@ export default function Register() {
                 </button>
               </div>
               <div className="input-field">
-                <i className="fas fa-lock"></i>
+                <FontAwesomeIcon icon={faLock} className="icon-style" />
                 <input
                   type="password"
                   placeholder={t("enterPassword")}
@@ -564,7 +578,7 @@ export default function Register() {
                 />
               </div>
               <div className="input-field">
-                <i className="fas fa-confirm"></i>
+                <FontAwesomeIcon icon={faLock} className="icon-style" />
                 <input
                   type="password"
                   placeholder={t("confirmPassWord")}
@@ -574,7 +588,7 @@ export default function Register() {
                 />
               </div>
               <div className="input-field">
-                <i className="fas fa-address"></i>
+                <FontAwesomeIcon icon={faHome} className="icon-style" />
                 <input
                   type="text"
                   placeholder={t("enterAddress")}
@@ -584,7 +598,8 @@ export default function Register() {
                 />
               </div>
               <div className="input-field">
-                <i className="fas fa-type"></i>
+                <FontAwesomeIcon icon={faPaw} className="icon-style" />
+                <span>{t("type")}</span>&nbsp;&nbsp;
                 <label>
                   <input
                     type="checkbox"
@@ -594,6 +609,7 @@ export default function Register() {
                   />
                   {t("puppy")}
                 </label>
+                &nbsp;&nbsp;
                 <label>
                   <input
                     type="checkbox"
@@ -603,6 +619,7 @@ export default function Register() {
                   />
                   {t("cat")}
                 </label>
+                &nbsp;&nbsp;
                 <label>
                   <input
                     type="checkbox"
@@ -614,7 +631,7 @@ export default function Register() {
                 </label>
               </div>
               <div className="input-field">
-                <i className="fas fa-license"></i>
+                <FontAwesomeIcon icon={faCertificate} className="icon-style" />
                 <input
                   type="text"
                   placeholder={t("license")}
@@ -623,7 +640,7 @@ export default function Register() {
                 />
               </div>
               <div className="input-field">
-                <i className="fas fa-career"></i>
+                <FontAwesomeIcon icon={faBriefcase} className="icon-style" />
                 <input
                   type="text"
                   placeholder={t("career")}
@@ -632,7 +649,7 @@ export default function Register() {
                 />
               </div>
               <div className="input-field">
-                <i className="fas fa-oneLineIntro"></i>
+                <FontAwesomeIcon icon={faComment} className="icon-style" />
                 <input
                   type="text"
                   placeholder={t("oneLineIntro")}
@@ -640,8 +657,8 @@ export default function Register() {
                   onChange={(e) => setOneLineIntro(e.target.value)}
                 />
               </div>
-              <div className="input-field">
-                <i className="fas fa-introduction"></i>
+              <div className="input-field-selfIntro">
+                <FontAwesomeIcon icon={faPencilAlt} className="icon-style" />
                 <textarea
                   placeholder={t("selfIntroduction")}
                   value={selfIntroduction}
@@ -650,13 +667,14 @@ export default function Register() {
                 ></textarea>
               </div>
               <div className="input-field">
-                <i className="fas fa-pay"></i>
+                <FontAwesomeIcon icon={faWonSign} className="icon-style" />
                 <input
                   type="number"
                   placeholder={t("pay")}
                   value={pay}
                   onChange={(e) => setPay(e.target.value)}
                   required
+                  step="1000"
                 />
               </div>
               <div className="button-container">

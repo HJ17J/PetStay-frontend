@@ -63,7 +63,9 @@ export default function Register() {
       const response = await axios.post(
         process.env.REACT_APP_API_SERVER + "/idCheck",
         { userid },
-        { headers: { "Content-Type": "application/json" } }
+        {
+          headers: { "Content-Type": "application/json" },
+        }
       );
       setIsUserIdAvailable(response.data.isAvailable);
       alert(response.data.message);
@@ -92,7 +94,9 @@ export default function Register() {
       const response = await axios.post(
         process.env.REACT_APP_API_SERVER + "/nameCheck",
         { name },
-        { headers: { "Content-Type": "application/json" } }
+        {
+          headers: { "Content-Type": "application/json" },
+        }
       );
       setIsNameAvailable(response.data.isAvailable);
       alert(response.data.message);

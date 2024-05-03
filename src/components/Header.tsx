@@ -5,6 +5,7 @@ import "../styles/Header.scss";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../store/authSlice";
 import { RootState } from "../store/store";
+import axios from "axios";
 
 const Header: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -14,6 +15,7 @@ const Header: React.FC = () => {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
+    axios.post(process.env.REACT_APP_API_SERVER + "/logout");
     dispatch(logout());
     alert(t("header.logoutSuccess"));
     i18n.changeLanguage("ko");

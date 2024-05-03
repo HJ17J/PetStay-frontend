@@ -1,40 +1,28 @@
+import "boxicons/";
 import "../styles/Reservation.scss";
 import "../styles/ModalChat.scss";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
-import "boxicons/";
-import {
-  useState,
-  SyntheticEvent,
-  ChangeEvent,
-  useEffect,
-  useCallback,
-  useRef,
-} from "react";
+import MyCalendar from "../components/MyCalender";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
-import MyCalendar from "../components/MyCalender";
-import type { PetSitterDetail } from "../types/PetSitter";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import { review } from "../types/review";
+import type { PetSitterDetail } from "../types/PetSitter";
 import { ChatList, Chats, Room } from "../types/chat";
 import { io } from "socket.io-client";
+import axios from "axios";
+import { useState, SyntheticEvent, ChangeEvent, useEffect, useCallback } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import { useTranslation } from "react-i18next";
 
-// REACT_APP_API_SERVER가 정의되지 않았을 때를 대비하여 기본값을 설정
-// const apiUrl =
-//   process.env.REACT_APP_API_SERVER || "http://127.0.0.1:8080/api-server";
-
-// const socket = io(apiUrl, {
-//   autoConnect: false,
-// });
-const reader = new FileReader();
 const socket = io("http://localhost:8080", { autoConnect: false });
 export default function Reservation() {
   const initSocketConnect = () => {
     if (!socket.connected) socket.connect();
   };
-  const modalRef = useRef<HTMLDivElement>(null);
+
   const [inputValue, setInputValue] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
@@ -58,11 +46,13 @@ export default function Reservation() {
   //sitter정보 받아오는 함수
   const getSitterData = async () => {
     try {
-      const result = await axios.get(
-        process.env.REACT_APP_API_SERVER + `/sitter/${useridx}`
-      );
-      console.log("data>", result.data);
-      setSitterData(result.data.data);
+      const result = await axios.get(process.env.REACT_APP_API_SERVER + `/sitter/${useridx}`);
+      console.log("data>", result);
+      if (result.data.sitterInfo.length === 0) {
+        alert("데이터를 불러올 수 없습니다.");
+        return;
+      }
+      setSitterData(result.data.sitterInfo);
       setReviewData(result.data.reviews);
     } catch (error) {
       console.error("Error fetching sitter data:", error);
@@ -120,9 +110,7 @@ export default function Reservation() {
     e.preventDefault();
 
     // axios-chat
-    const chatData = await axios.get(
-      process.env.REACT_APP_API_SERVER + `/chat/${useridx}`
-    );
+    const chatData = await axios.get(process.env.REACT_APP_API_SERVER + `/chat/${useridx}`);
 
     console.log(chatData.data); //chats, msg, rooms
     const { chats, msg, rooms, user, sitter, roomidx } = chatData.data;
@@ -184,10 +172,7 @@ export default function Reservation() {
     }
     formData.append("roomidx", String(roomidx));
 
-    const imgResponse = await axios.post(
-      process.env.REACT_APP_API_SERVER + "/insertImg",
-      formData
-    );
+    const imgResponse = await axios.post(process.env.REACT_APP_API_SERVER + "/insertImg", formData);
 
     const imgSrc = imgResponse.data.saveChat.img;
     //socket전송
@@ -231,6 +216,21 @@ export default function Reservation() {
     setSitterName(sitter.name);
     setRoomidx(roomidx);
   };
+
+  // 번역
+  const { t } = useTranslation();
+
+  // 로그인 확인
+  const isLoogedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const handleClick = (e: SyntheticEvent) => {
+    e.preventDefault();
+    if (isLoogedIn) {
+      toggleModal(e);
+    } else {
+      alert(t("header.loginRequired"));
+    }
+  };
+
   return (
     <>
       <Header />
@@ -239,7 +239,7 @@ export default function Reservation() {
           <div className="trainerInfoContainer1">
             <div className="imageContainer">
               <img
-                src="https://picsum.photos/200/300?grayscale"
+                src={sitterData?.img}
                 alt="Profile Image"
                 className="reservation_profile_image"
               />
@@ -251,18 +251,10 @@ export default function Reservation() {
               {/* <div className="trainerTitle">
                 <span>자기소개</span>
               </div> */}
-              <div className="selfIntroductionText">
-                {sitterData?.shortIntro}
-              </div>
+              <div className="selfIntroductionText">{sitterData?.selfIntroduction}</div>
             </div>
             <div className="btn-box">
-              <a
-                href=""
-                className="reservationBtn"
-                onClick={(e) => {
-                  toggleModal(e);
-                }}
-              >
+              <a href="" className="reservationBtn" onClick={handleClick}>
                 문의하기
               </a>
             </div>
@@ -309,9 +301,7 @@ export default function Reservation() {
                         <img src={el.img} alt="" className="info1Img" />
                       </div>
                       <div className="info2">
-                        <div className="info2Text">
-                          {el.name} (슈나우저·9살)
-                        </div>
+                        <div className="info2Text">{el.name} (슈나우저·9살)</div>
                         <div className="info2Text">
                           {el.rate} 점 {el.createdAt}
                         </div>
@@ -342,7 +332,7 @@ export default function Reservation() {
             </div>
           </div>
           <div className="trainerInfoContainer5">
-            <MyCalendar />
+            <MyCalendar sitteridx={sitterData?.useridx} pay={sitterData?.pay} />
             {/* Modal container */}
           </div>
         </div>
@@ -398,15 +388,11 @@ export default function Reservation() {
                               <div
                                 key={el.chatidx}
                                 className={
-                                  `${el.authoridx}` === `${useridx}`
-                                    ? "otherTalk"
-                                    : "meTalk"
+                                  `${el.authoridx}` === `${useridx}` ? "otherTalk" : "meTalk"
                                 }
                               >
                                 <div className="chatterName">
-                                  {`${el.authoridx}` === `${useridx}`
-                                    ? sitterName
-                                    : userName}
+                                  {`${el.authoridx}` === `${useridx}` ? sitterName : userName}
                                 </div>
                                 <div className="chatterText">{el.content}</div>
                               </div>
@@ -416,15 +402,11 @@ export default function Reservation() {
                               <div
                                 key={el.chatidx}
                                 className={
-                                  `${el.authoridx}` === `${useridx}`
-                                    ? "otherTalk"
-                                    : "meTalk"
+                                  `${el.authoridx}` === `${useridx}` ? "otherTalk" : "meTalk"
                                 }
                               >
                                 <div className="chatterName">
-                                  {`${el.authoridx}` === `${useridx}`
-                                    ? sitterName
-                                    : userName}
+                                  {`${el.authoridx}` === `${useridx}` ? sitterName : userName}
                                 </div>
                                 <img className="chatterImg" src={el.img}></img>
                               </div>
@@ -437,11 +419,7 @@ export default function Reservation() {
                           return (
                             <div
                               key={idx}
-                              className={
-                                el.nickname === userName
-                                  ? "meTalk"
-                                  : "otherTalk"
-                              }
+                              className={el.nickname === userName ? "meTalk" : "otherTalk"}
                             >
                               <div className="chatterName">{el.nickname}</div>
                               <div className="chatterText">{el.message}</div>
@@ -451,11 +429,7 @@ export default function Reservation() {
                           return (
                             <div
                               key={idx}
-                              className={
-                                el.nickname === userName
-                                  ? "meTalk"
-                                  : "otherTalk"
-                              }
+                              className={el.nickname === userName ? "meTalk" : "otherTalk"}
                             >
                               <div className="chatterName">{el.nickname}</div>
                               <img className="chatterImg" src={el.img}></img>
@@ -531,10 +505,7 @@ export default function Reservation() {
                 {selectedImage && (
                   <div id="imageModalbox" className="imageModal">
                     <div className="imageModalContent">
-                      <div
-                        className="imageModalclose"
-                        onClick={() => setSelectedImage(null)}
-                      >
+                      <div className="imageModalclose" onClick={() => setSelectedImage(null)}>
                         &times;
                       </div>
                       <div className="imageModalTitle">파일 전송</div>

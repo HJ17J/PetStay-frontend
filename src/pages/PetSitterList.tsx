@@ -2,7 +2,7 @@ import React from "react";
 import "../styles/PetSitterList.scss";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import type { PetSitterList } from "../types/PetSitter";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -28,9 +28,7 @@ export default function PetSitterList() {
   // 펫시터 목록 조회 요청
   const fetchPetSitters = async () => {
     try {
-      const result = await axios.get(
-        process.env.REACT_APP_API_SERVER + "/sitter"
-      );
+      const result = await axios.get(process.env.REACT_APP_API_SERVER + "/sitter");
       console.log(result.data);
       setPetSitters(result.data.data);
     } catch (error) {
@@ -95,10 +93,7 @@ export default function PetSitterList() {
                   <div className="rating-box">
                     <div className="stars">
                       <span className="base-star">★★★★★</span>
-                      <span
-                        className="filled-star"
-                        style={{ width: `${sitter.rating * 20}%` }}
-                      >
+                      <span className="filled-star" style={{ width: `${sitter.rating * 20}%` }}>
                         ★★★★★
                       </span>
                     </div>

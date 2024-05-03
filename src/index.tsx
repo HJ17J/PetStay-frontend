@@ -5,9 +5,9 @@ import axios from "axios";
 
 axios.defaults.withCredentials = true;
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
+console.log(process.env.REACT_APP_GOOGLE_CLIENT_ID);
+
+const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
   <>
     <App />

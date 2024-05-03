@@ -63,7 +63,7 @@ const ChatPage = () => {
       <h1>채팅방</h1>
       <ul>
         {messages.map((msg) => (
-          <li key={msg.chatIdx}>
+          <li key={msg.chatidx}>
             {msg.content}
             {msg.img && (
               <img src={msg.img} alt="Chat Image" style={{ width: 100 }} />

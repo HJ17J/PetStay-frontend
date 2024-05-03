@@ -2,8 +2,10 @@ import React from "react";
 import "../styles/MainPage.scss";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import { useTranslation } from "react-i18next";
 
 const MainPage = () => {
+  const { t } = useTranslation();
   return (
     <div className="main-page">
       <Header />
@@ -22,8 +24,8 @@ const MainPage = () => {
       <section className="sitter-section">
         <div className="sitter-content">
           <div className="sitter-text">
-            <p>반려동물들의 최고의 친구, 펫스테이 펫시터들</p>
-            <p>사랑과 정성으로 가득 찬 돌봄, 그것이 펫스테이의 차이입니다.</p>
+            <p>{t("mainPage.welcome")}</p>
+            <p>{t("mainPage.careDifference")}</p>
           </div>
           <div className="sitter-image">
             <img src="images/Main2.png" alt="Caring Sitter" />
@@ -32,46 +34,43 @@ const MainPage = () => {
       </section>
       <section className="vip-section">
         <div className="vip-text">
-          <p>펫스테이에서는 모든 반려동물이 VIP입니다.</p>
-          <p>당신의 소중한 가족을 위한 최적의 펫시터를 찾아보세요.</p>
+          <p>{t("mainPage.everyPetVIP")}</p>
+          <p>{t("mainPage.findBestSitter")}</p>
         </div>
         <div className="vip-image">
           <img src="images/Main3.png" alt="VIP Pets" />
         </div>
       </section>
       <section className="team">
-        <h3>펫스테이 팀 조직도</h3>
+        <h3>{t("mainPage.teamTitle")}</h3>
         <div className="team-members">
           <div className="team-member">
             <img src="" alt="Team Member 1" />
-            <p>진현정</p>
+            <p>{t("teamMember.name.jinHyunJung")}</p>
             <p>CEO</p>
           </div>
           <div className="team-member">
             <img src="" alt="Team Member 2" />
-            <p>신동원</p>
+            <p>{t("teamMember.name.shinDongWon")}</p>
             <p>CTO</p>
           </div>
           <div className="team-member">
             <img src="" alt="Team Member 3" />
-            <p>이형석</p>
+            <p>{t("teamMember.name.leeHyungSeok")}</p>
             <p>COO</p>
           </div>
           <div className="team-member">
             <img src="images/lim.png" alt="Team Member 4" />
-            <p>임학민</p>
+            <p>{t("teamMember.name.limHakMin")}</p>
             <p>CMO</p>
           </div>
           <div className="team-member">
             <img src="" alt="Team Member 5" />
-            <p>홍주희</p>
+            <p>{t("teamMember.name.hongJuHee")}</p>
             <p>CFO</p>
           </div>
         </div>
       </section>
-      {/* <section className="bottom">
-        <img src="images/bottom banner2 edit.png" alt="bottom" />
-      </section> */}
       <Footer />
     </div>
   );

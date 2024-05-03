@@ -2,6 +2,16 @@
 
 /* 활성화된 시간대 스타일 */
 
+/* 기본 컨테이너 */
+@mixin container {
+  width: 100%;
+  border: 1px solid #dcdcdc;
+  display: flex;
+  padding: 10px;
+  border-radius: 11px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+}
+
 .react-calendar {
   width: unset !important;
   // overflow: hidden;
@@ -43,40 +53,33 @@
 }
 
 .calenderContainer1 {
-  border: 1px solid #dcdcdc;
-  display: flex;
+  @include container;
   flex-direction: column;
-  padding: 5px;
-  gap: 10px;
-  padding: 5px;
-  border-radius: 11px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  justify-content: center;
+  h3 {
+    height: 40px;
+    line-height: 40px;
+  }
+  hr {
+    margin: 10px 0;
+  }
 }
 
 .calenderContainer2 {
-  border: 1px solid #dcdcdc;
-  position: relative;
-  display: flex;
+  @include container;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  padding: 5px;
-  gap: 10px;
-  padding: 5px;
   height: 90px;
-  border-radius: 11px;
+  position: relative;
+  align-items: center;
   overflow: hidden;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }
 
 // 예약 옵션 컨테이너
 .calenderContainer3 {
-  border: 1px solid #dcdcdc;
-  display: flex;
+  @include container;
+  flex-direction: row;
   justify-content: space-around;
-  padding: 10px;
-  border-radius: 11px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 
   // 동물 종류 선택
   .animalTypeContainer {
@@ -125,24 +128,19 @@
     }
   }
 }
-.calenderContainer4 {
-  border: 1px solid #dcdcdc;
-  display: flex;
-  flex-direction: column;
-  padding: 5px;
-  gap: 10px;
-  padding: 5px;
-  border-radius: 11px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-}
 
-.priceTitle {
-  border-bottom: 1px solid #ebebeb;
-  display: flex;
-  align-items: center;
-  height: 57px;
-  font-size: 18px;
-  font-weight: bold;
+.calenderContainer4 {
+  @include container;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px;
+  h3 {
+    height: 40px;
+    line-height: 40px;
+  }
+  hr {
+    margin: 10px 0;
+  }
 }
 
 /* 슬라이더 css*/
@@ -202,7 +200,6 @@
   border: none;
   scroll-behavior: smooth;
   left: 24px;
-  // width: auto;
   height: 78px;
   overflow: hidden;
   gap: 26px;
@@ -235,26 +232,15 @@
 }
 
 .calenderContainer5 {
-  border: 1px solid #dcdcdc;
-  display: flex;
+  @include container;
+  width: 100%;
+  height: 300px;
   flex-direction: column;
-  padding: 5px;
-  gap: 10px;
-  padding: 5px;
-  border-radius: 11px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-}
-
-.calenderContainer5 {
-  display: flex;
   justify-content: center;
-  gap: 5px;
-
   .reservationDetail {
-    padding: 10px;
     display: flex;
     flex-direction: column;
-    width: 100%;
+    padding: 10px;
     h3 {
       height: 40px;
       line-height: 40px;
@@ -274,7 +260,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-
     .reservationBtn {
       background-color: white;
       border: 1px solid #dcdcdc;

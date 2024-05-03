@@ -195,14 +195,7 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
         alert("예약이 완료되었습니다.");
 
         // 데이터 리셋
-        setSelectedDate(null);
-        setAnimalType("");
-        setAnimalNum(0);
-        setStartIdx(null);
-        setEndIdx(null);
-        setTimeslots(initTimeslot);
-        txtRef.current && (txtRef.current.value = "");
-        console.log("reset?", data);
+        resetReservation();
       }
     } catch (error) {
       console.log("Cannot make Reservation.", error);
@@ -210,6 +203,20 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
     }
   };
 
+  // 예약 초기화
+  const resetReservation = () => {
+    const isReset = confirm("예약 중인 정보가 초기화됩니다.");
+    if (isReset) {
+      // 데이터 리셋
+      setSelectedDate(null);
+      setAnimalType("");
+      setAnimalNum(0);
+      setStartIdx(null);
+      setEndIdx(null);
+      setTimeslots(initTimeslot);
+      txtRef.current && (txtRef.current.value = "");
+    }
+  };
   // const onClickDay = (value: Date) => {
   //   const newTimeslots = timeslots.map((timeslot) => {
   //     return { ...timeslot, status: "inactive" };
@@ -322,7 +329,8 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
   return (
     <div className="calenderWrapper">
       <div className="calenderContainer1">
-        <h4>날짜</h4>
+        <h3 className="detailTitle">날짜</h3>
+        <hr />
         <Calendar
           onChange={onChange as CalendarProps["onChange"]}
           value={date}
@@ -401,7 +409,8 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
         </div>
       </div>
       <div className="calenderContainer4">
-        <h4>추가 요청사항</h4>
+        <h3 className="detailTitle">추가 요청사항</h3>
+        <hr />
         <textarea
           name="content"
           className="resvContent"
@@ -412,7 +421,7 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
       </div>
       <div className="calenderContainer5">
         <div className="reservationDetail">
-          <h3>예약 정보 확인</h3>
+          <h3 className="detailTitle">예약 정보 확인</h3>
           <hr />
           <div>
             <span className="optionDetail">예약 날짜 </span>
@@ -430,12 +439,6 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
               ) : (
                 <span>-</span>
               )}
-              {/* { timeslots.some(timeslot => timeslot.status === "active") ? 
-              (timeslots.map((timeslot, index) => {
-                if (timeslot.status === "active") {
-                  return <span key={index}>{timeslot.time} </span>;
-                }} ):(<span>"-"</span>)
-              } */}
             </span>
           </div>
           <div>
@@ -466,6 +469,9 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
         <div className="reservationBtnContainer">
           <button className="reservationBtn" onClick={makeReservation}>
             예약
+          </button>
+          <button className="reservationBtn" onClick={resetReservation}>
+            초기화
           </button>
         </div>
       </div>

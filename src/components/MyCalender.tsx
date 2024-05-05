@@ -240,21 +240,23 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
         .filter((el: ReservationInfo) => el.confirm != "refused")
         .map((el: ReservationInfo) => [
           formatTimeToString(el.startTime),
-          el.endTime - el.startTime,
+          el.endTime - el.startTime === 0 ? 0 : el.endTime - el.startTime - 1,
         ]);
-      console.log(reservationToday);
 
       // timeslot 값 초기화 후 예약된 시간 표시
       const updatedTimeslots = [...initTimeslot];
-      console.log("현재 timeslot", timeslots);
+      // console.log("현재 timeslot", timeslots);
       for (const time of reservationToday) {
+        console.log(time);
         const idx = updatedTimeslots.findIndex((el) => el.time === time[0]);
         for (let i = idx; i <= idx + time[1]; i++) {
-          updatedTimeslots[idx].booked = true;
+          console.log(i);
+          updatedTimeslots[i].booked = true;
         }
       }
       setTimeslots(updatedTimeslots);
-      console.log(timeslots);
+      console.log(updatedTimeslots);
+      // console.log("처리 후 timeslot", timeslots);
     } catch (error) {
       console.log(error);
     }

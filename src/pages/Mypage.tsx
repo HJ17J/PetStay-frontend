@@ -1,6 +1,7 @@
 // import { useState } from "react";
-import { useState, SyntheticEvent, ChangeEvent, useEffect } from "react";
+import { useState, SyntheticEvent, ChangeEvent, useEffect, useCallback, useRef } from "react";
 import "../styles/Mypage.scss";
+import "../styles/ModalChat.scss";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Picker from "@emoji-mart/react";
@@ -11,12 +12,22 @@ import data from "@emoji-mart/data";
 import axios from "axios";
 import { UserData, Reservation } from "../types/reservation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faTimes, faQuestion } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faTimes, faQuestion, faComments } from "@fortawesome/free-solid-svg-icons";
 import StarRating from "../components/StarRating";
 
 const socket = io("http://localhost:8080", { autoConnect: false });
 
 export default function Mypage() {
+  // 주희 chat
+  const initSocketConnect = () => {
+    if (!socket.connected) socket.connect();
+  };
+  const scrollDiv = useRef<HTMLDivElement | null>(null);
+  const [usertype, setUsertype] = useState("");
+  const [useridx, setUseridx] = useState(0);
+  //현재 채팅 room관리
+  const [activeRoom, setActiveRoom] = useState<Room | null>(null);
+  // =================
   const [activeTab, setActiveTab] = useState("account");
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -29,9 +40,65 @@ export default function Mypage() {
   const [userName, setUserName] = useState<string>("");
   const [sitterName, setSitterName] = useState<string>("");
   const [roomidx, setRoomidx] = useState<number>(0);
-  const { useridx } = useParams();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [sitterData, setSitterData] = useState(null);
+  const fetchUserData = async () => {
+    try {
+      // console.log("userid:", userid); // Log useridx to check if it's populated
+      const response = await axios.post(`${process.env.REACT_APP_API_SERVER}/profile`);
+      console.log("response:", response.data); // Log response to check if it's received
+      setUserData(response.data);
+      setReservations(response.data.resvData);
+
+      setUsertype(response.data.userData.usertype);
+      setUserName(response.data.userData.name);
+      setUseridx(response.data.userData.useridx); //현재 로그인 계정의 idx
+    } catch (error) {
+      console.error("Error fetching sitter data:", error);
+    }
+  };
+
+  const addChatList = useCallback(
+    (data: ChatList) => {
+      console.log(data); //{message, nickname}
+      let newChatList;
+      if (data.img === "") {
+        //텍스트 데이터 일 때
+        newChatList = [
+          ...chatList,
+          {
+            nickname: data.nickname,
+            message: data.message,
+            img: "",
+          },
+        ];
+      } else {
+        //img데이터 일 때
+        newChatList = [
+          ...chatList,
+          {
+            nickname: data.nickname,
+            message: "",
+            img: data.img,
+          },
+        ];
+      }
+      setChatList(newChatList);
+    },
+    [chatList]
+  );
+
+  useEffect(() => {
+    fetchUserData();
+    initSocketConnect();
+  }, []);
+  //실시간 채팅 진행 시 실행
+  useEffect(() => {
+    socket.on("message", addChatList);
+    socket.on("img", addChatList);
+    scrollDiv.current?.scrollIntoView({ behavior: "auto" }); //smooth
+  }, [addChatList]);
 
   // 리뷰
   const [reviewContent, setReviewContent] = useState("");
@@ -86,13 +153,24 @@ export default function Mypage() {
     roomList?.forEach((room) => {
       if (room.roomidx === clickroomidx) {
         otherName = room.User.name;
+        console.log("대화 상대이름", otherName);
+        setSitterName(otherName);
+        setActiveRoom(room);
       }
     });
 
-    const roomName = `${userName}+${otherName}`;
+    //if문으로 type에 따라
+    let roomName;
+    if (usertype === "user") {
+      roomName = `${userName}+${otherName}`;
+    } else if (usertype === "sitter") {
+      roomName = `${otherName}+${userName}`;
+    }
+
+    console.log("roomName>>>", roomName);
     // room생성
     socket.emit("createRoom", roomName);
-    console.log(clickroomidx);
+    // console.log(clickroomidx);
     //1. 클릭한 roomidx로 검색한 채팅 데이터 가져옴
     // axios-chat
     const chatData = await axios.get(
@@ -103,8 +181,8 @@ export default function Mypage() {
     const { chats, msg, user, sitter, roomidx } = chatData.data;
 
     setChatData(chats);
-    setUserName(user.name);
-    setSitterName(sitter.name);
+    // setUserName(user.name);
+    // setSitterName(sitter.name);
     setRoomidx(roomidx);
   };
 
@@ -120,6 +198,10 @@ export default function Mypage() {
     //inputValue 전송
     //1. socket으로 전송
     if (inputValue.trim() === "") return setInputValue("");
+    if (roomidx === 0) {
+      setInputValue("");
+      return alert("채팅방을 선택해주세요");
+    }
 
     const sendData = {
       msg: inputValue,
@@ -138,6 +220,10 @@ export default function Mypage() {
     // alert("이미지 보냄!");
     e.preventDefault();
     // console.log(selectedImage?.name);
+    if (roomidx === 0) {
+      setInputValue("");
+      return alert("채팅방을 선택해주세요");
+    }
 
     const formData = new FormData();
     if (selectedImage) {
@@ -161,33 +247,23 @@ export default function Mypage() {
 
   const toggleModal = async (e: SyntheticEvent) => {
     e.preventDefault();
-    setShowModal(!showModal);
+
     // axios-chat
-    // const chatData = await axios.get(
-    //   process.env.REACT_APP_API_SERVER + `/chat/${useridx}`
-    // );
+    const chatData = await axios.get(process.env.REACT_APP_API_SERVER + "/Onechat");
+    console.log("chatData", chatData.data);
+    const { rooms } = chatData.data;
+
+    setRoomList(rooms);
+
+    if (roomList) {
+      setShowModal(!showModal);
+    }
   };
 
   const handleReviewClick = (e: SyntheticEvent) => {
     e.preventDefault();
     setShowReviewModal(!showReviewModal);
   };
-  const { userid } = useParams();
-  const [sitterData, setSitterData] = useState(null);
-  const fetchUserData = async () => {
-    try {
-      // console.log("userid:", userid); // Log useridx to check if it's populated
-      const response = await axios.post(`${process.env.REACT_APP_API_SERVER}/profile`);
-      console.log("response:", response.data); // Log response to check if it's received
-      setUserData(response.data);
-      setReservations(response.data.resvData);
-    } catch (error) {
-      console.error("Error fetching sitter data:", error);
-    }
-  };
-  useEffect(() => {
-    fetchUserData();
-  }, []);
 
   // 예약 삭제
   const handleDeleteReservation = async (reservationId: number) => {
@@ -215,6 +291,16 @@ export default function Mypage() {
     setReviewRate(rating);
   };
 
+  const enterEvent = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    if (e.key === "Enter") {
+      // Enter 키 입력 시 실행할 내용
+      sendMessage(e);
+    }
+  };
+  const closeChatModal = (e: SyntheticEvent) => {
+    setShowModal(!showModal);
+  };
   return (
     <>
       <Header />
@@ -388,7 +474,7 @@ export default function Mypage() {
 
       {showModal && (
         <div id="modalbox" className="modal">
-          <div className="modalCloseBtn" onClick={toggleModal}>
+          <div className="modalCloseBtn" onClick={closeChatModal}>
             &times;
           </div>
           <div className="modalContainer">
@@ -403,7 +489,20 @@ export default function Mypage() {
                     </div>
                   </div>
                 </div> */}
-                <div className="advertisementContainer"></div>
+
+                <div className="advertisementContainer">
+                  {activeRoom && (
+                    <>
+                      <div>
+                        <img src={activeRoom?.User.img} alt="" className="chattingActiveImage" />
+                      </div>
+                      <div className="chattingActiveTitle">{activeRoom?.User.name}</div>
+                      <div className="commentsIcont">
+                        <FontAwesomeIcon icon={faComments} />
+                      </div>
+                    </>
+                  )}
+                </div>
                 <div className="chattingHistoryWrapper">
                   {/* <div className="chattingContainer">
                     <div>
@@ -463,8 +562,6 @@ export default function Mypage() {
                     </div> */}
                     <div className="chatterInformation">
                       {/* 기존 채팅 */}
-                      <div className="chatterName">홍길동</div>
-                      <div className="chatterText">안녕하세요!</div>
                       {chatData &&
                         chatData.map((el) => {
                           if (el.img === null) {
@@ -472,11 +569,11 @@ export default function Mypage() {
                               <div
                                 key={el.chatidx}
                                 className={
-                                  `${el.authoridx}` === `${useridx}` ? "otherTalk" : "meTalk"
+                                  `${el.authoridx}` === `${useridx}` ? "meTalk" : "otherTalk"
                                 }
                               >
                                 <div className="chatterName">
-                                  {`${el.authoridx}` === `${useridx}` ? sitterName : userName}
+                                  {`${el.authoridx}` === `${useridx}` ? userName : sitterName}
                                 </div>
                                 <div className="chatterText">{el.content}</div>
                               </div>
@@ -486,11 +583,11 @@ export default function Mypage() {
                               <div
                                 key={el.chatidx}
                                 className={
-                                  `${el.authoridx}` === `${useridx}` ? "otherTalk" : "meTalk"
+                                  `${el.authoridx}` === `${useridx}` ? "meTalk" : "otherTalk"
                                 }
                               >
                                 <div className="chatterName">
-                                  {`${el.authoridx}` === `${useridx}` ? sitterName : userName}
+                                  {`${el.authoridx}` === `${useridx}` ? userName : sitterName}
                                 </div>
                                 <img className="chatterImg" src={el.img}></img>
                               </div>
@@ -521,6 +618,7 @@ export default function Mypage() {
                           );
                         }
                       })}
+                      <div ref={scrollDiv}></div>
                     </div>
                   </div>
                 </div>
@@ -546,6 +644,7 @@ export default function Mypage() {
                       // value={currentEmoji || ""}
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
+                      onKeyDown={enterEvent}
                     />
                     <button onClick={sendMessage}>보내기</button>
                   </div>
@@ -557,11 +656,11 @@ export default function Mypage() {
                       }}
                     >
                       {/* 이모지 변경  */}
-                      <div className="emojiBtnContainer">
+                      {/* <div className="emojiBtnContainer">
                         <div className="emojiBtn " onClick={toggleEmoji}>
                           <i className="bx bx-smile"></i>
                         </div>
-                      </div>
+                      </div> */}
                       {isPickerVisible && (
                         // <div className={isPickerVisible ? "d-block" : "d-none"}>
                         <div

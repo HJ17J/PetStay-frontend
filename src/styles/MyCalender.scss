@@ -32,8 +32,10 @@
 }
 
 .react-calendar {
-  width: unset !important;
-  // overflow: hidden;
+  width: 90%;
+  margin: auto;
+  border: none;
+  // width: unset !important;
 }
 
 .react-calendar__navigation {
@@ -52,15 +54,25 @@
   box-shadow: none;
 }
 
-.react-calendar__tile {
+.react-calendar__month-view__days {
+  width: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
-  color: black;
-  border: 1px solid black;
-  height: 28px;
-  border-radius: 0px;
-  box-shadow: none;
+
+  /* 달력 날짜 */
+  .react-calendar__tile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 36px;
+  }
+  .react-calendar__tile--now {
+    background-color: #ffcc00;
+  }
+  .react-calendar__tile--active {
+    background-color: #00abf0;
+  }
 }
 
 .calenderWrapper {

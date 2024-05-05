@@ -274,6 +274,8 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
         <Calendar
           onChange={onChange as CalendarProps["onChange"]}
           onClickDay={getReservations}
+          minDate={new Date()}
+          formatDay={(locale, date) => date.toLocaleString("en", { day: "numeric" })}
           value={date}
         />
       </div>

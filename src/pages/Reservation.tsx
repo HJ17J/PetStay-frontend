@@ -12,11 +12,13 @@ import type { PetSitterDetail } from "../types/PetSitter";
 import { ChatList, Chats, Room } from "../types/chat";
 import { io } from "socket.io-client";
 import axios from "axios";
-import { useState, SyntheticEvent, ChangeEvent, useEffect, useCallback } from "react";
+import { useState, SyntheticEvent, ChangeEvent, useEffect, useCallback, useRef } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { useTranslation } from "react-i18next";
 import { DisplayStarRating } from "../components/StarRatingView";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faComments } from "@fortawesome/free-solid-svg-icons";
 
 const socket = io("http://localhost:8080", { autoConnect: false });
 export default function Reservation() {
@@ -24,6 +26,7 @@ export default function Reservation() {
     if (!socket.connected) socket.connect();
   };
 
+  const scrollDiv = useRef<HTMLDivElement | null>(null);
   const [inputValue, setInputValue] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
@@ -37,18 +40,22 @@ export default function Reservation() {
   const [chatList, setChatList] = useState<ChatList[]>([]);
   //roomidx관리
   const [roomidx, setRoomidx] = useState<number>(0);
+  //현재 채팅 room관리
+  const [activeRoom, setActiveRoom] = useState<Room | null>(null);
   //rooms관리
   const [roomList, setRoomList] = useState<Room[] | null>(null);
   //이름관리
   const [userName, setUserName] = useState<string>("");
   const [sitterName, setSitterName] = useState<string>("");
-
+  //채팅 상대 id관리
   const { useridx } = useParams();
+  const [otheridx, setOtheridx] = useState(useridx);
+
   //sitter정보 받아오는 함수
   const getSitterData = async () => {
     try {
       const result = await axios.get(process.env.REACT_APP_API_SERVER + `/sitter/${useridx}`);
-      console.log("data>", result);
+      // console.log("data>", result);
       if (result.data.sitterInfo.length === 0) {
         alert("데이터를 불러올 수 없습니다.");
         return;
@@ -62,7 +69,7 @@ export default function Reservation() {
   };
   const addChatList = useCallback(
     (data: ChatList) => {
-      console.log(data); //{message, nickname}
+      // console.log(data); //{message, nickname}
       let newChatList;
       if (data.img === "") {
         //텍스트 데이터 일 때
@@ -99,6 +106,7 @@ export default function Reservation() {
   useEffect(() => {
     socket.on("message", addChatList);
     socket.on("img", addChatList);
+    scrollDiv.current?.scrollIntoView({ behavior: "auto" }); //smooth
   }, [addChatList]);
 
   // This function will be triggered when the file field changes
@@ -115,6 +123,9 @@ export default function Reservation() {
 
     console.log(chatData.data); //chats, msg, rooms
     const { chats, msg, rooms, user, sitter, roomidx } = chatData.data;
+    if (user.usertype === "sitter") {
+      return alert("일반회원만 이용이 가능한 서비스 입니다");
+    }
     if (chats) {
       //채팅 있으면
       setChatData(chats);
@@ -123,10 +134,14 @@ export default function Reservation() {
     setSitterName(sitter.name);
     setRoomidx(roomidx);
     setRoomList(rooms);
+    const nowRoom = rooms.filter((room: Room) => room.roomidx === roomidx);
+    setActiveRoom(nowRoom[0]);
+    // console.log("현재 room>>", nowRoom[0]);
 
     const roomName = `${userName}+${sitterName}`;
     // room생성
     socket.emit("createRoom", roomName);
+
     if (roomList) {
       setShowModal(!showModal);
     }
@@ -186,7 +201,7 @@ export default function Reservation() {
     // console.log(imgSrc);
     setSelectedImage(null);
   };
-  console.log("room목록", roomList);
+  // console.log("room목록", roomList);
 
   //room클릭시
   const clickRoom = async (clickroomidx: number) => {
@@ -202,20 +217,30 @@ export default function Reservation() {
     const roomName = `${userName}+${otherName}`;
     // room생성
     socket.emit("createRoom", roomName);
-    console.log(clickroomidx);
+    // console.log(clickroomidx);
     //1. 클릭한 roomidx로 검색한 채팅 데이터 가져옴
     // axios-chat
     const chatData = await axios.get(
       process.env.REACT_APP_API_SERVER + `/chatRoom/${clickroomidx}`
     );
 
-    console.log(chatData.data); //chats, msg, rooms
+    // console.log(chatData.data); //chats, msg, rooms
     const { chats, msg, user, sitter, roomidx } = chatData.data;
 
     setChatData(chats);
     setUserName(user.name);
     setSitterName(sitter.name);
     setRoomidx(roomidx);
+    let newOtheridx;
+    roomList?.forEach((room) => {
+      if (room.roomidx === clickroomidx) {
+        newOtheridx = room.sitteridx;
+        setActiveRoom(room);
+      }
+    });
+    setOtheridx(newOtheridx);
+
+    // console.log("현재 room>>", activeRoom);
   };
 
   // 번역
@@ -232,6 +257,18 @@ export default function Reservation() {
     }
   };
 
+  // console.log("otheridx", otheridx);
+
+  const enterEvent = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    if (e.key === "Enter") {
+      // Enter 키 입력 시 실행할 내용
+      sendMessage(e);
+    }
+  };
+  const closeModal = (e: SyntheticEvent) => {
+    setShowModal(!showModal);
+  };
   return (
     <>
       <Header />
@@ -335,13 +372,23 @@ export default function Reservation() {
       <Footer />
       {showModal && (
         <div id="modalbox" className="modal">
-          <div className="modalCloseBtn" onClick={toggleModal}>
+          <div className="modalCloseBtn" onClick={closeModal}>
             &times;
           </div>
           <div className="modalContainer">
             <div className="modalContent">
               <div className="modalSection1 modals">
-                <div className="advertisementContainer"></div>
+                <div className="advertisementContainer">
+                  {activeRoom && activeRoom.User && (
+                    <div>
+                      <img src={activeRoom.User.img} alt="" className="chattingActiveImage" />
+                      <div className="chattingActiveTitle">{activeRoom.User.name}</div>
+                    </div>
+                  )}
+                  <div className="commentsIcont">
+                    <FontAwesomeIcon icon={faComments} />
+                  </div>
+                </div>
                 <div className="chattingHistoryWrapper">
                   {roomList?.map((el) => {
                     return (
@@ -383,11 +430,11 @@ export default function Reservation() {
                               <div
                                 key={el.chatidx}
                                 className={
-                                  `${el.authoridx}` === `${useridx}` ? "otherTalk" : "meTalk"
+                                  `${el.authoridx}` === `${otheridx}` ? "otherTalk" : "meTalk"
                                 }
                               >
                                 <div className="chatterName">
-                                  {`${el.authoridx}` === `${useridx}` ? sitterName : userName}
+                                  {`${el.authoridx}` === `${otheridx}` ? sitterName : userName}
                                 </div>
                                 <div className="chatterText">{el.content}</div>
                               </div>
@@ -397,11 +444,11 @@ export default function Reservation() {
                               <div
                                 key={el.chatidx}
                                 className={
-                                  `${el.authoridx}` === `${useridx}` ? "otherTalk" : "meTalk"
+                                  `${el.authoridx}` === `${otheridx}` ? "otherTalk" : "meTalk"
                                 }
                               >
                                 <div className="chatterName">
-                                  {`${el.authoridx}` === `${useridx}` ? sitterName : userName}
+                                  {`${el.authoridx}` === `${otheridx}` ? sitterName : userName}
                                 </div>
                                 <img className="chatterImg" src={el.img}></img>
                               </div>
@@ -432,6 +479,7 @@ export default function Reservation() {
                           );
                         }
                       })}
+                      <div ref={scrollDiv}></div>
                     </div>
                   </div>
                 </div>
@@ -457,6 +505,7 @@ export default function Reservation() {
                       // value={currentEmoji || ""}
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
+                      onKeyDown={enterEvent}
                     />
                     <button onClick={sendMessage}>보내기</button>
                   </div>
@@ -468,11 +517,11 @@ export default function Reservation() {
                       }}
                     >
                       {/* 이모지 변경  */}
-                      <div className="emojiBtnContainer">
+                      {/* <div className="emojiBtnContainer">
                         <div className="emojiBtn " onClick={toggleEmoji}>
                           <i className="bx bx-smile"></i>
                         </div>
-                      </div>
+                      </div> */}
                       {isPickerVisible && (
                         // <div className={isPickerVisible ? "d-block" : "d-none"}>
                         <div

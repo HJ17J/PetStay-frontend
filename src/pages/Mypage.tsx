@@ -1,6 +1,7 @@
 // import { useState } from "react";
-import { useState, SyntheticEvent, ChangeEvent, useEffect, useCallback } from "react";
+import { useState, SyntheticEvent, ChangeEvent, useEffect, useCallback, useRef } from "react";
 import "../styles/Mypage.scss";
+import "../styles/ModalChat.scss";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Picker from "@emoji-mart/react";
@@ -11,7 +12,7 @@ import data from "@emoji-mart/data";
 import axios from "axios";
 import { UserData, Reservation } from "../types/reservation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faTimes, faQuestion } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faTimes, faQuestion, faComments } from "@fortawesome/free-solid-svg-icons";
 import StarRating from "../components/StarRating";
 
 const socket = io("http://localhost:8080", { autoConnect: false });
@@ -21,8 +22,11 @@ export default function Mypage() {
   const initSocketConnect = () => {
     if (!socket.connected) socket.connect();
   };
+  const scrollDiv = useRef<HTMLDivElement | null>(null);
   const [usertype, setUsertype] = useState("");
   const [useridx, setUseridx] = useState(0);
+  //현재 채팅 room관리
+  const [activeRoom, setActiveRoom] = useState<Room | null>(null);
   // =================
   const [activeTab, setActiveTab] = useState("account");
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -93,6 +97,7 @@ export default function Mypage() {
   useEffect(() => {
     socket.on("message", addChatList);
     socket.on("img", addChatList);
+    scrollDiv.current?.scrollIntoView({ behavior: "auto" }); //smooth
   }, [addChatList]);
 
   // 리뷰
@@ -150,6 +155,7 @@ export default function Mypage() {
         otherName = room.User.name;
         console.log("대화 상대이름", otherName);
         setSitterName(otherName);
+        setActiveRoom(room);
       }
     });
 
@@ -192,6 +198,10 @@ export default function Mypage() {
     //inputValue 전송
     //1. socket으로 전송
     if (inputValue.trim() === "") return setInputValue("");
+    if (roomidx === 0) {
+      setInputValue("");
+      return alert("채팅방을 선택해주세요");
+    }
 
     const sendData = {
       msg: inputValue,
@@ -210,6 +220,10 @@ export default function Mypage() {
     // alert("이미지 보냄!");
     e.preventDefault();
     // console.log(selectedImage?.name);
+    if (roomidx === 0) {
+      setInputValue("");
+      return alert("채팅방을 선택해주세요");
+    }
 
     const formData = new FormData();
     if (selectedImage) {
@@ -277,6 +291,16 @@ export default function Mypage() {
     setReviewRate(rating);
   };
 
+  const enterEvent = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    if (e.key === "Enter") {
+      // Enter 키 입력 시 실행할 내용
+      sendMessage(e);
+    }
+  };
+  const closeChatModal = (e: SyntheticEvent) => {
+    setShowModal(!showModal);
+  };
   return (
     <>
       <Header />
@@ -450,7 +474,7 @@ export default function Mypage() {
 
       {showModal && (
         <div id="modalbox" className="modal">
-          <div className="modalCloseBtn" onClick={toggleModal}>
+          <div className="modalCloseBtn" onClick={closeChatModal}>
             &times;
           </div>
           <div className="modalContainer">
@@ -465,7 +489,20 @@ export default function Mypage() {
                     </div>
                   </div>
                 </div> */}
-                <div className="advertisementContainer"></div>
+
+                <div className="advertisementContainer">
+                  {activeRoom && (
+                    <>
+                      <div>
+                        <img src={activeRoom?.User.img} alt="" className="chattingActiveImage" />
+                      </div>
+                      <div className="chattingActiveTitle">{activeRoom?.User.name}</div>
+                      <div className="commentsIcont">
+                        <FontAwesomeIcon icon={faComments} />
+                      </div>
+                    </>
+                  )}
+                </div>
                 <div className="chattingHistoryWrapper">
                   {/* <div className="chattingContainer">
                     <div>
@@ -581,6 +618,7 @@ export default function Mypage() {
                           );
                         }
                       })}
+                      <div ref={scrollDiv}></div>
                     </div>
                   </div>
                 </div>
@@ -606,6 +644,7 @@ export default function Mypage() {
                       // value={currentEmoji || ""}
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
+                      onKeyDown={enterEvent}
                     />
                     <button onClick={sendMessage}>보내기</button>
                   </div>
@@ -617,11 +656,11 @@ export default function Mypage() {
                       }}
                     >
                       {/* 이모지 변경  */}
-                      <div className="emojiBtnContainer">
+                      {/* <div className="emojiBtnContainer">
                         <div className="emojiBtn " onClick={toggleEmoji}>
                           <i className="bx bx-smile"></i>
                         </div>
-                      </div>
+                      </div> */}
                       {isPickerVisible && (
                         // <div className={isPickerVisible ? "d-block" : "d-none"}>
                         <div

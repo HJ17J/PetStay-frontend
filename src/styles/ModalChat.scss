@@ -1,19 +1,113 @@
 .meTalk {
   margin-left: auto;
+  text-align: right;
+  margin-bottom: 5px;
   .chatterText {
-    background-color: pink;
+    background-color: rgb(255, 177, 177);
     color: black;
+    border: none;
+    text-align: center;
+    padding: 5px 7px;
+    border-radius: 20px;
   }
 }
 .otherTalk {
   margin-right: auto;
+  text-align: left;
+  margin-bottom: 5px;
   .chatterText {
-    background-color: gray;
-    color: white;
+    background-color: rgb(214, 213, 213);
+    color: black;
+    border: none;
+    text-align: center;
+    padding: 5px 7px;
+    border-radius: 20px;
   }
 }
 
 .chatterImg {
-  max-width: 50px;
-  max-height: 50px;
+  max-width: 60%;
+  border-radius: 10px;
+}
+.chattingHistoryWrapper {
+  background-color: #ffffff;
+  overflow-y: scroll;
+  .chattingContainer {
+    display: flex;
+    gap: 10px;
+    height: 60px;
+    line-height: 60px;
+    border-bottom: 1px solid rgb(188, 188, 188);
+    // background-color: rgb(245, 245, 206);
+    // border-radius: 5px;
+    &:hover {
+      background-color: rgb(238, 237, 237);
+      cursor: pointer;
+      transition: 0.5s;
+    }
+    div {
+      display: flex;
+      .chattingCustomerImage {
+        border-radius: 50%;
+        width: 47px;
+        height: 47px;
+        margin: 5px;
+        z-index: 1;
+        cursor: pointer;
+      }
+    }
+    .chattingInformation {
+      .customerTitle {
+        color: black;
+        font-weight: 300;
+        font-size: 15px;
+      }
+    }
+  }
+}
+.chatterInformation {
+  background-color: rgb(251, 250, 250);
+  overflow-y: scroll;
+  padding: 0 10px;
+}
+.modalSection1 {
+  border: 1px solid black;
+}
+.modalSection2 {
+  border: 1px solid black;
+  border-left: none;
+}
+//
+.advertisementContainer {
+  // border: 1px solid black;
+  background-color: #333;
+  height: 80px;
+  width: 100%;
+  display: flex;
+  line-height: 80px;
+  div {
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    .chattingActiveImage {
+      border-radius: 50%;
+      width: 47px;
+      height: 47px;
+      // margin: 10px;
+    }
+  }
+  .chattingActiveTitle {
+    color: white;
+    font-weight: 300;
+    font-size: 15px;
+    margin-left: 15px;
+  }
+  .commentsIcont {
+    margin-left: auto;
+    margin-right: 30px;
+    svg {
+      color: white;
+      scale: 1.5;
+    }
+  }
 }

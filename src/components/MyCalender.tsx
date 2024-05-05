@@ -6,6 +6,8 @@ import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import { ReservationInfo } from "../types/reservation";
+import { CompletionTriggerKind } from "typescript";
 
 interface MyCalendarProps {
   sitteridx: number | undefined;
@@ -59,11 +61,14 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
   const handleTimeslotClick = (index: number) => {
     // 클릭한 시간대의 상태 가져오기
     const clickedTimeslot = timeslots[index];
+    console.log(clickedTimeslot);
     console.log("클릭!", timeslots);
-    // done 상태인 경우 클릭 이벤트 무시
-    if (clickedTimeslot.status === "done") {
-      return;
-    }
+
+    // // done 상태인 경우 클릭 이벤트 무시
+    // if (clickedTimeslot.status === "disabled") {
+    //   return;
+    // }
+
     if (startIdx === null) {
       // 시작 시간을 클릭한 경우
       setStartIdx(index);
@@ -80,7 +85,7 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
         const updatedTimeslots = [...prevState];
         for (let i = startIdx; i <= index; i++) {
           // 중간에 done 상태인 시간대가 있는 경우 활성화하지 않음
-          if (updatedTimeslots[i].status === "done") {
+          if (updatedTimeslots[i].status === "disabled") {
             alert("이미 예약되어 있는 시간대입니다");
             break;
           } else {
@@ -94,7 +99,7 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
       setTimeslots((prevState) =>
         prevState.map((slot) => ({
           ...slot,
-          status: slot.status !== "done" ? "inactive" : slot.status,
+          status: slot.status !== "disabled" ? "inactive" : slot.status,
         }))
       );
       setStartIdx(null);
@@ -127,9 +132,13 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
   };
 
   // 시간 형식을 변환하는 함수
-  const formatTime = (time: string) => {
+  const formatTimeToNumber = (time: string) => {
     // 두 자리 숫자로 포맷팅하여 반환
     return Number(time.replace(":00", ""));
+  };
+
+  const formatTimeToString = (time: number) => {
+    return String(time).concat(":00");
   };
 
   // 두 개의 시간을 비교하여 결과를 반환하는 함수
@@ -177,9 +186,11 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
           return;
         }
 
-        const startTime = formatTime(timeslots.filter((el) => el.status === "active")[0].time);
+        const startTime = formatTimeToNumber(
+          timeslots.filter((el) => el.status === "active")[0].time
+        );
         const endTime =
-          formatTime(timeslots.filter((el) => el.status === "active").pop()!.time) + 1;
+          formatTimeToNumber(timeslots.filter((el) => el.status === "active").pop()!.time) + 1;
         console.log("시작시간", startTime);
         console.log("종료시간", endTime);
 
@@ -240,19 +251,41 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
     }
   };
 
+  // 캘린더 날짜 클릭 시
   const getReservations = async (
     value: Date,
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     console.log("시터번호", sitteridx);
     console.log("날짜??", value);
+
     try {
       const result = await axios({
         method: "post",
         url: `${process.env.REACT_APP_API_SERVER}/resvDate/${sitteridx}`,
         data: { date: value },
       });
-      console.log(result.data);
+
+      const reservationToday = result.data.reservation
+        .filter((el: ReservationInfo) => el.confirm != "refused")
+        .map((el: ReservationInfo) => [
+          formatTimeToString(el.startTime),
+          el.endTime - el.startTime,
+        ]);
+      console.log(reservationToday);
+
+      // timeslot 값 초기화
+      const updatedTimeslots = [...initTimeslot];
+      console.log("현재 timeslot", timeslots);
+      for (const time of reservationToday) {
+        console.log(time);
+        const idx = updatedTimeslots.findIndex((el) => el.time === time[0]);
+        for (let i = idx; i <= idx + time[1]; i++) {
+          updatedTimeslots[idx].status = "disabled";
+        }
+      }
+      setTimeslots(updatedTimeslots);
+      console.log(timeslots);
     } catch (error) {
       console.log(error);
     }
@@ -320,37 +353,33 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
           onChange={onChange as CalendarProps["onChange"]}
           onClickDay={getReservations}
           value={date}
-          // onClickDay={onClickDay}
         />
       </div>
       <div className="calenderContainer2">
-        <div className="sliderBtnContainer">
+        {/* <div className="sliderBtnContainer">
           <button onClick={PrevhandleClick} className="sliderBtn prev">
             <i className="bx bx-chevron-left"></i>
           </button>
           <button onClick={NexthandleClick} className="sliderBtn next">
             <i className="bx bx-chevron-right"></i>
           </button>
-        </div>
+        </div> */}
         <div className="timeList">
           {timeslots.map((timeslot, index) => (
-            <div
+            <button
               key={index}
               className={`times ${
                 timeslot.status === "active"
                   ? "active"
-                  : timeslot.status === "done"
-                  ? "done"
-                  : "inactive"
+                  : timeslot.status === "inactive" || "refused"
+                  ? "inactive"
+                  : "disabled"
               }`}
-              style={{
-                transform: `translateX(${translation}px)`,
-                transition: "transform 0.5s ease", // Optional: Add transition for smooth animation
-              }}
+              disabled={timeslot.status === "disabled"}
               onClick={() => handleTimeslotClick(index)}
             >
               {timeslot.time}
-            </div>
+            </button>
           ))}
         </div>
       </div>

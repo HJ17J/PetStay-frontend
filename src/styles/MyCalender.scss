@@ -12,6 +12,25 @@
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }
 
+/* 기본 버튼 */
+@mixin resv-button {
+  width: 70px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  background: #fff;
+  color: #000;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+  &:hover {
+    background-color: #ebebeb;
+    cursor: pointer;
+  }
+}
+
 .react-calendar {
   width: unset !important;
   // overflow: hidden;
@@ -65,14 +84,83 @@
   }
 }
 
+// 시간 선택 컨테이너
 .calenderContainer2 {
   @include container;
+  height: 150px;
   flex-direction: column;
   justify-content: center;
-  height: 90px;
   position: relative;
   align-items: center;
-  overflow: hidden;
+  // overflow: hidden;
+
+  .sliderBtnContainer {
+    // position: absolute;
+    // background: black;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .sliderBtn {
+    position: relative;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    color: black;
+    background: #fff;
+    opacity: 0.9;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    z-index: 1;
+  }
+
+  .sliderBtn:active {
+    transform: scale(0.96);
+  }
+
+  .timeList {
+    // position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    scroll-behavior: smooth;
+    left: 24px;
+    height: 150px;
+    overflow: hidden;
+    gap: 10px 20px;
+    flex-wrap: wrap;
+  }
+
+  .times {
+    @include resv-button;
+    font-size: 13px;
+  }
+
+  .times.active {
+    transform: scale(0.96);
+    transition: "transform 0.5s ease";
+    background-color: #c0dae3;
+  }
+
+  .times.inactive {
+    background-color: #fff;
+  }
+  .times:disabled {
+    background-color: #ebebeb;
+    cursor: default;
+  }
+  // .times.disabled {
+  //   background-color: gray;
+  // }
 }
 
 // 예약 옵션 컨테이너
@@ -130,6 +218,7 @@
   }
 }
 
+// 추가사항 작성 컨테이너
 .calenderContainer4 {
   @include container;
   flex-direction: column;
@@ -160,81 +249,9 @@
 //   /* overflow: hidden; */
 // }
 
-.sliderBtnContainer {
-  // position: absolute;
-  // background: black;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: absolute;
-  width: 98%;
-  height: 92%;
-}
-
-.sliderBtn {
-  position: relative;
-  border: 1px solid #fff;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 30px;
-  height: 30px;
-  color: black;
-  background: #fff;
-  opacity: 0.9;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  z-index: 1;
-}
-
-.sliderBtn:active {
-  transform: scale(0.96);
-}
-
-.timeList {
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: none;
-  scroll-behavior: smooth;
-  left: 24px;
-  height: 78px;
-  overflow: hidden;
-  gap: 26px;
-}
-
-.times {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  background: #fff;
-  width: 70px;
-  height: 40px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
-}
-
-.times.active {
-  transform: scale(0.96);
-  background-color: #c0dae3;
-}
-
-.times.inactive {
-  background-color: #fff;
-}
-.times.done {
-  background-color: gray;
-}
-
+// 예약 내용 확인 컨테이너
 .calenderContainer5 {
   @include container;
-  width: 100%;
   height: 300px;
   flex-direction: column;
   justify-content: center;

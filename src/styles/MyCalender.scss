@@ -157,6 +157,8 @@
   .times:disabled {
     background-color: #ebebeb;
     cursor: default;
+    transform: scale(0.96);
+    transition: "transform 0.5s ease";
   }
   // .times.disabled {
   //   background-color: gray;

@@ -20,12 +20,13 @@ const Header: React.FC = () => {
     dispatch(logout());
     alert(t("header.logoutSuccess"));
     i18n.changeLanguage("ko");
+    navigate("/");
   };
 
   const handleMyPageClick = (event: React.MouseEvent) => {
     event.preventDefault();
     if (isLoggedIn) {
-      navigate("/profile/:userid"); // 로그인 상태면 마이페이지로 이동
+      navigate("/profile"); // 로그인 상태면 마이페이지로 이동
     } else {
       alert(t("header.loginRequired")); // 로그인 안 했으면 알림창 띄우기
     }
@@ -41,7 +42,7 @@ const Header: React.FC = () => {
         <Link to="/petsitters" className="myLink">
           {t("header.petSitter")}
         </Link>
-        <Link to="/profile/:userid" className="myLink" onClick={handleMyPageClick}>
+        <Link to="/profile" className="myLink" onClick={handleMyPageClick}>
           {t("header.myPage")}
         </Link>
         {isLoggedIn ? (

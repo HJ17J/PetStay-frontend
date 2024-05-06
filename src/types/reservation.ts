@@ -4,6 +4,10 @@ export interface Reservation {
   price: number;
   resvidx: number;
   confirm: string;
+  username: string;
+  type: string;
+  animalNumber: number;
+  content: string;
 }
 
 export interface UserData {

@@ -34,6 +34,9 @@ export default function Reservation() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [sitterData, setSitterData] = useState<PetSitterDetail>();
   const [reviewData, setReviewData] = useState<review[] | null>(null);
+
+  const [openReviewModal, setOpenReviewModal] = useState(false);
+
   //이전 채팅 데이터 관리
   const [chatData, setChatData] = useState<Chats[] | null>(null);
   //실시간 채팅 데이터 관리
@@ -67,6 +70,21 @@ export default function Reservation() {
       throw error;
     }
   };
+  // 날짜 변환
+  const formatDate = (date: Date) => {
+    const d = new Date(date);
+    const formattedDate = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${d
+      .getDate()
+      .toString()
+      .padStart(2, "0")}`;
+    return formattedDate;
+  };
+
+  // 리뷰 이미지 클릭
+  const openReviewImg = () => {
+    setOpenReviewModal((prev) => !prev);
+  };
+
   const addChatList = useCallback(
     (data: ChatList) => {
       // console.log(data); //{message, nickname}
@@ -282,7 +300,7 @@ export default function Reservation() {
                 className="reservation_profile_image"
               />
               <div className="image_button_container">
-                <div className="trainerName">{sitterData?.name}</div>
+                <h3 className="trainerName">{sitterData?.name}</h3>
               </div>
             </div>
             <div className="trainerIntroductionContainer">
@@ -326,21 +344,38 @@ export default function Reservation() {
             <div className="reviewContainer">
               {reviewData?.map((el) => {
                 return (
-                  <div className="reviewListContainer" key={el.reviewidx}>
-                    <div className="reviewSection">
-                      <div className="info1">
-                        <img src={el.img} alt="" className="info1Img" />
+                  <div className="reviewItemContainer" key={el.reviewidx}>
+                    <div className="reviewInfo">
+                      <div className="reviewProfileBox">
+                        <img src={el.profileImg} alt="profile image" className="reviewerProfile" />
                       </div>
-                      <div className="info2">
-                        <div className="info2Text">{el.name}</div>
-                        <div className="info2Text">
-                          <DisplayStarRating rating={el.rate} size={"small"} />
-                          <span>{el.rate}</span> {el.createdAt}
-                        </div>
+                      <div className="reviewerName">
+                        <span>{el.name}</span>
+                      </div>
+                      <div className="ratingBox">
+                        <DisplayStarRating rating={el.rate} size={"small"} />
+                        <span>{el.rate}</span>
+                      </div>
+                      <div className="reviewDateBox">
+                        <span>{formatDate(el.createdAt)}</span>
                       </div>
                     </div>
                     <div className="hr"></div>
-                    <div className="content">{el.content}</div>
+                    <div className="reviewContent">
+                      <span>{el.content}</span>
+                      {el.img && (
+                        <button onClick={openReviewImg} className="reviewThumb">
+                          <img src={el.img} className="imgThumb" />
+                          {!openReviewModal ? null : (
+                            <div className="reviewModal">
+                              <div className="modalContent">
+                                <img className="naturalImg" src={el.img} />
+                              </div>
+                            </div>
+                          )}
+                        </button>
+                      )}
+                    </div>
                   </div>
                 );
               })}

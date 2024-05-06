@@ -12,7 +12,13 @@ import data from "@emoji-mart/data";
 import axios from "axios";
 import { UserData, Reservation } from "../types/reservation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faTimes, faQuestion, faComments } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCheck,
+  faTimes,
+  faQuestion,
+  faComments,
+  faSpinner,
+} from "@fortawesome/free-solid-svg-icons";
 import StarRating from "../components/StarRating";
 
 const socket = io("http://localhost:8080", { autoConnect: false });
@@ -178,6 +184,8 @@ export default function Mypage() {
 
   // 리뷰 등록
   const submitReview = async () => {
+    if (reviewRate <= 0) return alert("평점을 입력해주세요!");
+    if (reviewContent.trim() === "") return alert("내용을 입력해주세요!");
     if (!selectedResvidx) {
       alert("유효한 예약 정보가 없습니다.");
       return;
@@ -358,7 +366,7 @@ export default function Mypage() {
   // 예약 삭제
   const handleDeleteReservation = async (reservationId: number) => {
     // 사용자에게 삭제 확인 요청
-    if (window.confirm("삭제하시겠습니까?")) {
+    if (window.confirm("예약을 취소하시겠습니까?")) {
       try {
         const url = `${process.env.REACT_APP_API_SERVER}/reservation/${reservationId}/delete`;
         await axios.delete(url);
@@ -369,11 +377,11 @@ export default function Mypage() {
         );
       } catch (error) {
         console.error("Failed to delete reservation", error);
-        alert("예약 삭제에 실패했습니다.");
+        alert("예약 취소에 실패했습니다.");
       }
     } else {
       // 사용자가 취소를 선택했을 때
-      console.log("삭제가 취소되었습니다.");
+      console.log("예약 취소가 되지 않았습니다.");
     }
   };
 
@@ -545,6 +553,7 @@ export default function Mypage() {
           </div>
         </div>
         <div className="myPageContainer2">
+          <p className="resvtitle">예약 현황</p>
           <div className="reservationTable1">
             <div className="table">
               <div className="row tableHeader">
@@ -554,18 +563,20 @@ export default function Mypage() {
                     <div className="cell">펫시터</div>
                     <div className="cell">날짜</div>
                     <div className="cell">요금</div>
-                    <div className="cell">삭제</div>
-                    <div className="cell">예약 상태</div>
+                    <div className="cell">예약 취소</div>
+                    <div className="cell">승인 여부</div>
                   </>
                 ) : userData && userData.usertype === "sitter" ? (
                   <>
                     <div className="cell">No.</div>
-                    <div className="cell">닉네임</div>
+                    <div className="cell">회원명</div>
                     <div className="cell">날짜</div>
+                    <div className="cell">가격</div>
                     <div className="cell">동물</div>
                     <div className="cell">마릿수</div>
-                    <div className="cell">설명</div>
-                    <div className="cell">수락</div>
+                    <div className="cell">상세</div>
+                    <div className="cell">승인</div>
+                    <div className="cell">거절</div>
                     <div className="cell">상태</div>
                   </>
                 ) : (
@@ -579,10 +590,10 @@ export default function Mypage() {
                     <div className="cell">{startIndex + index + 1}</div>
                     <div className="cell">{reservation.User.name}</div>
                     <div className="cell">{reservation.date}</div>
-                    <div className="cell">{reservation.price}</div>
+                    <div className="cell">{reservation.price}원</div>
                     <div className="cell myPagedeleteBtn">
                       <button onClick={() => handleDeleteReservation(reservation.resvidx)}>
-                        삭제
+                        취소
                       </button>
                     </div>
                     <div className="cell">
@@ -591,6 +602,7 @@ export default function Mypage() {
                       ) : reservation.confirm === "refused" ? (
                         <FontAwesomeIcon icon={faTimes} style={{ color: "red" }} /> // X 표시
                       ) : (
+                        // <FontAwesomeIcon icon={faSpinner} style={{ color: "blue" }} />
                         <FontAwesomeIcon icon={faQuestion} style={{ color: "blue" }} /> // ? 표시
                       )}
                     </div>
@@ -603,7 +615,7 @@ export default function Mypage() {
                     <div className="cell">{startIndex + index + 1}</div>
                     <div className="cell">{reservation.User.name}</div>
                     <div className="cell">{reservation.date}</div>
-                    <div className="cell">{reservation.price}</div>
+                    <div className="cell">{reservation.price}원</div>
                     <div className="cell">{reservation.type}</div>
                     <div className="cell">{reservation.animalNumber}</div>
                     <div className="cell">
@@ -613,6 +625,7 @@ export default function Mypage() {
                     </div>
                     <div className="cell">
                       <button
+                        className="approve"
                         onClick={() => handleApproveReservation(reservation.resvidx)} // 익명 함수로 감싸고 예약 ID를 전달
                         disabled={reservation.confirm !== "request"}
                       >
@@ -621,6 +634,7 @@ export default function Mypage() {
                     </div>
                     <div className="cell">
                       <button
+                        className="refused"
                         onClick={() => handleRefuseReservation(reservation.resvidx)} // 익명 함수로 감싸고 예약 ID를 전달
                         disabled={reservation.confirm !== "request"}
                       >
@@ -633,25 +647,29 @@ export default function Mypage() {
                       ) : reservation.confirm === "refused" ? (
                         <FontAwesomeIcon icon={faTimes} style={{ color: "red" }} /> // X 표시
                       ) : (
+                        // <FontAwesomeIcon icon={faSpinner} style={{ color: "blue" }} />
                         <FontAwesomeIcon icon={faQuestion} style={{ color: "blue" }} /> // ? 표시
                       )}
                     </div>
                   </div>
                 ))}
               {/* 페이지 번호를 표시하는 부분 */}
-              <div className="pagination">
-                {pageNumbers.map((number) => (
-                  <button
-                    key={number}
-                    onClick={() => handlePageChange(number)}
-                    className={number === currentPage ? "active" : ""}
-                  >
-                    {number}
-                  </button>
-                ))}
+              <div className="pagingBottom">
+                <div className="pagination">
+                  {pageNumbers.map((number) => (
+                    <button
+                      key={number}
+                      onClick={() => handlePageChange(number)}
+                      className={number === currentPage ? "active" : ""}
+                    >
+                      {number}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
+          <p className="resvtitle">완료 예약</p>
           <div className="reservationTable2">
             <div className="table">
               <div className="row tableHeader">
@@ -666,9 +684,12 @@ export default function Mypage() {
                 ) : userData && userData.usertype === "sitter" ? (
                   <>
                     <div className="cell">No.</div>
-                    <div className="cell">닉네임</div>
+                    <div className="cell">회원명</div>
                     <div className="cell">날짜</div>
                     <div className="cell">요금</div>
+                    <div className="cell">동물</div>
+                    <div className="cell">마릿수</div>
+                    <div className="cell">상세</div>
                   </>
                 ) : (
                   <div className="cell">헤더를 표시할 수 없습니다.</div>
@@ -681,11 +702,9 @@ export default function Mypage() {
                     <div className="cell">{doneStartIndex + index + 1}</div>
                     <div className="cell">{reservation.User.name}</div>
                     <div className="cell">{reservation.date}</div>
-                    <div className="cell">{reservation.price}</div>
+                    <div className="cell">{reservation.price}원</div>
                     <div className="cell myPageReviewBtn">
-                      <button onClick={() => handleReviewClick(reservation.resvidx)}>
-                        리뷰하기
-                      </button>
+                      <button onClick={() => handleReviewClick(reservation.resvidx)}>리뷰</button>
                     </div>
                   </div>
                 ))}
@@ -696,21 +715,29 @@ export default function Mypage() {
                     <div className="cell">{doneStartIndex + index + 1}</div>
                     <div className="cell">{reservation.User.name}</div>
                     <div className="cell">{reservation.date}</div>
-                    <div className="cell">{reservation.price}</div>
+                    <div className="cell">{reservation.price}원</div>
+                    <div className="cell">{reservation.type}</div>
+                    <div className="cell">{reservation.animalNumber}</div>
+                    <div className="cell">
+                      <button onClick={() => handleViewReservation(reservation.content)}>
+                        보기
+                      </button>
+                    </div>
                   </div>
                 ))}
-
               {/* 페이지 번호 표시 */}
-              <div className="pagination">
-                {donePageNumbers.map((number) => (
-                  <button
-                    key={number}
-                    onClick={() => handleDonePageChange(number)}
-                    className={number === currentDonePage ? "active" : ""}
-                  >
-                    {number}
-                  </button>
-                ))}
+              <div className="pagingBottom">
+                <div className="pagination">
+                  {donePageNumbers.map((number) => (
+                    <button
+                      key={number}
+                      onClick={() => handleDonePageChange(number)}
+                      className={number === currentDonePage ? "active" : ""}
+                    >
+                      {number}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -725,8 +752,10 @@ export default function Mypage() {
               &times;
             </div>
             <h2>예약 상세내역</h2>
-            <p>{selectedReservationContent}</p>
-            <button onClick={closeReservationModal}>닫기</button>
+            <div className="reservationDetails">{selectedReservationContent}</div>
+            <div className="btnDiv">
+              <button onClick={closeReservationModal}>닫기</button>
+            </div>
           </div>
         </div>
       )}
@@ -737,20 +766,26 @@ export default function Mypage() {
               <div className="reviewCloseBtn" onClick={closeModal}>
                 &times;
               </div>
-              <div className="reviewtitle">리뷰쓰기</div>
-              <div className="reviewSubtitle">어떤 점이 좋았나요?</div>
+
               {existReview != null ? (
                 <>
+                  <div className="reviewtitle">내가 작성한 리뷰</div>
                   <StarRating value={existReview.rate} onChange={setReviewRate} disabled={false} />
                   <div className="reviewtextArea">
+                    <div className="reviewImageContainer">
+                      {!existReview.img && (
+                        <img
+                          src="https://bucket-hyeon.s3.ap-northeast-2.amazonaws.com/profile-img/default-profile.jpg"
+                          alt="Uploaded Review"
+                        />
+                      )}
+                      {existReview.img && <img src={existReview.img} alt="Uploaded Review" />}
+                    </div>
                     <textarea
                       value={existReview.content}
                       // onChange={(e) => setReviewContent(e.target.value)}
                       disabled
                     ></textarea>
-                  </div>
-                  <div className="reviewImageContainer">
-                    {existReview.img != "" && <img src={existReview.img} alt="Uploaded Review" />}
                   </div>
                   <div className="reviewBtn">
                     <button onClick={() => deleteReview(existReview.reviewidx)}>삭제</button>
@@ -759,9 +794,23 @@ export default function Mypage() {
                 </>
               ) : (
                 <>
+                  <div className="reviewtitle">리뷰쓰기</div>
+                  <div className="reviewSubtitle">어떤 점이 좋았나요?</div>
                   <StarRating value={reviewRate} onChange={setReviewRate} />
                   <div className="reviewtextArea">
+                    <div className="reviewImageContainer">
+                      {!reviewImage && (
+                        <img
+                          src="https://bucket-hyeon.s3.ap-northeast-2.amazonaws.com/profile-img/default-profile.jpg"
+                          alt="Review Image"
+                        />
+                      )}
+                      {reviewImage && (
+                        <img src={URL.createObjectURL(reviewImage)} alt="Uploaded Review" />
+                      )}
+                    </div>
                     <textarea
+                      placeholder="후기를 입력해주세요!"
                       value={reviewContent}
                       onChange={(e) => setReviewContent(e.target.value)}
                     ></textarea>
@@ -778,11 +827,6 @@ export default function Mypage() {
                       accept="image/*"
                       onChange={(e) => setReviewImage(e.target.files ? e.target.files[0] : null)}
                     />
-                  </div>
-                  <div className="reviewImageContainer">
-                    {reviewImage && (
-                      <img src={URL.createObjectURL(reviewImage)} alt="Uploaded Review" />
-                    )}
                   </div>
                   <div className="reviewBtn">
                     <button onClick={submitReview}>등록</button>

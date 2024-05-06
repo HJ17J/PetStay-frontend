@@ -88,6 +88,9 @@ form.petsitter-form {
   align-items: center; // 세로 중앙 정렬
   padding: 0 0.4rem;
   position: relative;
+  svg {
+    margin-right: 5px;
+  }
 
   input {
     flex: 1; // input이 가능한 많은 공간을 차지하도록 설정
@@ -130,9 +133,9 @@ form.petsitter-form {
   gap: 10px; // 버튼 사이의 간격 설정
 }
 
-.btn {
-  flex: 1; // 버튼들이 동일한 크기를 가지도록 설정
-}
+// .btn {
+//   flex: 1; // 버튼들이 동일한 크기를 가지도록 설정
+// }
 
 .input-field i {
   text-align: center;

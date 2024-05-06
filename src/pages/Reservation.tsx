@@ -34,6 +34,11 @@ export default function Reservation() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [sitterData, setSitterData] = useState<PetSitterDetail>();
   const [reviewData, setReviewData] = useState<review[] | null>(null);
+
+  const [openReviewModal, setOpenReviewModal] = useState(false);
+  const [reviewImage, setReviewImage] = useState("");
+  const [reviewPage, setReviewPage] = useState(1);
+
   //이전 채팅 데이터 관리
   const [chatData, setChatData] = useState<Chats[] | null>(null);
   //실시간 채팅 데이터 관리
@@ -54,19 +59,61 @@ export default function Reservation() {
   //sitter정보 받아오는 함수
   const getSitterData = async () => {
     try {
-      const result = await axios.get(process.env.REACT_APP_API_SERVER + `/sitter/${useridx}`);
-      // console.log("data>", result);
-      if (result.data.sitterInfo.length === 0) {
+      const infoData = await axios.get(process.env.REACT_APP_API_SERVER + `/sitter/${useridx}`);
+      const reviewData = await axios.get(
+        process.env.REACT_APP_API_SERVER + `/sitter/review/${useridx}?rvPage=${reviewPage}`
+      );
+      if (infoData.data.sitterInfo.length === 0) {
         alert("데이터를 불러올 수 없습니다.");
         return;
       }
-      setSitterData(result.data.sitterInfo);
-      setReviewData(result.data.reviews);
+      setSitterData(infoData.data.sitterInfo);
+      setReviewData(reviewData.data.reviews);
+      setReviewPage((prev) => prev + 1);
     } catch (error) {
       console.error("Error fetching sitter data:", error);
       throw error;
     }
   };
+
+  // 리뷰 더 받아오기
+  const getMoreReview = async () => {
+    try {
+      console.log(reviewPage);
+      const reviewData = await axios.get(
+        process.env.REACT_APP_API_SERVER + `/sitter/review/${useridx}?rvPage=${reviewPage}`
+      );
+      setReviewData((prev) => {
+        if (prev === null) {
+          return reviewData.data.reviews;
+        } else {
+          return [...prev, ...reviewData.data.reviews];
+        }
+      });
+      setReviewPage((prev) => prev + 1);
+      console.log(reviewData);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  // 날짜 변환
+  const formatDate = (date: Date) => {
+    const d = new Date(date);
+    const formattedDate = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${d
+      .getDate()
+      .toString()
+      .padStart(2, "0")}`;
+    return formattedDate;
+  };
+
+  // 리뷰 이미지 클릭
+  const openReviewImg = (imgUrl: string) => {
+    setOpenReviewModal((prev) => !prev);
+    setReviewImage(imgUrl);
+  };
+
   const addChatList = useCallback(
     (data: ChatList) => {
       // console.log(data); //{message, nickname}
@@ -102,6 +149,7 @@ export default function Reservation() {
     getSitterData();
     initSocketConnect();
   }, []);
+
   //실시간 채팅 진행 시 실행
   useEffect(() => {
     socket.on("message", addChatList);
@@ -282,7 +330,7 @@ export default function Reservation() {
                 className="reservation_profile_image"
               />
               <div className="image_button_container">
-                <div className="trainerName">{sitterData?.name}</div>
+                <h3 className="trainerName">{sitterData?.name}</h3>
               </div>
             </div>
             <div className="trainerIntroductionContainer">
@@ -326,25 +374,50 @@ export default function Reservation() {
             <div className="reviewContainer">
               {reviewData?.map((el) => {
                 return (
-                  <div className="reviewListContainer" key={el.reviewidx}>
-                    <div className="reviewSection">
-                      <div className="info1">
-                        <img src={el.img} alt="" className="info1Img" />
+                  <div className="reviewItemContainer" key={el.reviewidx}>
+                    <div className="reviewInfo">
+                      <div className="reviewProfileBox">
+                        <img src={el.profileImg} alt="profile image" className="reviewerProfile" />
                       </div>
-                      <div className="info2">
-                        <div className="info2Text">{el.name}</div>
-                        <div className="info2Text">
-                          <DisplayStarRating rating={el.rate} size={"small"} />
-                          <span>{el.rate}</span> {el.createdAt}
-                        </div>
+                      <div className="reviewerName">
+                        <span>{el.name}</span>
+                      </div>
+                      <div className="ratingBox">
+                        <DisplayStarRating rating={el.rate} size={"small"} />
+                        <span>{el.rate}</span>
+                      </div>
+                      <div className="reviewDateBox">
+                        <span>{formatDate(el.createdAt)}</span>
                       </div>
                     </div>
                     <div className="hr"></div>
-                    <div className="content">{el.content}</div>
+                    <div className="reviewContent">
+                      <span>{el.content}</span>
+                      {el.img && (
+                        <button
+                          onClick={() => {
+                            openReviewImg(el.img);
+                          }}
+                          className="reviewThumb"
+                        >
+                          <img src={el.img} className="imgThumb" />
+                          {!openReviewModal ? null : (
+                            <div className="reviewModal">
+                              <div className="modalContent">
+                                <img className="naturalImg" src={reviewImage} />
+                              </div>
+                            </div>
+                          )}
+                        </button>
+                      )}
+                    </div>
                   </div>
                 );
               })}
             </div>
+            <button className="moreBtn" onClick={getMoreReview}>
+              더보기
+            </button>
           </div>
         </div>
         <div className="reservationSection2">

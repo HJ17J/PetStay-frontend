@@ -185,11 +185,13 @@
   border-radius: 5px;
   display: flex;
   flex-direction: column;
+  overflow-y: scroll;
 
   .reviewItemContainer {
     width: 100%;
     height: auto;
     border: 1px solid #dcdcdc;
+    background-color: #fff;
     border-radius: 13px;
     padding: 5px;
   }
@@ -260,6 +262,12 @@
       }
     }
   }
+}
+
+.moreBtn {
+  width: 90%;
+  margin: auto;
+  cursor: pointer;
 }
 
 .reviewSection {

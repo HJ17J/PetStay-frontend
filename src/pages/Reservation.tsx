@@ -37,6 +37,7 @@ export default function Reservation() {
 
   const [openReviewModal, setOpenReviewModal] = useState(false);
   const [reviewImage, setReviewImage] = useState("");
+  const [reviewPage, setReviewPage] = useState(1);
 
   //이전 채팅 데이터 관리
   const [chatData, setChatData] = useState<Chats[] | null>(null);
@@ -58,19 +59,45 @@ export default function Reservation() {
   //sitter정보 받아오는 함수
   const getSitterData = async () => {
     try {
-      const result = await axios.get(process.env.REACT_APP_API_SERVER + `/sitter/${useridx}`);
-      // console.log("data>", result);
-      if (result.data.sitterInfo.length === 0) {
+      const infoData = await axios.get(process.env.REACT_APP_API_SERVER + `/sitter/${useridx}`);
+      const reviewData = await axios.get(
+        process.env.REACT_APP_API_SERVER + `/sitter/review/${useridx}?rvPage=${reviewPage}`
+      );
+      if (infoData.data.sitterInfo.length === 0) {
         alert("데이터를 불러올 수 없습니다.");
         return;
       }
-      setSitterData(result.data.sitterInfo);
-      setReviewData(result.data.reviews);
+      setSitterData(infoData.data.sitterInfo);
+      setReviewData(reviewData.data.reviews);
+      setReviewPage((prev) => prev + 1);
     } catch (error) {
       console.error("Error fetching sitter data:", error);
       throw error;
     }
   };
+
+  // 리뷰 더 받아오기
+  const getMoreReview = async () => {
+    try {
+      console.log(reviewPage);
+      const reviewData = await axios.get(
+        process.env.REACT_APP_API_SERVER + `/sitter/review/${useridx}?rvPage=${reviewPage}`
+      );
+      setReviewData((prev) => {
+        if (prev === null) {
+          return reviewData.data.reviews;
+        } else {
+          return [...prev, ...reviewData.data.reviews];
+        }
+      });
+      setReviewPage((prev) => prev + 1);
+      console.log(reviewData);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
   // 날짜 변환
   const formatDate = (date: Date) => {
     const d = new Date(date);
@@ -122,6 +149,7 @@ export default function Reservation() {
     getSitterData();
     initSocketConnect();
   }, []);
+
   //실시간 채팅 진행 시 실행
   useEffect(() => {
     socket.on("message", addChatList);
@@ -387,6 +415,9 @@ export default function Reservation() {
                 );
               })}
             </div>
+            <button className="moreBtn" onClick={getMoreReview}>
+              더보기
+            </button>
           </div>
         </div>
         <div className="reservationSection2">

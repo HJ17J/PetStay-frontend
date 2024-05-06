@@ -49,5 +49,12 @@
   "teamMember.name.shinDongWon": "申东原",
   "teamMember.name.leeHyungSeok": "李炯锡",
   "teamMember.name.limHakMin": "林学民",
-  "teamMember.name.hongJuHee": "洪周喜"
+  "teamMember.name.hongJuHee": "洪周喜",
+  "footer.title": "PetStay",
+  "footer.address": "地址：首尔道峰区马德路13街61号 SeedCube 昌东7层",
+  "footer.phone": "电话：+82 2-6249-7402",
+  "footer.directions": "路线：从昌东站1号出口出站，进入“SeedCube 昌东”大楼的3号门，然后进入7楼的青年就业学院。",
+  "footer.terms": "服务条款",
+  "footer.privacyPolicy": "隐私政策",
+  "footer.copyright": "© 2024 PetStay. 版权所有."
 }

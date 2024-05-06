@@ -40,6 +40,7 @@ export default function Mypage() {
   const [currentDonePage, setCurrentDonePage] = useState(1); // "done" 예약 전용 상태
   const [isReservationModalVisible, setIsReservationModalVisible] = useState(false);
   const [selectedReservationContent, setSelectedReservationContent] = useState<string | null>(null);
+  const [reviewImage, setReviewImage] = useState<File | null>(null);
 
   const fetchUserData = async () => {
     try {
@@ -121,7 +122,6 @@ export default function Mypage() {
 
   // 리뷰
   const [reviewContent, setReviewContent] = useState("");
-  const [reviewImage, setReviewImage] = useState<File | null>(null);
   const [reviewRate, setReviewRate] = useState(0);
   const [resvidx, setResvidx] = useState<number | null>(null);
 
@@ -135,7 +135,7 @@ export default function Mypage() {
     const formData = new FormData();
     formData.append("content", reviewContent);
     if (reviewImage) {
-      formData.append("img", reviewImage, reviewImage.name);
+      formData.append("reviewImage", reviewImage);
     }
     formData.append("rate", String(reviewRate));
 
@@ -310,7 +310,9 @@ export default function Mypage() {
   const handleApproveReservation = async (reservationId: number) => {
     if (window.confirm("승인하시겠습니까?")) {
       try {
-        await axios.put(`${process.env.REACT_APP_API_SERVER}/profile`);
+        await axios.patch(
+          `${process.env.REACT_APP_API_SERVER}/reservation/${reservationId}/confirm`
+        );
 
         // 성공적으로 업데이트했을 때 프론트엔드의 로컬 상태도 업데이트
         setReservations((prevReservations) =>
@@ -331,7 +333,9 @@ export default function Mypage() {
   const handleRefuseReservation = async (reservationId: number) => {
     if (window.confirm("거절하시겠습니까?")) {
       try {
-        await axios.put(`${process.env.REACT_APP_API_SERVER}/profile`);
+        await axios.patch(
+          `${process.env.REACT_APP_API_SERVER}/reservation/${reservationId}/refused`
+        );
 
         // 성공적으로 업데이트했을 때 프론트엔드의 로컬 상태도 업데이트
         setReservations((prevReservations) =>
@@ -459,7 +463,7 @@ export default function Mypage() {
                 currentReservations.map((reservation, index) => (
                   <div className="row" key={reservation.resvidx}>
                     <div className="cell">{startIndex + index + 1}</div>
-                    <div className="cell">{reservation.sittername}</div>
+                    <div className="cell">{reservation.User.name}</div>
                     <div className="cell">{reservation.date}</div>
                     <div className="cell">{reservation.price}</div>
                     <div className="cell myPagedeleteBtn">
@@ -483,7 +487,7 @@ export default function Mypage() {
                 currentReservations.map((reservation, index) => (
                   <div className="row" key={reservation.resvidx}>
                     <div className="cell">{startIndex + index + 1}</div>
-                    <div className="cell">{reservation.username}</div>
+                    <div className="cell">{reservation.User.name}</div>
                     <div className="cell">{reservation.date}</div>
                     <div className="cell">{reservation.price}</div>
                     <div className="cell">{reservation.type}</div>
@@ -551,7 +555,6 @@ export default function Mypage() {
                     <div className="cell">닉네임</div>
                     <div className="cell">날짜</div>
                     <div className="cell">요금</div>
-                    <div className="cell">리뷰</div>
                   </>
                 ) : (
                   <div className="cell">헤더를 표시할 수 없습니다.</div>
@@ -562,7 +565,7 @@ export default function Mypage() {
                 currentDoneReservations.map((reservation, index) => (
                   <div className="row" key={index}>
                     <div className="cell">{doneStartIndex + index + 1}</div>
-                    <div className="cell">{reservation.sittername}</div>
+                    <div className="cell">{reservation.User.name}</div>
                     <div className="cell">{reservation.date}</div>
                     <div className="cell">{reservation.price}</div>
                     <div className="cell myPageReviewBtn">
@@ -577,10 +580,9 @@ export default function Mypage() {
                 currentDoneReservations.map((reservation, index) => (
                   <div className="row" key={index}>
                     <div className="cell">{doneStartIndex + index + 1}</div>
-                    <div className="cell">{reservation.username}</div>
+                    <div className="cell">{reservation.User.name}</div>
                     <div className="cell">{reservation.date}</div>
                     <div className="cell">{reservation.price}</div>
-                    <div className="cell">별점</div>
                   </div>
                 ))}
 
@@ -644,7 +646,9 @@ export default function Mypage() {
                 />
               </div>
               <div className="reviewImageContainer">
-                <img src="https://picsum.photos/200/300?grayscale" alt="" />
+                {reviewImage && (
+                  <img src={URL.createObjectURL(reviewImage)} alt="Uploaded Review" />
+                )}
               </div>
               <div className="reviewBtn">
                 <button onClick={submitReview}>등록</button>

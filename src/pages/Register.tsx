@@ -28,6 +28,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import { useTranslation } from "react-i18next";
 import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from "@react-oauth/google";
+import { Link } from "react-router-dom";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -404,23 +405,14 @@ export default function Register() {
                 <input type="submit" value={t("signIn.title")} className="btn solid" />
                 <p className="social-text">{t("socialPlatform")}</p>
                 <div className="social-media">
-                  <img
-                    className="social"
-                    src="images/google.png"
-                    alt="Login with Google"
-                    onClick={() => setInitiateLogin(true)}
-                    style={{ cursor: "pointer" }}
-                  />
-                  {initiateLogin && (
-                    <div style={{ display: "none" }}>
-                      {/* 컴포넌트 숨기기 위한 컨테이너 */}
-                      <GoogleLogin
-                        onSuccess={handleGoogleSuccess}
-                        onError={handleGoogleFailure}
-                        useOneTap={true}
-                      />
-                    </div>
-                  )}
+                  <Link to="/google-auth" className="social">
+                    <img
+                      className="social"
+                      src="images/google.png"
+                      alt="Login with Google"
+                      style={{ cursor: "pointer" }}
+                    />
+                  </Link>
                 </div>
               </form>
             )}

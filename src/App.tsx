@@ -8,6 +8,7 @@ import PetSitterList from "./pages/PetSitterList";
 import Register from "./pages/Register";
 import Mypage from "./pages/Mypage";
 import MyCalendar from "./components/MyCalender";
+import GoogleAuthPage from "./pages/GoogleAuthPage";
 
 function App() {
   return (
@@ -16,12 +17,13 @@ function App() {
         <div className="App">
           <Routes>
             <Route path="/" element={<MainPage />} />
-            <Route path="/profile/:userid" element={<Mypage />} />
+            <Route path="/profile" element={<Mypage />} />
             <Route path="/petsitters" element={<PetSitterList />} />
             <Route path="/login" element={<Register />} />
             <Route path="/calender" element={<MyCalendar sitteridx={5} pay={10000} />} />
             <Route path="/petsitter/:useridx" element={<Reservation />} />
             <Route path="/mycalender" element={<Reservation />} />
+            <Route path="/google-auth" element={<GoogleAuthPage />} />
           </Routes>
         </div>
       </Router>

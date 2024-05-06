@@ -23,7 +23,6 @@ export default function Mypage() {
     if (!socket.connected) socket.connect();
   };
   const scrollDiv = useRef<HTMLDivElement | null>(null);
-  const [usertype, setUsertype] = useState("");
   const [useridx, setUseridx] = useState(0);
   //현재 채팅 room관리
   const [activeRoom, setActiveRoom] = useState<Room | null>(null);
@@ -42,21 +41,95 @@ export default function Mypage() {
   const [roomidx, setRoomidx] = useState<number>(0);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [selectedResvidx, setSelectedResvidx] = useState<number | null>(null);
+  const [usertype, setUsertype] = useState<string>("");
+  const [itemsPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [currentDonePage, setCurrentDonePage] = useState(1); // "done" 예약 전용 상태
+  const [isReservationModalVisible, setIsReservationModalVisible] = useState(false);
+  const [selectedReservationContent, setSelectedReservationContent] = useState<string | null>(null);
+  const [reviewImage, setReviewImage] = useState<File | null>(null);
   const [sitterData, setSitterData] = useState(null);
+
   const fetchUserData = async () => {
     try {
-      // console.log("userid:", userid); // Log useridx to check if it's populated
       const response = await axios.post(`${process.env.REACT_APP_API_SERVER}/profile`);
-      console.log("response:", response.data); // Log response to check if it's received
-      setUserData(response.data);
-      setReservations(response.data.resvData);
+      console.log("response:", response.data);
 
-      setUsertype(response.data.userData.usertype);
-      setUserName(response.data.userData.name);
-      setUseridx(response.data.userData.useridx); //현재 로그인 계정의 idx
+      // userData를 안전하게 가져와 설정
+      const fetchedUserData = response.data.userData;
+
+      // userData가 존재하는지 확인하여 사용
+      if (fetchedUserData) {
+        setUserData(fetchedUserData);
+        setReservations(response.data.resvData);
+        setUsertype(fetchedUserData.usertype);
+        setUserName(response.data.userData.name);
+        setUseridx(response.data.userData.useridx); //현재 로그인 계정의 idx
+
+        if (response.data.resvData && response.data.resvData.length > 0) {
+          const firstReservation = response.data.resvData[0];
+          setResvidx(firstReservation.resvidx); // Set the first 'resvidx'
+        }
+      } else {
+        console.warn("User data is not available.");
+      }
     } catch (error) {
       console.error("Error fetching sitter data:", error);
     }
+  };
+  useEffect(() => {
+    fetchUserData();
+    initSocketConnect();
+  }, []);
+
+  // 예약 목록을 필터링하여 현재 페이지의 목록을 추출
+  const getFilteredReservations = () => {
+    if (userData) {
+      if (userData.usertype === "user") {
+        return reservations.filter((reservation) => reservation.confirm !== "done");
+      } else if (userData.usertype === "sitter") {
+        return reservations.filter((reservation) => reservation.confirm !== "done");
+      }
+    }
+    return [];
+  };
+
+  // 예약 목록에서 현재 페이지의 항목들만 가져오기 위한 함수
+  const getFilteredDoneReservations = () => {
+    if (userData && userData.usertype === "user") {
+      return reservations.filter((reservation) => reservation.confirm === "done");
+    } else if (userData && userData.usertype === "sitter") {
+      return reservations.filter((reservation) => reservation.confirm === "done");
+    }
+    return [];
+  };
+
+  // 필터링된 예약 목록 가져오기
+  const filteredReservations = getFilteredReservations();
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentReservations = filteredReservations.slice(startIndex, endIndex);
+
+  // "done" 예약 목록 가져오기
+  const filteredDoneReservations = getFilteredDoneReservations();
+  const doneStartIndex = (currentDonePage - 1) * itemsPerPage;
+  const doneEndIndex = doneStartIndex + itemsPerPage;
+  const currentDoneReservations = filteredDoneReservations.slice(doneStartIndex, doneEndIndex);
+
+  // 총 페이지 수 계산
+  const totalPages = Math.ceil(filteredReservations.length / itemsPerPage);
+  const pageNumbers = [...Array(totalPages).keys()].map((num) => num + 1);
+  const totalDonePages = Math.ceil(filteredDoneReservations.length / itemsPerPage);
+  const donePageNumbers = [...Array(totalDonePages).keys()].map((num) => num + 1);
+
+  // 페이지 변경 핸들러
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handleDonePageChange = (pageNumber: number) => {
+    setCurrentDonePage(pageNumber);
   };
 
   const addChatList = useCallback(
@@ -89,10 +162,6 @@ export default function Mypage() {
     [chatList]
   );
 
-  useEffect(() => {
-    fetchUserData();
-    initSocketConnect();
-  }, []);
   //실시간 채팅 진행 시 실행
   useEffect(() => {
     socket.on("message", addChatList);
@@ -102,30 +171,32 @@ export default function Mypage() {
 
   // 리뷰
   const [reviewContent, setReviewContent] = useState("");
-  const [reviewImage, setReviewImage] = useState<File | null>(null);
   const [reviewRate, setReviewRate] = useState(0);
-
-  const { resvidx } = useParams<{ resvidx: string }>();
+  const [resvidx, setResvidx] = useState<number | null>(null);
 
   // 리뷰 등록
   const submitReview = async () => {
-    if (!resvidx) return;
-    const formData = new FormData();
+    if (!selectedResvidx) {
+      alert("유효한 예약 정보가 없습니다.");
+      return;
+    }
 
+    const formData = new FormData();
     formData.append("content", reviewContent);
     if (reviewImage) {
-      formData.append("img", reviewImage, reviewImage.name);
+      formData.append("reviewImage", reviewImage);
     }
-    formData.append("rate", reviewRate.toString());
+    formData.append("rate", String(reviewRate));
 
     try {
-      await axios.post(`${process.env.REACT_APP_API_SERVER}/review/${resvidx}`, formData, {
+      await axios.post(`${process.env.REACT_APP_API_SERVER}/review/${selectedResvidx}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
       alert("리뷰가 등록되었습니다.");
       setShowReviewModal(false); // 모달 닫기
+      setSelectedResvidx(null); // 선택된 resvidx 초기화
     } catch (error) {
       console.error("리뷰 등록 실패:", error);
       alert("리뷰 등록에 실패했습니다.");
@@ -260,8 +331,8 @@ export default function Mypage() {
     }
   };
 
-  const handleReviewClick = (e: SyntheticEvent) => {
-    e.preventDefault();
+  const handleReviewClick = (resvidx: number) => {
+    setSelectedResvidx(resvidx); // 상태에 resvidx 저장
     setShowReviewModal(!showReviewModal);
   };
 
@@ -289,6 +360,83 @@ export default function Mypage() {
 
   const handleStarChange = (rating: number) => {
     setReviewRate(rating);
+  };
+
+  // 예약 상태 변경 핸들러
+  const updateReservationStatus = async (reservationId: number, status: "approved" | "refused") => {
+    try {
+      await axios.patch(`${process.env.REACT_APP_API_SERVER}/profile`, {
+        confirm: status,
+      });
+      // 상태 업데이트로 UI에서 해당 예약 변경
+      setReservations((prevReservations) =>
+        prevReservations.map((reservation) =>
+          reservation.resvidx === reservationId ? { ...reservation, confirm: status } : reservation
+        )
+      );
+    } catch (error) {
+      console.error(`Failed to update reservation status to ${status}`, error);
+      alert(`예약 상태를 ${status === "approved" ? "승인" : "거절"}로 변경하는데 실패했습니다.`);
+    }
+  };
+
+  // 승인 핸들러
+  const handleApproveReservation = async (reservationId: number) => {
+    if (window.confirm("승인하시겠습니까?")) {
+      try {
+        await axios.patch(
+          `${process.env.REACT_APP_API_SERVER}/reservation/${reservationId}/confirm`
+        );
+
+        // 성공적으로 업데이트했을 때 프론트엔드의 로컬 상태도 업데이트
+        setReservations((prevReservations) =>
+          prevReservations.map((reservation) =>
+            reservation.resvidx === reservationId
+              ? { ...reservation, confirm: "approved" }
+              : reservation
+          )
+        );
+      } catch (error) {
+        console.error("Error approving reservation:", error);
+        alert("승인에 실패했습니다.");
+      }
+    }
+  };
+
+  // 거절 핸들러
+  const handleRefuseReservation = async (reservationId: number) => {
+    if (window.confirm("거절하시겠습니까?")) {
+      try {
+        await axios.patch(
+          `${process.env.REACT_APP_API_SERVER}/reservation/${reservationId}/refused`
+        );
+
+        // 성공적으로 업데이트했을 때 프론트엔드의 로컬 상태도 업데이트
+        setReservations((prevReservations) =>
+          prevReservations.map((reservation) =>
+            reservation.resvidx === reservationId
+              ? { ...reservation, confirm: "refused" }
+              : reservation
+          )
+        );
+      } catch (error) {
+        console.error("Error refusing reservation:", error);
+        alert("거절에 실패했습니다.");
+      }
+    }
+  };
+
+  // 보기 버튼 클릭 시 호출되는 함수
+  const handleViewReservation = (content: string) => {
+    console.log("모달 열기:", content);
+    setSelectedReservationContent(content);
+    setIsReservationModalVisible(true);
+  };
+
+  // 모달 닫기 함수
+  const closeReservationModal = () => {
+    setIsReservationModalVisible(false);
+    setSelectedReservationContent(null);
   };
 
   const enterEvent = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -370,19 +518,36 @@ export default function Mypage() {
           <div className="reservationTable1">
             <div className="table">
               <div className="row tableHeader">
-                <div className="cell">No.</div>
-                <div className="cell">펫시터</div>
-                <div className="cell">날짜</div>
-                <div className="cell">요금</div>
-                <div className="cell">삭제</div>
-                <div className="cell">예약 상태</div>
+                {userData && userData.usertype === "user" ? (
+                  <>
+                    <div className="cell">No.</div>
+                    <div className="cell">펫시터</div>
+                    <div className="cell">날짜</div>
+                    <div className="cell">요금</div>
+                    <div className="cell">삭제</div>
+                    <div className="cell">예약 상태</div>
+                  </>
+                ) : userData && userData.usertype === "sitter" ? (
+                  <>
+                    <div className="cell">No.</div>
+                    <div className="cell">닉네임</div>
+                    <div className="cell">날짜</div>
+                    <div className="cell">동물</div>
+                    <div className="cell">마릿수</div>
+                    <div className="cell">설명</div>
+                    <div className="cell">수락</div>
+                    <div className="cell">상태</div>
+                  </>
+                ) : (
+                  <div className="cell">헤더를 표시할 수 없습니다.</div>
+                )}
               </div>
-              {reservations
-                .filter((reservation) => reservation.confirm !== "done")
-                .map((reservation, index) => (
-                  <div className="row" key={index}>
-                    <div className="cell">{index + 1}</div>
-                    <div className="cell">{reservation.sittername}</div>
+              {userData &&
+                userData.usertype === "user" &&
+                currentReservations.map((reservation, index) => (
+                  <div className="row" key={reservation.resvidx}>
+                    <div className="cell">{startIndex + index + 1}</div>
+                    <div className="cell">{reservation.User.name}</div>
                     <div className="cell">{reservation.date}</div>
                     <div className="cell">{reservation.price}</div>
                     <div className="cell myPagedeleteBtn">
@@ -401,41 +566,145 @@ export default function Mypage() {
                     </div>
                   </div>
                 ))}
+              {userData &&
+                userData.usertype === "sitter" &&
+                currentReservations.map((reservation, index) => (
+                  <div className="row" key={reservation.resvidx}>
+                    <div className="cell">{startIndex + index + 1}</div>
+                    <div className="cell">{reservation.User.name}</div>
+                    <div className="cell">{reservation.date}</div>
+                    <div className="cell">{reservation.price}</div>
+                    <div className="cell">{reservation.type}</div>
+                    <div className="cell">{reservation.animalNumber}</div>
+                    <div className="cell">
+                      <button onClick={() => handleViewReservation(reservation.content)}>
+                        보기
+                      </button>
+                    </div>
+                    <div className="cell">
+                      <button
+                        onClick={() => handleApproveReservation(reservation.resvidx)} // 익명 함수로 감싸고 예약 ID를 전달
+                        disabled={reservation.confirm !== "request"}
+                      >
+                        승인
+                      </button>
+                    </div>
+                    <div className="cell">
+                      <button
+                        onClick={() => handleRefuseReservation(reservation.resvidx)} // 익명 함수로 감싸고 예약 ID를 전달
+                        disabled={reservation.confirm !== "request"}
+                      >
+                        거절
+                      </button>
+                    </div>
+                    <div className="cell">
+                      {reservation.confirm === "approved" ? (
+                        <FontAwesomeIcon icon={faCheck} style={{ color: "green" }} /> // 체크 표시
+                      ) : reservation.confirm === "refused" ? (
+                        <FontAwesomeIcon icon={faTimes} style={{ color: "red" }} /> // X 표시
+                      ) : (
+                        <FontAwesomeIcon icon={faQuestion} style={{ color: "blue" }} /> // ? 표시
+                      )}
+                    </div>
+                  </div>
+                ))}
+              {/* 페이지 번호를 표시하는 부분 */}
+              <div className="pagination">
+                {pageNumbers.map((number) => (
+                  <button
+                    key={number}
+                    onClick={() => handlePageChange(number)}
+                    className={number === currentPage ? "active" : ""}
+                  >
+                    {number}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
           <div className="reservationTable2">
             <div className="table">
               <div className="row tableHeader">
-                <div className="cell">No.</div>
-                <div className="cell">펫시터</div>
-                <div className="cell">날짜</div>
-                <div className="cell">요금</div>
-                <div className="cell">리뷰</div>
+                {userData && userData.usertype === "user" ? (
+                  <>
+                    <div className="cell">No.</div>
+                    <div className="cell">펫시터</div>
+                    <div className="cell">날짜</div>
+                    <div className="cell">요금</div>
+                    <div className="cell">리뷰</div>
+                  </>
+                ) : userData && userData.usertype === "sitter" ? (
+                  <>
+                    <div className="cell">No.</div>
+                    <div className="cell">닉네임</div>
+                    <div className="cell">날짜</div>
+                    <div className="cell">요금</div>
+                  </>
+                ) : (
+                  <div className="cell">헤더를 표시할 수 없습니다.</div>
+                )}
               </div>
-              {reservations
-                .filter((reservation) => reservation.confirm === "done")
-                .map((reservation, index) => (
+              {userData &&
+                userData.usertype === "user" &&
+                currentDoneReservations.map((reservation, index) => (
                   <div className="row" key={index}>
-                    <div className="cell">{index + 1}</div>
-                    <div className="cell">{reservation.sittername}</div>
+                    <div className="cell">{doneStartIndex + index + 1}</div>
+                    <div className="cell">{reservation.User.name}</div>
                     <div className="cell">{reservation.date}</div>
                     <div className="cell">{reservation.price}</div>
                     <div className="cell myPageReviewBtn">
-                      <button onClick={(e) => handleReviewClick(e)}>리뷰하기</button>
+                      <button onClick={() => handleReviewClick(reservation.resvidx)}>
+                        리뷰하기
+                      </button>
                     </div>
                   </div>
                 ))}
+              {userData &&
+                userData.usertype === "sitter" &&
+                currentDoneReservations.map((reservation, index) => (
+                  <div className="row" key={index}>
+                    <div className="cell">{doneStartIndex + index + 1}</div>
+                    <div className="cell">{reservation.User.name}</div>
+                    <div className="cell">{reservation.date}</div>
+                    <div className="cell">{reservation.price}</div>
+                  </div>
+                ))}
+
+              {/* 페이지 번호 표시 */}
+              <div className="pagination">
+                {donePageNumbers.map((number) => (
+                  <button
+                    key={number}
+                    onClick={() => handleDonePageChange(number)}
+                    className={number === currentDonePage ? "active" : ""}
+                  >
+                    {number}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </div>
-
       <Footer />
+      {/* 보기 모달 추가 코드 */}
+      {isReservationModalVisible && (
+        <div className="reservationModal">
+          <div className="reservationModalContent">
+            <div className="reservationModalClose" onClick={closeReservationModal}>
+              &times;
+            </div>
+            <h2>예약 상세내역</h2>
+            <p>{selectedReservationContent}</p>
+            <button onClick={closeReservationModal}>닫기</button>
+          </div>
+        </div>
+      )}
       {showReviewModal && (
         <div id="reviewModalbox" className="reviewModal">
           <div className="reviewModalContainer">
             <div className="addReviewContainer">
-              <div className="reviewCloseBtn" onClick={handleReviewClick}>
+              <div className="reviewCloseBtn" onClick={closeModal}>
                 &times;
               </div>
               <div className="reviewtitle">리뷰쓰기</div>
@@ -461,7 +730,9 @@ export default function Mypage() {
                 />
               </div>
               <div className="reviewImageContainer">
-                <img src="https://picsum.photos/200/300?grayscale" alt="" />
+                {reviewImage && (
+                  <img src={URL.createObjectURL(reviewImage)} alt="Uploaded Review" />
+                )}
               </div>
               <div className="reviewBtn">
                 <button onClick={submitReview}>등록</button>
@@ -471,7 +742,6 @@ export default function Mypage() {
           </div>
         </div>
       )}
-
       {showModal && (
         <div id="modalbox" className="modal">
           <div className="modalCloseBtn" onClick={closeChatModal}>

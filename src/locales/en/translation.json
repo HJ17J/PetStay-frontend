@@ -49,5 +49,12 @@
   "teamMember.name.shinDongWon": "Shin Dongwon",
   "teamMember.name.leeHyungSeok": "Lee Hyungseok",
   "teamMember.name.limHakMin": "Lim Hakmin",
-  "teamMember.name.hongJuHee": "Hong Juhee"
+  "teamMember.name.hongJuHee": "Hong Juhee",
+  "footer.title": "PetStay",
+  "footer.address": "Address: SeedCube Changdong, 7th Floor, 61 Madel-ro 13-gil, Dobong-gu, Seoul",
+  "footer.phone": "Phone: +82 2-6249-7402",
+  "footer.directions": "Directions: Exit Changdong Station from Exit 1, enter the 'SeedCube Changdong' building through Gate 3, and head to the Youth Employment Academy on the 7th floor.",
+  "footer.terms": "Terms of Service",
+  "footer.privacyPolicy": "Privacy Policy",
+  "footer.copyright": "© 2024 PetStay. All rights reserved."
 }

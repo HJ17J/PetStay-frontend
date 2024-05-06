@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
 import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -6,14 +6,22 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 interface StarRatingProps {
   value: number;
   onChange: (rating: number) => void;
+  disabled?: boolean;
 }
 
-const StarRating: React.FC<StarRatingProps> = ({ onChange }) => {
-  const [rating, setRating] = useState(0);
+const StarRating: React.FC<StarRatingProps> = ({ value, onChange, disabled = true }) => {
+  const [rating, setRating] = useState(value);
+
+  useEffect(() => {
+    setRating(value); // value prop이 변경될 때마다 rating 상태 업데이트
+  }, [value]);
 
   const handleClick = (index: number) => {
-    setRating(index + 1);
-    onChange(index + 1);
+    if (disabled) {
+      // disabled prop이 true일 때만 이벤트 핸들러 작동
+      setRating(index + 1);
+      onChange(index + 1);
+    }
   };
 
   return (

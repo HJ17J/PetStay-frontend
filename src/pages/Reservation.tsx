@@ -331,9 +331,9 @@ export default function Reservation() {
               </div>
             </div>
             <div className="trainerIntroductionContainer">
-              {/* <div className="trainerTitle">
-                <span>자기소개</span>
-              </div> */}
+              <div className="trainerTitle">
+                <span>{sitterData?.shortIntro}</span>
+              </div>
               <div className="selfIntroductionText">{sitterData?.selfIntroduction}</div>
             </div>
             <div className="btn-box">
@@ -358,24 +358,25 @@ export default function Reservation() {
             </div>
           </div>
           <div className="trainerInfoContainer2">
-            <div className="mainExperienceContainer containers">
-              <div className="trainerTitle">
-                <i className="bx bx-trophy"></i>
-                <span>대표경력</span>
-              </div>
-              <div className="textField">{sitterData?.career}</div>
-            </div>
             <div className="expertyContainer containers">
               <div className="trainerTitle">
                 <i className="bx bxs-hand-right"></i>
-                <span>전문분야</span>
+                <span>위치</span>
               </div>
-              <div className="textField">행동 분석 전문, 산책 교육 전문</div>
+              <div className="textField">{sitterData?.address}</div>
             </div>
+            <div className="mainExperienceContainer containers">
+              <div className="trainerTitle">
+                <i className="bx bx-trophy"></i>
+                <span>경력</span>
+              </div>
+              <div className="textField">{sitterData?.career}</div>
+            </div>
+
             <div className="licenseContainer containers">
               <div className="trainerTitle">
                 <i className="bx bx-home"></i>
-                <span>경력·자격</span>
+                <span>자격증</span>
               </div>
               <div className="certiContainer">
                 <div className="textField">{sitterData?.license}</div>
@@ -453,7 +454,6 @@ export default function Reservation() {
                 </button>
               </div>
             </div>
-            <div></div>
           </div>
         </div>
         <div className="reservationSection2">

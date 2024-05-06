@@ -38,6 +38,7 @@ export default function Reservation() {
   const [openReviewModal, setOpenReviewModal] = useState(false);
   const [reviewImage, setReviewImage] = useState("");
   const [reviewPage, setReviewPage] = useState(1);
+  const [totalReviewPage, setTotalReviewPage] = useState(0);
 
   //이전 채팅 데이터 관리
   const [chatData, setChatData] = useState<Chats[] | null>(null);
@@ -69,6 +70,7 @@ export default function Reservation() {
       }
       setSitterData(infoData.data.sitterInfo);
       setReviewData(reviewData.data.reviews);
+      setTotalReviewPage(reviewData.data.totalPage);
       setReviewPage((prev) => prev + 1);
     } catch (error) {
       console.error("Error fetching sitter data:", error);
@@ -79,7 +81,7 @@ export default function Reservation() {
   // 리뷰 더 받아오기
   const getMoreReview = async () => {
     try {
-      console.log(reviewPage);
+      console.log("page", reviewPage);
       const reviewData = await axios.get(
         process.env.REACT_APP_API_SERVER + `/sitter/review/${useridx}?rvPage=${reviewPage}`
       );
@@ -91,7 +93,6 @@ export default function Reservation() {
         }
       });
       setReviewPage((prev) => prev + 1);
-      console.log(reviewData);
     } catch (error) {
       console.error(error);
       throw error;
@@ -324,11 +325,7 @@ export default function Reservation() {
         <div className="reservationSection1">
           <div className="trainerInfoContainer1">
             <div className="imageContainer">
-              <img
-                src={sitterData?.img}
-                alt="Profile Image"
-                className="reservation_profile_image"
-              />
+              <img src={sitterData?.img} alt="Profile Image" className="sitterProfileImg" />
               <div className="image_button_container">
                 <h3 className="trainerName">{sitterData?.name}</h3>
               </div>
@@ -343,6 +340,21 @@ export default function Reservation() {
               <a href="" className="reservationBtn" onClick={handleClick}>
                 문의하기
               </a>
+            </div>
+          </div>
+          <div className="trainerInfoContainer4">
+            <div className="priceContainer">
+              <div className="priceTitle">이용 금액</div>
+              <hr />
+              <div className="detailPriceWrapper">
+                <div className="detailPriceContainer">
+                  <div className="sixtyMins">
+                    <span>60분</span>
+                  </div>
+                  <div>방문 교육</div>
+                </div>
+                <div>₩ {sitterData?.pay}원</div>
+              </div>
             </div>
           </div>
           <div className="trainerInfoContainer2">
@@ -371,75 +383,83 @@ export default function Reservation() {
             </div>
           </div>
           <div className="trainerInfoContainer3">
-            <div className="reviewContainer">
-              {reviewData?.map((el) => {
-                return (
-                  <div className="reviewItemContainer" key={el.reviewidx}>
-                    <div className="reviewInfo">
-                      <div className="reviewProfileBox">
-                        <img src={el.profileImg} alt="profile image" className="reviewerProfile" />
-                      </div>
-                      <div className="reviewerName">
-                        <span>{el.name}</span>
-                      </div>
-                      <div className="ratingBox">
-                        <DisplayStarRating rating={el.rate} size={"small"} />
-                        <span>{el.rate}</span>
-                      </div>
-                      <div className="reviewDateBox">
-                        <span>{formatDate(el.createdAt)}</span>
-                      </div>
-                    </div>
-                    <div className="hr"></div>
-                    <div className="reviewContent">
-                      <span>{el.content}</span>
-                      {el.img && (
-                        <button
-                          onClick={() => {
-                            openReviewImg(el.img);
-                          }}
-                          className="reviewThumb"
-                        >
-                          <img src={el.img} className="imgThumb" />
-                          {!openReviewModal ? null : (
-                            <div className="reviewModal">
-                              <div className="modalContent">
-                                <img className="naturalImg" src={reviewImage} />
-                              </div>
-                            </div>
-                          )}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+            <div className="reviewHeader">
+              <h3 className="reviewTitle">리뷰</h3>
+              <div className="avgRatingBox">
+                <DisplayStarRating
+                  rating={sitterData?.rating ? sitterData?.rating : 0}
+                  size={"middle"}
+                />
+                <span className="sitterRating">{sitterData?.rating}</span>
+                <span className="sitterReviewCount">
+                  ({sitterData && sitterData?.reviewCount < 999 ? sitterData?.reviewCount : "999+"})
+                </span>
+              </div>
             </div>
-            <button className="moreBtn" onClick={getMoreReview}>
-              더보기
-            </button>
+            <hr />
+            <div className="reviewContainer">
+              <div className="reviewList">
+                {reviewData?.map((el) => {
+                  return (
+                    <div className="reviewItemContainer" key={el.reviewidx}>
+                      <div className="reviewInfo">
+                        <div className="reviewProfileBox">
+                          <img
+                            src={el.profileImg}
+                            alt="profile image"
+                            className="reviewerProfileImg"
+                          />
+                        </div>
+                        <div className="reviewerName">
+                          <span className="rvName">{el.name}</span>
+                          <span className="rvDate">{formatDate(el.createdAt)}</span>
+                        </div>
+                        <div className="reviewDateBox"></div>
+                        <div className="ratingBox">
+                          <DisplayStarRating rating={el.rate} size={"small"} />
+                          <span>{el.rate}</span>
+                        </div>
+                      </div>
+                      <div className="hr"></div>
+                      <div className="reviewContent">
+                        <span>{el.content}</span>
+                        {el.img && (
+                          <button
+                            onClick={() => {
+                              openReviewImg(el.img);
+                            }}
+                            className="reviewThumb"
+                          >
+                            <img src={el.img} className="imgThumb" />
+                            {!openReviewModal ? null : (
+                              <div className="reviewModal">
+                                <div className="modalContent">
+                                  <img className="naturalImg" src={reviewImage} />
+                                </div>
+                              </div>
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+                <button
+                  className="moreBtn"
+                  style={{ display: reviewPage > totalReviewPage ? "none" : "block" }}
+                  onClick={getMoreReview}
+                >
+                  더보기
+                </button>
+              </div>
+            </div>
+            <div></div>
           </div>
         </div>
         <div className="reservationSection2">
-          <div className="trainerInfoContainer4">
-            <div className="priceContainer">
-              <div className="priceTitle">이용 금액</div>
-              <hr />
-              <div className="detailPriceWrapper">
-                <div className="detailPriceContainer">
-                  <div className="sixtyMins">
-                    <span>60분</span>
-                  </div>
-                  <div>방문 교육</div>
-                </div>
-                <div>₩ {sitterData?.pay}원</div>
-              </div>
-            </div>
-          </div>
-          <div className="trainerInfoContainer5">
-            <MyCalendar sitteridx={sitterData?.useridx} pay={sitterData?.pay} />
-            {/* Modal container */}
-          </div>
+          {/* <div className="trainerInfoContainer5"> */}
+          <MyCalendar sitteridx={sitterData?.useridx} pay={sitterData?.pay} />
+          {/* </div> */}
         </div>
       </div>
       <Footer />

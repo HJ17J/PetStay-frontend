@@ -25,10 +25,6 @@
   background: #fff;
   color: #000;
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
-  &:hover {
-    background-color: #ebebeb;
-    cursor: pointer;
-  }
 }
 
 .react-calendar {
@@ -139,7 +135,6 @@
   }
 
   .timeList {
-    // position: absolute;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -156,25 +151,28 @@
     @include resv-button;
     font-size: 13px;
   }
-
   .times.active {
-    transform: scale(0.96);
-    transition: "transform 0.5s ease";
     background-color: #c0dae3;
+    &:hover {
+      transform: scale(0.96);
+      transition: "transform 0.5s ease";
+      background-color: #ebebebe8;
+      cursor: pointer;
+    }
   }
-
   .times.inactive {
     background-color: #fff;
+    &:hover {
+      transform: scale(0.96);
+      transition: "transform 0.5s ease";
+      background-color: #ebebeb;
+      cursor: pointer;
+    }
   }
   .times:disabled {
     background-color: #ebebeb;
     cursor: default;
-    transform: scale(0.96);
-    transition: "transform 0.5s ease";
   }
-  // .times.disabled {
-  //   background-color: gray;
-  // }
 }
 
 // 예약 옵션 컨테이너
@@ -212,15 +210,16 @@
       font-weight: 600;
     }
     .animalNumBtn {
+      @include resv-button;
       width: 70px;
       height: 40px;
-      border: none;
-      border-radius: 10px;
-      background-color: #fff;
-      color: #000;
-      font-size: 15px;
-      transition: transform 0.2s ease;
-      box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+      // border: none;
+      // border-radius: 10px;
+      // background-color: #fff;
+      // color: #000;
+      // font-size: 15px;
+      // transition: transform 0.2s ease;
+      // box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
       &:hover {
         background-color: #ebebeb;
         cursor: pointer;

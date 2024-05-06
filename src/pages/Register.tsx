@@ -28,7 +28,6 @@ import { useNavigate, Link } from "react-router-dom";
 import Header from "../components/Header";
 import { useTranslation } from "react-i18next";
 import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from "@react-oauth/google";
-import { Link } from "react-router-dom";
 
 export default function Register() {
   const navigate = useNavigate();

@@ -2,6 +2,16 @@
   margin: 0;
 }
 
+@mixin basic-info-container {
+  border: 1px solid #dcdcdc;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  gap: 10px;
+  border-radius: 11px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+}
+
 .reservationWrapper {
   border: 1px solid black;
   display: flex;
@@ -23,102 +33,185 @@
 }
 
 .trainerInfoContainer1 {
-  border: 1px solid #dcdcdc;
-  display: flex;
-  flex-direction: column;
+  @include basic-info-container;
   justify-content: center;
   align-items: center;
   gap: 15px;
   padding: 5px;
   height: 370px;
-  border-radius: 11px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }
 
 .trainerInfoContainer2 {
-  border: 1px solid #dcdcdc;
-  display: flex;
-  flex-direction: column;
-  padding: 5px;
-  gap: 10px;
-  padding: 5px;
-  height: 250px;
-  border-radius: 11px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  @include basic-info-container;
+  height: 200px;
 }
 
+/* 리뷰 컨테이너 */
 .trainerInfoContainer3 {
-  border: 1px solid #dcdcdc;
+  @include basic-info-container;
+  /* 리뷰 타이틀 */
+  .reviewHeader {
+    width: 90%;
+    height: 60px;
+    margin: auto;
+    display: flex;
+    justify-content: space-around;
+    .reviewTitle {
+      width: 60%;
+      line-height: 60px;
+    }
+    .avgRatingBox {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      width: 40%;
+      .sitterRating,
+      .sitterReviewCount {
+        line-height: 32px;
+        font-size: 20px;
+        font-weight: 600;
+      }
+      .ratingInfo {
+        .sitterRating {
+          width: 30px;
+          margin-right: 5px;
+        }
+        .sitterReviewCount {
+          width: 70px;
+        }
+      }
+    }
+  }
+  hr {
+    margin: 0px 10px;
+  }
+  /* 리뷰 컨테이너 */
+  .reviewContainer {
+    display: flex;
+    flex-direction: column;
+    .reviewList {
+      width: 95%;
+      height: 420px;
+      margin: auto;
+      // padding-right: 10px;
+      gap: 10px 0px;
+      border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+
+      /* 리뷰 아이템 컨테이너 */
+      .reviewItemContainer {
+        width: 100%;
+        height: auto;
+        border: 1px solid #dcdcdc;
+        background-color: #fff;
+        border-radius: 13px;
+        padding: 5px;
+
+        .reviewInfo {
+          height: 70px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          // 회원 프로필 이미지
+          .reviewProfileBox {
+            width: 70px;
+            display: flex;
+            justify-content: center;
+            .reviewerProfileImg {
+              border-radius: 50%;
+              border: 0.2rem solid #6c63ff;
+              width: 50px;
+              height: 50px;
+              object-fit: cover;
+            }
+          }
+          .reviewerName {
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px 0;
+            .rvName {
+              font-size: 14px;
+              font-weight: 600;
+            }
+            .rvDate {
+              font-size: 12px;
+              font-weight: 400;
+            }
+          }
+          .ratingBox {
+            width: 150px;
+            display: flex;
+            justify-content: right;
+            align-items: center;
+            margin: 0px 10px;
+            & > * {
+              margin-right: 5px;
+            }
+          }
+          .reviewDateBox {
+            width: 100px;
+          }
+        }
+      }
+      .moreBtn {
+        width: 100%;
+        height: 26px;
+        margin: auto;
+        cursor: pointer;
+      }
+    }
+
+    .reviewContent {
+      display: flex;
+      justify-content: space-between;
+      min-height: 80px;
+      padding: 10px;
+      .reviewThumb {
+        width: 100px;
+        height: 100px;
+        overflow: hidden;
+        cursor: pointer;
+        .imgThumb {
+          width: auto;
+          height: auto;
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: cover;
+          aspect-ratio: 1/1;
+        }
+        .naturalImg {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+  }
+}
+
+.reviewSection {
   display: flex;
-  flex-direction: column;
-  padding: 5px;
-  gap: 10px;
-  padding: 5px;
-  border-radius: 11px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  align-items: center;
+  height: 47px;
 }
 
 .trainerInfoContainer4 {
-  border: 1px solid #dcdcdc;
-  display: flex;
-  flex-direction: column;
-  padding: 5px;
-  gap: 10px;
-  padding: 5px;
+  @include basic-info-container;
   height: 110px;
-  border-radius: 11px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }
 
-.trainerInfoContainer5 {
-  position: relative;
-  // border: 1px solid #dcdcdc;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 11px;
-}
+// .trainerInfoContainer5 {
+//   position: relative;
+//   // border: 1px solid #dcdcdc;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   border-radius: 11px;
+// }
 
-.trainerInfoContainer6 {
-  border: 1px solid #dcdcdc;
-  display: flex;
-  flex-direction: column;
-  padding: 5px;
-  gap: 10px;
-  padding: 5px;
-  height: 90px;
-  border-radius: 11px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-}
-
-.trainerInfoContainer7 {
-  border: 1px solid #dcdcdc;
-  display: flex;
-  flex-direction: column;
-  padding: 5px;
-  gap: 10px;
-  padding: 5px;
-  height: 90px;
-  border-radius: 11px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-}
-
-.trainerInfoContainer8 {
-  border: 1px solid #dcdcdc;
-  display: flex;
-  flex-direction: column;
-  padding: 5px;
-  gap: 10px;
-  padding: 5px;
-  height: 150px;
-  border-radius: 11px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-}
-.trainerInfoContainer9 {
-  display: flex;
-  justify-content: center;
-  gap: 5px;
-}
 .reservationBtn {
   background-color: white;
   border: 1px solid #dcdcdc;
@@ -176,106 +269,6 @@
   color: #999999;
 }
 
-/* 리뷰 컨테이너 */
-.reviewContainer {
-  width: 90%;
-  height: 550px;
-  margin: auto;
-  gap: 10px 0px;
-  border-radius: 5px;
-  display: flex;
-  flex-direction: column;
-  overflow-y: scroll;
-
-  .reviewItemContainer {
-    width: 100%;
-    height: auto;
-    border: 1px solid #dcdcdc;
-    background-color: #fff;
-    border-radius: 13px;
-    padding: 5px;
-  }
-
-  .reviewInfo {
-    height: 70px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    // 회원 프로필 이미지
-    .reviewProfileBox {
-      width: 70px;
-      display: flex;
-      justify-content: center;
-      .reviewerProfile {
-        border-radius: 50%;
-        border: 0.2rem solid #6c63ff;
-        width: 50px;
-        height: 50px;
-        object-fit: cover;
-      }
-    }
-    .reviewerName {
-      width: 200px;
-      span {
-        width: 200px;
-        font-size: 14px;
-        font-weight: bold;
-      }
-    }
-    .ratingBox {
-      width: 150px;
-      display: flex;
-      justify-content: right;
-      align-items: center;
-      margin: 0px 10px;
-      & > * {
-        margin-right: 5px;
-      }
-    }
-    .reviewDateBox {
-      width: 100px;
-    }
-  }
-
-  .reviewContent {
-    display: flex;
-    justify-content: space-between;
-    min-height: 80px;
-    padding: 10px;
-    .reviewThumb {
-      width: 100px;
-      height: 100px;
-      overflow: hidden;
-      cursor: pointer;
-      .imgThumb {
-        width: auto;
-        height: auto;
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: cover;
-        aspect-ratio: 1/1;
-      }
-      .naturalImg {
-        width: 100%;
-        height: 100%;
-      }
-    }
-  }
-}
-
-.moreBtn {
-  width: 90%;
-  margin: auto;
-  cursor: pointer;
-}
-
-.reviewSection {
-  display: flex;
-  align-items: center;
-  height: 47px;
-}
-
 .info1 {
   display: flex;
   justify-content: center;
@@ -320,7 +313,7 @@
   gap: 15px;
 }
 
-.reservation_profile_image {
+.sitterProfileImg {
   border-radius: 50%;
   width: 150px;
   height: 150px;
@@ -780,7 +773,7 @@ a {
   }
 }
 
-.star-rating-box {
-  width: 60px;
-  font-size: 12px;
-}
+// .star-rating-box {
+//   width: 60px;
+//   font-size: 12px;
+// }

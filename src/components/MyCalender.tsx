@@ -6,6 +6,8 @@ import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import { ReservationInfo } from "../types/reservation";
+import { CompletionTriggerKind } from "typescript";
 
 interface MyCalendarProps {
   sitteridx: number | undefined;
@@ -16,17 +18,17 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
   // 예약 설정
   // 시간대 상태를 관리하는 useState 훅
   const initTimeslot = [
-    { time: "10:00", status: "inactive" },
-    { time: "11:00", status: "inactive" },
-    { time: "12:00", status: "inactive" },
-    { time: "13:00", status: "inactive" },
-    { time: "14:00", status: "inactive" },
-    { time: "15:00", status: "inactive" },
-    { time: "16:00", status: "inactive" },
-    { time: "17:00", status: "inactive" },
-    { time: "18:00", status: "inactive" },
-    { time: "19:00", status: "inactive" },
-    { time: "20:00", status: "inactive" },
+    { time: "10:00", selected: false, booked: false },
+    { time: "11:00", selected: false, booked: false },
+    { time: "12:00", selected: false, booked: false },
+    { time: "13:00", selected: false, booked: false },
+    { time: "14:00", selected: false, booked: false },
+    { time: "15:00", selected: false, booked: false },
+    { time: "16:00", selected: false, booked: false },
+    { time: "17:00", selected: false, booked: false },
+    { time: "18:00", selected: false, booked: false },
+    { time: "19:00", selected: false, booked: false },
+    { time: "20:00", selected: false, booked: false },
   ];
   const [timeslots, setTimeslots] = useState(initTimeslot);
   const [startIdx, setStartIdx] = useState<null | number>(null); // 시작 시간 인덱스 상태
@@ -55,50 +57,54 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
     }
   };
 
+  // 선택한 시간 초기화
+  const resetSelectedTime = () => {
+    setTimeslots((prevState) =>
+      prevState.map((time) => ({
+        ...time,
+        selected: false,
+      }))
+    );
+    setStartIdx(null);
+    setEndIdx(null);
+  };
+
   // 예약 시간 클릭 이벤트 핸들러 함수
   const handleTimeslotClick = (index: number) => {
-    // 클릭한 시간대의 상태 가져오기
-    const clickedTimeslot = timeslots[index];
-    console.log("클릭!", timeslots);
-    // done 상태인 경우 클릭 이벤트 무시
-    if (clickedTimeslot.status === "done") {
-      return;
-    }
+    const clickedTime = timeslots[index];
+    console.log("클릭!", clickedTime);
+    console.log(timeslots);
+
+    // 아직 아무것도 선택하지 않았을 경우
     if (startIdx === null) {
-      // 시작 시간을 클릭한 경우
       setStartIdx(index);
       setTimeslots((prevState) => {
         const updatedTimeslots = [...prevState];
-        updatedTimeslots[index].status = "active";
+        updatedTimeslots[index].selected = true;
         return updatedTimeslots;
       });
-    } else if (endIdx === null && index >= startIdx) {
-      // 종료 시간을 클릭한 경우 (시작 시간 이후의 시간대만 선택 가능)
-      setEndIdx(index);
-      // 시작 시간부터 종료 시간까지의 시간대를 활성화
-      setTimeslots((prevState) => {
-        const updatedTimeslots = [...prevState];
+    }
+    // startIdx가 존재하는 경우
+    else {
+      // index가 startIdx보다 작거나, startIdx와 endIdx사이에 있는 경우 선택 취소
+      if (startIdx >= index || (endIdx && index <= endIdx)) {
+        resetSelectedTime();
+        console.log("취소 후", timeslots);
+      }
+      // index가 startIdx보다 큰 경우
+      else {
+        setEndIdx(index);
+        const updatedTimeslots = [...timeslots];
+        // start와 end 사이에 예약된 시간이 있는 경우
         for (let i = startIdx; i <= index; i++) {
-          // 중간에 done 상태인 시간대가 있는 경우 활성화하지 않음
-          if (updatedTimeslots[i].status === "done") {
-            alert("이미 예약되어 있는 시간대입니다");
-            break;
-          } else {
-            updatedTimeslots[i].status = "active";
+          if (timeslots[i].booked) {
+            resetSelectedTime();
+            return;
           }
+          timeslots[i].selected = true;
         }
-        return updatedTimeslots;
-      });
-    } else {
-      // 이미 선택된 시간대를 클릭한 경우, 모든 시간대 비활성화
-      setTimeslots((prevState) =>
-        prevState.map((slot) => ({
-          ...slot,
-          status: slot.status !== "done" ? "inactive" : slot.status,
-        }))
-      );
-      setStartIdx(null);
-      setEndIdx(null);
+        setTimeslots(updatedTimeslots);
+      }
     }
   };
 
@@ -110,10 +116,8 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
       setSelectedDate(Array.isArray(value) ? null : value);
       if (Array.isArray(value)) {
         setDate([value[0], value[1]]);
-        // console.log("Selected date range:", value);
       } else {
         setDate(value);
-        // console.log("Selected date:", value);
       }
     }
   };
@@ -127,41 +131,22 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
   };
 
   // 시간 형식을 변환하는 함수
-  const formatTime = (time: string) => {
+  const formatTimeToNumber = (time: string) => {
     // 두 자리 숫자로 포맷팅하여 반환
     return Number(time.replace(":00", ""));
   };
 
-  // 두 개의 시간을 비교하여 결과를 반환하는 함수
-  function compareTime(time1: string, time2: string) {
-    const [hour1, minute1] = time1.split(":").map(Number);
-    const [hour2, minute2] = time2.split(":").map(Number);
-
-    // 시간을 비교
-    if (hour1 < hour2) {
-      return -1; // time1이 time2보다 이전
-    } else if (hour1 > hour2) {
-      return 1; // time1이 time2보다 이후
-    } else {
-      // 시간이 같은 경우 분을 비교
-      if (minute1 < minute2) {
-        return -1; // time1이 time2보다 이전
-      } else if (minute1 > minute2) {
-        return 1; // time1이 time2보다 이후
-      } else {
-        return 0; // time1과 time2가 같음
-      }
-    }
-  }
+  const formatTimeToString = (time: number) => {
+    return String(time).concat(":00");
+  };
 
   // 예약 초기화
   const resetReservation = () => {
     setSelectedDate(null);
     setAnimalType("");
     setAnimalNum(0);
-    setStartIdx(null);
-    setEndIdx(null);
-    setTimeslots(initTimeslot);
+    resetSelectedTime();
+    console.log("초기화", timeslots);
     txtRef.current && (txtRef.current.value = "");
   };
 
@@ -176,19 +161,12 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
         if (!isReserve) {
           return;
         }
-
-        const startTime = formatTime(timeslots.filter((el) => el.status === "active")[0].time);
-        const endTime =
-          formatTime(timeslots.filter((el) => el.status === "active").pop()!.time) + 1;
-        console.log("시작시간", startTime);
-        console.log("종료시간", endTime);
-
         // 유효성 검사
         if (!selectedDate) {
           alert("날짜를 선택해주세요.");
           return;
         }
-        if (!startTime) {
+        if (startIdx === null) {
           alert("시간을 선택해주세요.");
           return;
         }
@@ -200,6 +178,9 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
           alert("맡길 동물 친구의 수를 선택해주세요.");
           return;
         }
+
+        const startTime = formatTimeToNumber(timeslots.filter((el) => el.selected)[0].time);
+        const endTime = formatTimeToNumber(timeslots.filter((el) => el.selected).pop()!.time) + 1;
 
         const data = {
           date: selectedDate,
@@ -240,71 +221,47 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
     }
   };
 
+  // 캘린더 날짜 클릭 시
   const getReservations = async (
     value: Date,
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     console.log("시터번호", sitteridx);
     console.log("날짜??", value);
+
     try {
       const result = await axios({
         method: "post",
         url: `${process.env.REACT_APP_API_SERVER}/resvDate/${sitteridx}`,
         data: { date: value },
       });
-      console.log(result.data);
+
+      const reservationToday = result.data.reservation
+        .filter((el: ReservationInfo) => el.confirm != "refused")
+        .map((el: ReservationInfo) => [
+          formatTimeToString(el.startTime),
+          el.endTime - el.startTime === 0 ? 0 : el.endTime - el.startTime - 1,
+        ]);
+
+      // timeslot 값 초기화 후 예약된 시간 표시
+      const updatedTimeslots = [...initTimeslot];
+      // console.log("현재 timeslot", timeslots);
+      for (const time of reservationToday) {
+        console.log(time);
+        const idx = updatedTimeslots.findIndex((el) => el.time === time[0]);
+        for (let i = idx; i <= idx + time[1]; i++) {
+          console.log(i);
+          updatedTimeslots[i].booked = true;
+        }
+      }
+      setTimeslots(updatedTimeslots);
+      console.log(updatedTimeslots);
+      // console.log("처리 후 timeslot", timeslots);
     } catch (error) {
       console.log(error);
     }
   };
 
-  // const onClickDay = (value: Date) => {
-  //   const newTimeslots = timeslots.map((timeslot) => {
-  //     return { ...timeslot, status: "inactive" };
-  //   });
-
-  //   // timeslots 상태 업데이트
-  //   setTimeslots(newTimeslots);
-  //   // console.log("Selected date:", value);
-  //   const date = formatDate(value);
-  //   console.log(">>>>>", date);
-  //   // console.log(process.env.REACT_APP_API_SERVER + "/resv/date");
-  //   // axios
-  //   axios
-  //     .post(process.env.REACT_APP_API_SERVER + "/resvDate/4", { date: date }) //sitteridx props로 변경필수!!!!
-  //     .then((response) => {
-  //       console.log("Response:", response.data);
-  //       const resvDate = response.data.reservation;
-
-  //       //예약 내역에 따라 예약 state변경
-  //       for (let i = 0; i < resvDate.length; i++) {
-  //         const startTime = resvDate[i].startTime;
-  //         const endTime = resvDate[i].endTime;
-
-  //         // startTime과 endTime을 시간 형식으로 변환
-  //         const formattedStartTime = formatTime(startTime);
-  //         const formattedEndTime = formatTime(endTime);
-  //         // timeslots 배열을 반복하여 해당하는 시간대를 찾고 상태를 변경
-  //         setTimeslots((prevTimeslots) => {
-  //           // const newTimeslots = [...prevTimeslots];
-  //           return prevTimeslots.map((timeslot) => {
-  //             // timeslot의 시간이 startTime과 endTime 사이에 있는지 확인
-  //             if (
-  //               compareTime(timeslot.time, formattedStartTime) >= 0 &&
-  //               compareTime(timeslot.time, formattedEndTime) <= 0
-  //             ) {
-  //               return { ...timeslot, status: "done" };
-  //             }
-  //             return timeslot;
-  //           });
-  //         });
-  //       }
-  //       // }
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error:", error);
-  //     });
-  // };
   // 번역
   const { t } = useTranslation();
 
@@ -319,38 +276,36 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
         <Calendar
           onChange={onChange as CalendarProps["onChange"]}
           onClickDay={getReservations}
+          minDate={new Date()}
+          formatDay={(locale, date) => date.toLocaleString("en", { day: "numeric" })}
           value={date}
-          // onClickDay={onClickDay}
         />
       </div>
       <div className="calenderContainer2">
-        <div className="sliderBtnContainer">
+        {/* <div className="sliderBtnContainer">
           <button onClick={PrevhandleClick} className="sliderBtn prev">
             <i className="bx bx-chevron-left"></i>
           </button>
           <button onClick={NexthandleClick} className="sliderBtn next">
             <i className="bx bx-chevron-right"></i>
           </button>
-        </div>
+        </div> */}
         <div className="timeList">
           {timeslots.map((timeslot, index) => (
-            <div
+            <button
               key={index}
               className={`times ${
-                timeslot.status === "active"
+                timeslot.selected === true
                   ? "active"
-                  : timeslot.status === "done"
-                  ? "done"
-                  : "inactive"
+                  : timeslot.selected === false
+                  ? "inactive"
+                  : "disabled"
               }`}
-              style={{
-                transform: `translateX(${translation}px)`,
-                transition: "transform 0.5s ease", // Optional: Add transition for smooth animation
-              }}
+              disabled={timeslot.booked}
               onClick={() => handleTimeslotClick(index)}
             >
               {timeslot.time}
-            </div>
+            </button>
           ))}
         </div>
       </div>
@@ -416,9 +371,9 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
           <div>
             <span className="optionDetail">예약 시간 </span>
             <span>
-              {timeslots.some((timeslot) => timeslot.status === "active") ? (
+              {timeslots.some((timeslot) => timeslot.selected) ? (
                 timeslots.map((timeslot, idx) => {
-                  if (timeslot.status === "active") {
+                  if (timeslot.selected) {
                     return <span key={idx}>{timeslot.time} </span>;
                   }
                 })

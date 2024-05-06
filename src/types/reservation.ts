@@ -15,3 +15,18 @@ export interface UserData {
   usertype: string;
   resvData: Reservation[];
 }
+export interface ReservationInfo {
+  resvidx: number;
+  date: Date;
+  startTime: number;
+  endTime: number;
+  content: string;
+  sitteridx: number;
+  useridx: number;
+  animalType: string;
+  animalNumber: number;
+  price: number;
+  confirm: "request" | "approved" | "refused" | "done";
+  createdAt: Date;
+  updatedAt: Date;
+}

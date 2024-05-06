@@ -7,6 +7,7 @@ export interface review {
   name: string;
   useridx: number;
   sitteridx: number;
-  createdAt: string;
-  updatedAt: string;
+  profileImg: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

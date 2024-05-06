@@ -32,8 +32,7 @@
   padding: 5px;
   height: 370px;
   border-radius: 11px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }
 
 .trainerInfoContainer2 {
@@ -45,8 +44,7 @@
   padding: 5px;
   height: 250px;
   border-radius: 11px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }
 
 .trainerInfoContainer3 {
@@ -57,8 +55,7 @@
   gap: 10px;
   padding: 5px;
   border-radius: 11px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }
 
 .trainerInfoContainer4 {
@@ -70,8 +67,7 @@
   padding: 5px;
   height: 110px;
   border-radius: 11px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }
 
 .trainerInfoContainer5 {
@@ -92,8 +88,7 @@
   padding: 5px;
   height: 90px;
   border-radius: 11px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }
 
 .trainerInfoContainer7 {
@@ -105,8 +100,7 @@
   padding: 5px;
   height: 90px;
   border-radius: 11px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }
 
 .trainerInfoContainer8 {
@@ -118,8 +112,7 @@
   padding: 5px;
   height: 150px;
   border-radius: 11px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }
 .trainerInfoContainer9 {
   display: flex;
@@ -136,8 +129,7 @@
   cursor: pointer;
   width: 87px;
   height: 26px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
 }
 
 .selectedReservation {
@@ -184,18 +176,98 @@
   color: #999999;
 }
 
+/* 리뷰 컨테이너 */
 .reviewContainer {
-  width: 100%;
-  height: 440px;
+  width: 90%;
+  height: 550px;
+  margin: auto;
+  gap: 10px 0px;
   border-radius: 5px;
   display: flex;
   flex-direction: column;
+  overflow-y: scroll;
+
+  .reviewItemContainer {
+    width: 100%;
+    height: auto;
+    border: 1px solid #dcdcdc;
+    background-color: #fff;
+    border-radius: 13px;
+    padding: 5px;
+  }
+
+  .reviewInfo {
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    // 회원 프로필 이미지
+    .reviewProfileBox {
+      width: 70px;
+      display: flex;
+      justify-content: center;
+      .reviewerProfile {
+        border-radius: 50%;
+        border: 0.2rem solid #6c63ff;
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+      }
+    }
+    .reviewerName {
+      width: 200px;
+      span {
+        width: 200px;
+        font-size: 14px;
+        font-weight: bold;
+      }
+    }
+    .ratingBox {
+      width: 150px;
+      display: flex;
+      justify-content: right;
+      align-items: center;
+      margin: 0px 10px;
+      & > * {
+        margin-right: 5px;
+      }
+    }
+    .reviewDateBox {
+      width: 100px;
+    }
+  }
+
+  .reviewContent {
+    display: flex;
+    justify-content: space-between;
+    min-height: 80px;
+    padding: 10px;
+    .reviewThumb {
+      width: 100px;
+      height: 100px;
+      overflow: hidden;
+      cursor: pointer;
+      .imgThumb {
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+        aspect-ratio: 1/1;
+      }
+      .naturalImg {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
 }
 
-.reviewListContainer {
-  border: 1px solid #dcdcdc;
-  border-radius: 13px;
-  padding: 5px;
+.moreBtn {
+  width: 90%;
+  margin: auto;
+  cursor: pointer;
 }
 
 .reviewSection {
@@ -210,18 +282,6 @@
   align-items: center;
 }
 
-.info1Img {
-  border-radius: 50%;
-  border: 0.2rem solid #6c63ff;
-  width: 35px;
-  height: 35px;
-}
-
-.info2Text {
-  font-size: 12px;
-  font-weight: bold;
-}
-
 .hr {
   border: 0.5px solid lightgray;
   display: flex;
@@ -229,10 +289,6 @@
   width: 96%;
 }
 
-.content {
-  padding: 0px 5px 0px 5px;
-  font-size: 12px;
-}
 .containers {
   display: flex;
   flex-direction: column;
@@ -269,9 +325,9 @@
   width: 150px;
   height: 150px;
   position: relative;
+  object-fit: cover;
   z-index: 1;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
 }
 
 .selfIntroductionText {
@@ -382,7 +438,7 @@ a {
 }
 
 .modals {
-  border: 1px solid black;
+  // border: 1px solid black;
   width: 100%;
   height: 100%;
 }
@@ -437,48 +493,10 @@ a {
   height: 26px;
 }
 
-.advertisementContainer {
-  border: 1px solid black;
-  height: 80px;
-}
-
 .chattingHistoryWrapper {
   // border: 1px solid red;
   height: 465px;
   padding: 5px;
-}
-
-.chattingContainer {
-  // border: 1px solid black;
-  display: flex;
-  gap: 10px;
-  // padding: 10px;
-  height: 60px;
-  line-height: 60px;
-  border-bottom: 3px solid white;
-  background-color: rgb(245, 245, 206);
-  border-radius: 5px;
-  &:hover {
-    background-color: lightgray;
-    cursor: pointer;
-    transition: 0.5s;
-  }
-  div {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    .chattingCustomerImage {
-      border-radius: 50%;
-      width: 40%;
-      margin: 5px;
-      // height: 50px;
-      // width: 100%;
-      // height: 100%;
-      // position: relative;
-      z-index: 1;
-      cursor: pointer;
-    }
-  }
 }
 
 .chattingInformation {
@@ -501,6 +519,7 @@ a {
   display: flex;
   gap: 5px;
   padding: 2px;
+  height: 100%;
 }
 
 .chatterImageContainer {
@@ -533,26 +552,25 @@ a {
   border: 1px solid black;
   background: #585858;
   color: #fff;
-  display: flex;
+  // display: flex;
   align-items: center;
-  border-radius: 7px;
-  height: 20px;
+  // height: 20px;
   font-size: 12px;
-  padding: 5px;
+  // padding: 5px;
 }
 
 .chattingInputContainer2 {
-  border: 1px solid black;
+  // border: 1px solid black;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
   height: 45px;
-  padding: 3px;
+  padding: 10px 5px;
 }
 
 .findImageContainer {
   position: relative;
-  border: 1px solid black;
+  // border: 1px solid black;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -563,7 +581,7 @@ a {
 
 .label {
   position: absolute;
-  border: 1px solid black;
+  // border: 1px solid black;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -598,7 +616,7 @@ a {
 }
 
 .sendChattingTextContainer {
-  border: 1px solid black;
+  // border: 1px solid black;
   display: flex;
   justify-content: left;
   align-items: center;
@@ -609,19 +627,27 @@ a {
 
 .sendChattingTextContainer input {
   border: none;
+  background-color: rgb(247, 245, 245);
+  border-radius: 7px;
   width: 203px;
   height: 34px;
+  padding: 0 5px;
+  &:focus {
+    outline: none;
+  }
 }
 
 .sendChattingTextContainer button {
-  // border: 1px solid black;
+  border: 1px solid black;
   background: #fff;
   color: #000;
   height: 28px;
   box-shadow: none;
-  border-radius: 0%;
+  // border-radius: 5px;
   width: 52px;
   height: 34px;
+  font-size: 12px;
+  margin-left: 10px;
 }
 
 .emojiBtnContainer {
@@ -665,8 +691,7 @@ a {
   height: 390px;
   // padding: 5px;
   border-radius: 4px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }
 
 .imageModalclose {
@@ -683,8 +708,7 @@ a {
   height: 25px;
   font-size: 28px;
   font-weight: bold;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
   cursor: pointer;
 }
 
@@ -706,8 +730,7 @@ a {
   height: 30px;
   font-size: 30px;
   font-weight: bold;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
   cursor: pointer;
   z-index: 12;
 }
@@ -737,7 +760,8 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 44px;
+  // height: 44px;
+  // height: 100%;
 }
 
 .imageModalBtn button {
@@ -747,4 +771,16 @@ a {
   border-radius: 0px;
   width: 100%;
   height: 100%;
+  border: none;
+  line-height: 62px;
+  &:hover {
+    background-color: rgb(239, 239, 239);
+    cursor: pointer;
+    transition: 0.5s;
+  }
+}
+
+.star-rating-box {
+  width: 60px;
+  font-size: 12px;
 }

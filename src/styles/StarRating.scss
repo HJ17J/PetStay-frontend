@@ -1,0 +1,38 @@
+// Sitter 별점 조회
+.star-rating-box {
+  //   width: 120px;
+  height: 32px;
+  //   font-size: 24px;
+  line-height: 32px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: space-evenly;
+
+  .stars {
+    width: 100%;
+    position: relative;
+    margin-right: 5px;
+    .base-star {
+      color: #a0a0a0;
+      position: relative;
+    }
+    .filled-star {
+      overflow: hidden;
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: gold;
+    }
+  }
+}
+
+.star-rating-box.middle {
+  width: 120px;
+  font-size: 24px;
+}
+
+.star-rating-box.samll {
+  width: 60px;
+  font-size: 10px;
+}

@@ -19,6 +19,18 @@ export interface Room {
   User: User;
 }
 
+export interface ExistReview {
+  content: string;
+  createdAt: string;
+  img: string;
+  rate: number;
+  resvidx: number;
+  reviewidx: number;
+  sitteridx: number;
+  updatedAt: string;
+  useridx: number;
+}
+
 interface User {
   name: string;
   img: string;

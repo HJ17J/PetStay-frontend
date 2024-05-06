@@ -6,7 +6,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Picker from "@emoji-mart/react";
 import { useParams } from "react-router-dom";
-import { ChatList, Chats, Room } from "../types/chat";
+import { ChatList, Chats, ExistReview, Room } from "../types/chat";
 import { io } from "socket.io-client";
 import data from "@emoji-mart/data";
 import axios from "axios";
@@ -27,6 +27,7 @@ export default function Mypage() {
   //현재 채팅 room관리
   const [activeRoom, setActiveRoom] = useState<Room | null>(null);
   // =================
+  const [existReview, setExistReview] = useState<ExistReview | null>(null);
   const [activeTab, setActiveTab] = useState("account");
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -49,6 +50,7 @@ export default function Mypage() {
   const [isReservationModalVisible, setIsReservationModalVisible] = useState(false);
   const [selectedReservationContent, setSelectedReservationContent] = useState<string | null>(null);
   const [reviewImage, setReviewImage] = useState<File | null>(null);
+  const [existReviewImage, setExistReviewImage] = useState<string | null>(null);
   const [sitterData, setSitterData] = useState(null);
 
   const fetchUserData = async () => {
@@ -184,17 +186,18 @@ export default function Mypage() {
     const formData = new FormData();
     formData.append("content", reviewContent);
     if (reviewImage) {
+      console.log("현재 파일데이터", reviewImage);
       formData.append("reviewImage", reviewImage);
     }
     formData.append("rate", String(reviewRate));
 
     try {
-      await axios.post(`${process.env.REACT_APP_API_SERVER}/review/${selectedResvidx}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      alert("리뷰가 등록되었습니다.");
+      const reviewResponse = await axios.post(
+        `${process.env.REACT_APP_API_SERVER}/review/${selectedResvidx}`,
+        formData
+      );
+      // alert("리뷰가 등록되었습니다.");
+      alert(reviewResponse.data.msg);
       setShowReviewModal(false); // 모달 닫기
       setSelectedResvidx(null); // 선택된 resvidx 초기화
     } catch (error) {
@@ -331,7 +334,23 @@ export default function Mypage() {
     }
   };
 
-  const handleReviewClick = (resvidx: number) => {
+  const handleReviewClick = async (resvidx: number) => {
+    const reveiwExist = await axios.get(process.env.REACT_APP_API_SERVER + "/review/" + resvidx);
+    // console.log("review가 있나요??", reveiwExist.data.data);
+    if (reveiwExist.data.data.length > 0) {
+      console.log("review있음");
+      setExistReview(reveiwExist.data.data[0]);
+      // setReviewRate(reveiwExist.data.data[0].rate);
+      // setReviewContent(reveiwExist.data.data[0].content);
+      // setExistReviewImage(reveiwExist.data.data[0].img);
+      console.log(reveiwExist.data.data[0]);
+    } else {
+      console.log("review없음");
+      setExistReview(null);
+      setReviewRate(0);
+      setReviewContent("");
+      setReviewImage(null);
+    }
     setSelectedResvidx(resvidx); // 상태에 resvidx 저장
     setShowReviewModal(!showReviewModal);
   };
@@ -448,6 +467,17 @@ export default function Mypage() {
   };
   const closeChatModal = (e: SyntheticEvent) => {
     setShowModal(!showModal);
+  };
+  const deleteReview = async (reviewidx: number) => {
+    const confirmReview = confirm("작성한 리뷰를 삭제하시겠어요??");
+    if (confirmReview) {
+      const response = await axios.delete(
+        process.env.REACT_APP_API_SERVER + "/review/" + reviewidx
+      );
+      alert(response.data.msg);
+      setShowReviewModal(false); // 모달 닫기
+      setSelectedResvidx(null); // 선택된 resvidx 초기화
+    }
   };
   return (
     <>
@@ -709,35 +739,57 @@ export default function Mypage() {
               </div>
               <div className="reviewtitle">리뷰쓰기</div>
               <div className="reviewSubtitle">어떤 점이 좋았나요?</div>
-              <StarRating value={reviewRate} onChange={setReviewRate} />
-              <div className="reviewtextArea">
-                <textarea
-                  value={reviewContent}
-                  onChange={(e) => setReviewContent(e.target.value)}
-                ></textarea>
-              </div>
-              <div className="reviewAddImage">
-                <label htmlFor="reviewImage" className="reviewlabel">
-                  <i className="bx bxs-camera"></i>
-                  <div className="reviewImageTitle">사진/동영상 첨부하기</div>
-                </label>
-                <input
-                  type="file"
-                  id="reviewImage"
-                  className="reviewInput"
-                  accept="image/*"
-                  onChange={(e) => setReviewImage(e.target.files ? e.target.files[0] : null)}
-                />
-              </div>
-              <div className="reviewImageContainer">
-                {reviewImage && (
-                  <img src={URL.createObjectURL(reviewImage)} alt="Uploaded Review" />
-                )}
-              </div>
-              <div className="reviewBtn">
-                <button onClick={submitReview}>등록</button>
-                <button onClick={closeModal}>취소</button>
-              </div>
+              {existReview != null ? (
+                <>
+                  <StarRating value={existReview.rate} onChange={setReviewRate} disabled={false} />
+                  <div className="reviewtextArea">
+                    <textarea
+                      value={existReview.content}
+                      // onChange={(e) => setReviewContent(e.target.value)}
+                      disabled
+                    ></textarea>
+                  </div>
+                  <div className="reviewImageContainer">
+                    {existReview.img != "" && <img src={existReview.img} alt="Uploaded Review" />}
+                  </div>
+                  <div className="reviewBtn">
+                    <button onClick={() => deleteReview(existReview.reviewidx)}>삭제</button>
+                    <button onClick={closeModal}>취소</button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <StarRating value={reviewRate} onChange={setReviewRate} />
+                  <div className="reviewtextArea">
+                    <textarea
+                      value={reviewContent}
+                      onChange={(e) => setReviewContent(e.target.value)}
+                    ></textarea>
+                  </div>
+                  <div className="reviewAddImage">
+                    <label htmlFor="reviewImage" className="reviewlabel">
+                      <i className="bx bxs-camera"></i>
+                      <div className="reviewImageTitle">사진/동영상 첨부하기</div>
+                    </label>
+                    <input
+                      type="file"
+                      id="reviewImage"
+                      className="reviewInput"
+                      accept="image/*"
+                      onChange={(e) => setReviewImage(e.target.files ? e.target.files[0] : null)}
+                    />
+                  </div>
+                  <div className="reviewImageContainer">
+                    {reviewImage && (
+                      <img src={URL.createObjectURL(reviewImage)} alt="Uploaded Review" />
+                    )}
+                  </div>
+                  <div className="reviewBtn">
+                    <button onClick={submitReview}>등록</button>
+                    <button onClick={closeModal}>취소</button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

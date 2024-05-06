@@ -36,6 +36,7 @@ export default function Reservation() {
   const [reviewData, setReviewData] = useState<review[] | null>(null);
 
   const [openReviewModal, setOpenReviewModal] = useState(false);
+  const [reviewImage, setReviewImage] = useState("");
 
   //이전 채팅 데이터 관리
   const [chatData, setChatData] = useState<Chats[] | null>(null);
@@ -81,8 +82,9 @@ export default function Reservation() {
   };
 
   // 리뷰 이미지 클릭
-  const openReviewImg = () => {
+  const openReviewImg = (imgUrl: string) => {
     setOpenReviewModal((prev) => !prev);
+    setReviewImage(imgUrl);
   };
 
   const addChatList = useCallback(
@@ -364,12 +366,17 @@ export default function Reservation() {
                     <div className="reviewContent">
                       <span>{el.content}</span>
                       {el.img && (
-                        <button onClick={openReviewImg} className="reviewThumb">
+                        <button
+                          onClick={() => {
+                            openReviewImg(el.img);
+                          }}
+                          className="reviewThumb"
+                        >
                           <img src={el.img} className="imgThumb" />
                           {!openReviewModal ? null : (
                             <div className="reviewModal">
                               <div className="modalContent">
-                                <img className="naturalImg" src={el.img} />
+                                <img className="naturalImg" src={reviewImage} />
                               </div>
                             </div>
                           )}

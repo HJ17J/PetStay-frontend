@@ -24,11 +24,10 @@ import {
   SignupErrorPayload,
   LoginPayload,
 } from "../types/authTypes";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Header from "../components/Header";
 import { useTranslation } from "react-i18next";
 import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from "@react-oauth/google";
-import { Link } from "react-router-dom";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -414,6 +413,11 @@ export default function Register() {
                     />
                   </Link>
                 </div>
+                <Link to={`http://localhost:8080/auth/kakao`}>
+                  <button type="button" className="social">
+                    카카오 로그인 테스트
+                  </button>
+                </Link>
               </form>
             )}
             {formToShow === "signUp" && (

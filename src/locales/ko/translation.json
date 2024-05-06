@@ -50,5 +50,12 @@
   "teamMember.name.shinDongWon": "신동원",
   "teamMember.name.leeHyungSeok": "이형석",
   "teamMember.name.limHakMin": "임학민",
-  "teamMember.name.hongJuHee": "홍주희"
+  "teamMember.name.hongJuHee": "홍주희",
+  "footer.title": "PetStay",
+  "footer.address": "주소: 서울 도봉구 마들로13길 61 씨드큐브 창동 7층",
+  "footer.phone": "전화번호: 02-6249-7402",
+  "footer.directions": "오시는 길: 창동역 1번 출구에서 나와 '씨드큐브 창동' 건물의 Gate 3로 들어오셔서 7층 청년취업사관학교로 들어오시면 됩니다!",
+  "footer.terms": "서비스 약관",
+  "footer.privacyPolicy": "개인정보보호정책",
+  "footer.copyright": "© 2024 PetStay. All rights reserved."
 }

@@ -7,7 +7,7 @@ export interface PetSitterList {
   pay: number;
   rating: number;
   reviewCount: number;
-  animalType: string;
+  animalType: string[];
 }
 
 export interface PetSitterDetail {
@@ -20,7 +20,7 @@ export interface PetSitterDetail {
   career: string;
   license: string;
   pay: number;
+  animalType: string[];
   rating: number;
   reviewCount: number;
-  animalType: string;
 }

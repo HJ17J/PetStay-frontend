@@ -7,6 +7,7 @@ import type { PetSitterList } from "../types/PetSitter";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { DisplayStarRating } from "../components/StarRatingView";
+import { type } from "os";
 
 export default function PetSitterList() {
   const [petSitters, setPetSitters] = useState<PetSitterList[]>([]);
@@ -20,6 +21,7 @@ export default function PetSitterList() {
       const result = await axios.get(
         `${process.env.REACT_APP_API_SERVER}/sitter?${searchTarget}=${searchKeyword}`
       );
+
       setPetSitters(result.data.data);
     } catch (error) {
       console.error("Failed to get searched sitter lists", error);
@@ -30,7 +32,7 @@ export default function PetSitterList() {
   const fetchPetSitters = async () => {
     try {
       const result = await axios.get(process.env.REACT_APP_API_SERVER + "/sitter");
-      console.log(result.data);
+      console.log(result);
       setPetSitters(result.data.data);
     } catch (error) {
       console.error("Failed to fetch pet sitters:", error);
@@ -110,11 +112,7 @@ export default function PetSitterList() {
                 <div className="tags">
                   <div className="animalType">
                     <span className="tag-box">동물</span>
-                    {sitter.animalType === "dog"
-                      ? "강아지"
-                      : sitter.animalType === "cat"
-                      ? "고양이"
-                      : "기타"}
+                    {sitter.animalType.join(", ")}
                   </div>
                   <div className="price">
                     <span>

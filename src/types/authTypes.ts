@@ -32,3 +32,9 @@ export interface SignupErrorPayload {
   message?: string;
   // 필요에 따라 추가적인 에러 필드를 여기에 포함시킬 수 있습니다.
 }
+
+export enum UserType {
+  SITTER = "sitter",
+  USER = "user",
+  ADMIN = "admin",
+}

@@ -332,7 +332,7 @@ export default function Reservation() {
             </div>
             <div className="trainerIntroductionContainer">
               <div className="trainerTitle">
-                <span>{sitterData?.shortIntro}</span>
+                <span>{sitterData?.oneLineIntro}</span>
               </div>
               <div className="selfIntroductionText">{sitterData?.selfIntroduction}</div>
             </div>

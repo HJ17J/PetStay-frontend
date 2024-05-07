@@ -30,6 +30,7 @@
     background-color: #333;
     border-radius: 5px;
     box-shadow: 0 0 5px 5px #f6f6f64d;
+    color: #fff;
     &:hover {
       cursor: pointer;
       background-color: #a0a0a0;
@@ -93,6 +94,7 @@
         line-height: 32px;
         overflow: hidden;
         white-space: nowrap;
+        text-align: left;
         text-overflow: ellipsis;
       }
       // Sitter 평점

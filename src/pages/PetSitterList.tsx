@@ -112,7 +112,7 @@ export default function PetSitterList() {
                 <div className="tags">
                   <div className="animalType">
                     <span className="tag-box">동물</span>
-                    {sitter.animalType.join(", ")}
+                    {sitter.animalType?.join(", ")}
                   </div>
                   <div className="price">
                     <span>

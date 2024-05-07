@@ -20,7 +20,7 @@ import { DisplayStarRating } from "../components/StarRatingView";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
 
-const socket = io("http://localhost:8080", { autoConnect: false });
+const socket = io(process.env.REACT_APP_SOCKET_SERVER!, { autoConnect: false });
 export default function Reservation() {
   const initSocketConnect = () => {
     if (!socket.connected) socket.connect();

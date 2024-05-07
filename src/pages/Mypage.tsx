@@ -21,7 +21,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import StarRating from "../components/StarRating";
 
-const socket = io("http://localhost:8080", { autoConnect: false });
+const socket = io(process.env.REACT_APP_SOCKET_SERVER!, { autoConnect: false });
 
 export default function Mypage() {
   // 주희 chat

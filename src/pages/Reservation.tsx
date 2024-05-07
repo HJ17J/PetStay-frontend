@@ -61,7 +61,7 @@ export default function Reservation() {
   const getSitterData = async () => {
     try {
       const infoData = await axios.get(process.env.REACT_APP_API_SERVER + `/sitter/${useridx}`);
-      const reviewData = await axios.get(
+      const rvData = await axios.get(
         process.env.REACT_APP_API_SERVER + `/sitter/review/${useridx}?rvPage=${reviewPage}`
       );
       if (infoData.data.sitterInfo.length === 0) {
@@ -69,8 +69,8 @@ export default function Reservation() {
         return;
       }
       setSitterData(infoData.data.sitterInfo);
-      setReviewData(reviewData.data.reviews);
-      setTotalReviewPage(reviewData.data.totalPage);
+      setReviewData(rvData?.data.reviews);
+      setTotalReviewPage(rvData?.data.totalPage);
       setReviewPage((prev) => prev + 1);
     } catch (error) {
       console.error("Error fetching sitter data:", error);

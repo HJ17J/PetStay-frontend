@@ -7,18 +7,16 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 71vh;
   gap: 20px;
-  margin: 100px 0px;
+  margin: 10px;
 }
 
 .myPageContainer1 {
-  display: flex;
+  // display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 400px;
-  height: 550px;
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }
 
@@ -29,7 +27,7 @@
   align-items: center;
   gap: 10px;
   // min-width: 600px;
-  min-width: 900px;
+  min-width: 750px;
   // height: 600px;
   .reservationTable1 {
     .table {
@@ -57,10 +55,11 @@
 }
 
 .sectionsContainer {
-  border-top-left-radius: 13px;
-  border-top-right-radius: 13px;
-  border-bottom-left-radius: 13px;
-  border-bottom-right-radius: 13px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 13px;
+  width: 350px;
+  margin: auto;
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
 }
 
@@ -91,6 +90,7 @@
   height: 213px;
   align-items: center;
   padding: 10px 0;
+  margin: auto;
   gap: 15px;
 }
 
@@ -103,13 +103,26 @@
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
 }
 
+.label_profile_image {
+  background-color: white;
+  border: 1px solid #dcdcdc;
+  color: #000;
+  border-radius: 5px;
+  font-size: 13px;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  width: 87px;
+  height: 26px;
+  line-height: 26px;
+}
 .myPage_image_input {
   position: absolute;
   border-radius: 50%;
   opacity: 0;
   cursor: pointer;
-  width: 150px;
-  height: 150px;
+  width: 1px;
+  height: 1px;
   z-index: 2;
 }
 
@@ -137,7 +150,7 @@
   font-weight: bold;
   justify-content: center;
   align-items: center;
-  width: 100px;
+  min-width: 100px;
   height: 40px;
 }
 
@@ -148,7 +161,7 @@
   font-weight: bold;
   justify-content: center;
   align-items: center;
-  width: 100px;
+  min-width: 100px;
   height: 150px;
 }
 
@@ -165,21 +178,24 @@
   width: 245px;
   height: 136px;
   border: none;
+  padding: 5px 10px;
 }
 
 .inputDiv {
   border: 1px solid #dcdcdc;
   display: flex;
+  flex: 1;
   justify-content: center;
   align-items: center;
-  width: 260px;
   height: 40px;
 }
 
 .inputDiv input {
-  width: 245px;
+  flex: 1;
   height: 28px;
+  background-color: transparent;
   border: none;
+  padding: 0 10px;
 }
 
 .myPageBtnContainer {
@@ -200,6 +216,10 @@
   cursor: pointer;
   width: 87px;
   height: 26px;
+}
+
+.typesContainer {
+  align-items: center;
 }
 
 .reservationTable1,
@@ -420,6 +440,9 @@
   cursor: pointer;
 }
 
+.labelDiv {
+  padding: 0 10px;
+}
 // .formControl {
 //   display: none;
 //   visibility: hidden;

@@ -105,7 +105,7 @@ export default function PetSitterList() {
                 </div>
                 <hr />
                 <div className="short-intro">
-                  <p>{sitter.shortIntro}</p>
+                  <p>{sitter.oneLineIntro}</p>
                 </div>
                 <div className="tags">
                   <div className="animalType">

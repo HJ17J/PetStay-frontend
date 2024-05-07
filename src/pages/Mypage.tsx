@@ -20,6 +20,7 @@ import {
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
 import StarRating from "../components/StarRating";
+import Userprofile from "../components/UserProfile";
 
 const socket = io(process.env.REACT_APP_SOCKET_SERVER!, { autoConnect: false });
 
@@ -492,65 +493,7 @@ export default function Mypage() {
       <Header />
       <div className="myPageWrapper">
         <div className="myPageContainer1">
-          <div className="imageContainer">
-            <img
-              src="https://picsum.photos/seed/picsum/200/300"
-              alt="Profile Image"
-              className="myPage_profile_image"
-            />
-            {/* <input
-              type="file"
-              name="profile_img"
-              className="myPage_image_input"
-            /> */}
-            <div className="image_button_container">
-              <button type="button">프로필 변경</button>
-              <button type="button">기본 프로필</button>
-            </div>
-          </div>
-          <div className="sectionsContainer">
-            {sitterData ? (
-              <div className="nameContainer sections">
-                <div className="mypageTitle bordertopLeft">성함</div>
-                <div className="inputDiv borderTopRight">
-                  <input type="text" value={sitterData} />
-                </div>
-              </div>
-            ) : (
-              ""
-            )}
-
-            <div className="nameContainer sections">
-              <div className="mypageTitle bordertopLeft">성함</div>
-              <div className="inputDiv borderTopRight">
-                <input type="text" />
-              </div>
-            </div>
-            <div className="experienceContainer sections">
-              <div className="mypageTitle">경력/전문분야</div>
-              <div className="inputDiv">
-                <input type="text" />
-              </div>
-            </div>
-            <div className="locationContainer sections">
-              <div className="mypageTitle">방문위치</div>
-              <div className="inputDiv">
-                <input type="text" />
-              </div>
-            </div>
-            <div className="introductionContainer sections">
-              <div className="textAreaTitle  borderBottomLeft">자가소개</div>
-              <div className="textAreaDiv borderBottomRight">
-                <textarea className="textAreaContainer"></textarea>
-              </div>
-            </div>
-          </div>
-          <div className="myPageBtnContainer">
-            <button className="myPageUpdateBtn" onClick={toggleModal}>
-              채팅창
-            </button>
-            <button className="myPageUpdateBtn">수정</button>
-          </div>
+          <Userprofile />
         </div>
         <div className="myPageContainer2">
           <p className="resvtitle">예약 현황</p>

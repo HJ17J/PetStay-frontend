@@ -1,12 +1,15 @@
+import { UserType } from "./authTypes";
+
 export interface PetSitterList {
   useridx: number;
   name: string;
   img: string;
   address: string;
-  shortIntro: string;
+  oneLineIntro: string;
   pay: number;
   rating: number;
   reviewCount: number;
+  // shortInfo: string;
   animalType: string;
 }
 
@@ -15,7 +18,7 @@ export interface PetSitterDetail {
   name: string;
   img: string;
   address: string;
-  shortIntro: string;
+  oneLineIntro: string;
   selfIntroduction: string;
   career: string;
   license: string;
@@ -23,4 +26,23 @@ export interface PetSitterDetail {
   rating: number;
   reviewCount: number;
   animalType: string;
+}
+
+
+export interface ProfileResponse {
+  address?: string;
+  career?: string;
+  confirm?: boolean;
+  id?: number;
+  img?: string;
+  license?: string;
+  name?: string;
+  oneLineIntro?: string;
+  pay?: number;
+  selfIntroduction?: string;
+  type?: string;
+  userid?: string;
+  useridx?: number;
+  userpw?: string;
+  usertype?: UserType;
 }

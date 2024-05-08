@@ -159,7 +159,7 @@ export default function Register() {
         dispatch(
           loginFailure({
             userid: "아이디 확인이 필요합니다",
-            userpw: axiosError.response.data.error,
+            userpw: "비밀번호가 틀렸습니다",
           })
         );
       } else {
@@ -389,8 +389,12 @@ export default function Register() {
                     value={userid}
                     onChange={(e) => setUserid(e.target.value)}
                   />
-                  {error.userid && <p style={{ color: "red" }}>{error.userid}</p>}
                 </div>
+                {error.userid && (
+                  <p style={{ color: "red", position: "relative", top: "-7px", left: "-65px" }}>
+                    {error.userid}
+                  </p>
+                )}
                 <div className="input-field">
                   <FontAwesomeIcon icon={faLock} className="icon-style" />
                   <input
@@ -399,25 +403,13 @@ export default function Register() {
                     value={userpw}
                     onChange={(e) => setUserpw(e.target.value)}
                   />
-                  {error.userpw && <p style={{ color: "red" }}>{error.userpw}</p>}
                 </div>
+                {error.userpw && (
+                  <p style={{ color: "red", position: "relative", top: "-7px", left: "-65px" }}>
+                    {error.userpw}
+                  </p>
+                )}
                 <input type="submit" value={t("signIn.title")} className="btn solid" />
-                <p className="social-text">{t("socialPlatform")}</p>
-                <div className="social-media">
-                  <Link to="/google-auth" className="social">
-                    <img
-                      className="social"
-                      src="images/google.png"
-                      alt="Login with Google"
-                      style={{ cursor: "pointer" }}
-                    />
-                  </Link>
-                </div>
-                <Link to={`http://localhost:8080/auth/kakao`}>
-                  <button type="button" className="social">
-                    카카오 로그인 테스트
-                  </button>
-                </Link>
               </form>
             )}
             {formToShow === "signUp" && (

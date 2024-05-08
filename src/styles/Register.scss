@@ -86,7 +86,8 @@ form.petsitter-form {
   border-radius: 55px;
   display: flex; // Flexbox를 사용하여 자식 요소들을 나란히 배열
   align-items: center; // 세로 중앙 정렬
-  padding: 0 0.4rem;
+  padding-left: 13px;
+  gap: 5px;
   position: relative;
   svg {
     margin-right: 5px;

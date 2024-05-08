@@ -185,7 +185,7 @@ export default function Userprofile({ toggleModal }: UserprofileProps) {
   };
   return (
     <div className="outerContainer">
-      {userInfo?.usertype !== UserType.SITTER ? (
+      {userInfo?.usertype === UserType.SITTER ? (
         !disableInput ? (
           <div className="innercontainer">
             <div className="imageContainer sections">
@@ -457,6 +457,9 @@ export default function Userprofile({ toggleModal }: UserprofileProps) {
             </div>
           </div>
           <div className="myPageBtnContainer">
+            <button className="myPageUpdateBtn" onClick={toggleModal}>
+              채팅창
+            </button>
             <button
               className="myPageUpdateBtn"
               onClick={() => {

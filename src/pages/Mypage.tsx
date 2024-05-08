@@ -493,7 +493,7 @@ export default function Mypage() {
       <Header />
       <div className="myPageWrapper">
         <div className="myPageContainer1">
-          <Userprofile />
+          <Userprofile toggleModal={toggleModal} />
         </div>
         <div className="myPageContainer2">
           <p className="resvtitle">예약 현황</p>

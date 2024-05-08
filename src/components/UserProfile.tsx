@@ -10,8 +10,11 @@ import { PetSitterDetail, ProfileResponse } from "../types/PetSitter";
 import { userInfo } from "os";
 import { CommonUserInterface } from "../types/user";
 import { setPetSitters } from "../store/PetSitterSlice";
+interface UserprofileProps {
+  toggleModal: (e: SyntheticEvent) => void;
+}
 
-export default function Userprofile() {
+export default function Userprofile({ toggleModal }: UserprofileProps) {
   // 펫시터 동물 항목 한글로 변경
   const setKoAnimalType = (type: string) => {
     if (type === "dog") {
@@ -246,6 +249,9 @@ export default function Userprofile() {
               </div>
             </div>
             <div className="myPageBtnContainer">
+              <button className="myPageUpdateBtn" onClick={toggleModal}>
+                채팅창
+              </button>
               <button
                 className="myPageUpdateBtn"
                 onClick={() => {

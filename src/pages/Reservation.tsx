@@ -61,7 +61,7 @@ export default function Reservation() {
   const getSitterData = async () => {
     try {
       const infoData = await axios.get(process.env.REACT_APP_API_SERVER + `/sitter/${useridx}`);
-      const reviewData = await axios.get(
+      const rvData = await axios.get(
         process.env.REACT_APP_API_SERVER + `/sitter/review/${useridx}?rvPage=${reviewPage}`
       );
       if (infoData.data.sitterInfo.length === 0) {
@@ -69,8 +69,8 @@ export default function Reservation() {
         return;
       }
       setSitterData(infoData.data.sitterInfo);
-      setReviewData(reviewData.data.reviews);
-      setTotalReviewPage(reviewData.data.totalPage);
+      setReviewData(rvData?.data.reviews);
+      setTotalReviewPage(rvData?.data.totalPage);
       setReviewPage((prev) => prev + 1);
     } catch (error) {
       console.error("Error fetching sitter data:", error);
@@ -322,8 +322,143 @@ export default function Reservation() {
     <>
       <Header />
       <div className="reservationWrapper">
-        <div className="reservationSection1">
-          <div className="trainerInfoContainer1">
+        <div className="sitter-top-section">
+          <div className="sitter-title-container">
+            <img src={sitterData?.img} alt="Profile Image" className="sitter-profile-img" />
+            <h3 className="sitterName">{sitterData?.name}</h3>
+            <p>{sitterData?.oneLineIntro}</p>
+            <a href="" className="reservation-btn" onClick={handleClick}>
+              문의하기
+            </a>
+          </div>
+        </div>
+        <div className="sitter-bottom-section">
+          <div className="section1">
+            <div className="sitter-info-container">
+              <div className="info-header">
+                <h3>펫시터 소개</h3>
+              </div>
+              <hr />
+
+              <div className="info-container">
+                <div className="info">
+                  <span className="info-title">
+                    <i className="bx bx-money"></i>&nbsp; 금액
+                  </span>
+                  <span className="infoContent">
+                    {sitterData?.pay}원<span className="sixtyMins">60분</span>
+                  </span>
+                </div>
+                <div className="info">
+                  <span className="info-title">
+                    <i className="bx bx-map"></i>&nbsp; 위치
+                  </span>
+                  <span className="infoContent">{sitterData?.address}</span>
+                </div>
+                <div className="info">
+                  <span className="info-title">
+                    <i className="bx bx-trophy"></i>&nbsp; 경력
+                  </span>
+                  <span className="infoContent">{sitterData?.career}</span>
+                </div>
+                <div className="info">
+                  <span className="info-title">
+                    <i className="bx bx-home"></i>&nbsp; 자격증
+                  </span>
+                  <span className="infoContent">{sitterData?.license}</span>
+                </div>
+                <div className="info self-introduction">
+                  <span className="info-title">
+                    <i className="bx bx-comment-dots"></i>&nbsp; 자기소개
+                  </span>
+                  <p className="infoContent">{sitterData?.selfIntroduction}</p>
+                </div>
+              </div>
+            </div>
+            <div className="sitter-review-container">
+              <div className="review-header">
+                <h3 className="review-title">리뷰</h3>
+                <div className="avg-rating-box">
+                  <DisplayStarRating
+                    rating={sitterData?.rating ? sitterData?.rating : 0}
+                    size={"middle"}
+                  />
+                  <span className="sitterRating">{sitterData?.rating}</span>
+                  <span className="sitterReviewCount">
+                    (
+                    {sitterData && sitterData?.reviewCount < 999 ? sitterData?.reviewCount : "999+"}
+                    )
+                  </span>
+                </div>
+              </div>
+              <hr />
+              <div className="reviewContainer">
+                <div className="reviewList">
+                  {reviewData?.map((el) => {
+                    return (
+                      <div className="reviewItemContainer" key={el.reviewidx}>
+                        <div className="reviewInfo">
+                          <div className="reviewProfileBox">
+                            <img
+                              src={el.profileImg}
+                              alt="profile image"
+                              className="reviewerProfileImg"
+                            />
+                          </div>
+                          <div className="reviewerName">
+                            <span className="rvName">{el.name}</span>
+                            <span className="rvDate">{formatDate(el.createdAt)}</span>
+                          </div>
+                          <div className="reviewDateBox"></div>
+                          <div className="ratingBox">
+                            <DisplayStarRating rating={el.rate} size={"small"} />
+                            <span>{el.rate}</span>
+                          </div>
+                        </div>
+                        <div className="hr"></div>
+                        <div className="reviewContent">
+                          <span>{el.content}</span>
+                          {el.img && (
+                            <button
+                              onClick={() => {
+                                openReviewImg(el.img);
+                              }}
+                              className="reviewThumb"
+                            >
+                              <img src={el.img} className="imgThumb" />
+                              {!openReviewModal ? null : (
+                                <div className="reviewModal">
+                                  <div className="modalContent">
+                                    <img className="naturalImg" src={reviewImage} />
+                                  </div>
+                                </div>
+                              )}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <button
+                    className="moreBtn"
+                    style={{ display: reviewPage > totalReviewPage ? "none" : "block" }}
+                    onClick={getMoreReview}
+                  >
+                    더보기
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="section2">
+            <div>
+              <MyCalendar sitteridx={sitterData?.useridx} pay={sitterData?.pay} />
+            </div>
+          </div>
+        </div>
+
+        {/* <div className="reservationSection1"> */}
+        {/* <div className="trainerInfoContainer1">
             <div className="imageContainer">
               <img src={sitterData?.img} alt="Profile Image" className="sitterProfileImg" />
               <div className="image_button_container">
@@ -341,49 +476,23 @@ export default function Reservation() {
                 문의하기
               </a>
             </div>
-          </div>
-          <div className="trainerInfoContainer4">
+          </div> */}
+        {/* <div className="trainerInfoContainer4">
             <div className="priceContainer">
               <div className="priceTitle">이용 금액</div>
               <hr />
               <div className="detailPriceWrapper">
                 <div className="detailPriceContainer">
                   <div className="sixtyMins">
-                    <span>60분</span>
+                    <span className="sixtyMins">60분</span>
                   </div>
-                  <div>방문 교육</div>
                 </div>
                 <div>₩ {sitterData?.pay}원</div>
               </div>
             </div>
-          </div>
-          <div className="trainerInfoContainer2">
-            <div className="expertyContainer containers">
-              <div className="trainerTitle">
-                <i className="bx bxs-hand-right"></i>
-                <span>위치</span>
-              </div>
-              <div className="textField">{sitterData?.address}</div>
-            </div>
-            <div className="mainExperienceContainer containers">
-              <div className="trainerTitle">
-                <i className="bx bx-trophy"></i>
-                <span>경력</span>
-              </div>
-              <div className="textField">{sitterData?.career}</div>
-            </div>
+          </div> */}
 
-            <div className="licenseContainer containers">
-              <div className="trainerTitle">
-                <i className="bx bx-home"></i>
-                <span>자격증</span>
-              </div>
-              <div className="certiContainer">
-                <div className="textField">{sitterData?.license}</div>
-              </div>
-            </div>
-          </div>
-          <div className="trainerInfoContainer3">
+        {/* <div className="trainerInfoContainer3">
             <div className="reviewHeader">
               <h3 className="reviewTitle">리뷰</h3>
               <div className="avgRatingBox">
@@ -454,13 +563,11 @@ export default function Reservation() {
                 </button>
               </div>
             </div>
-          </div>
-        </div>
-        <div className="reservationSection2">
-          {/* <div className="trainerInfoContainer5"> */}
+          </div> */}
+        {/* </div> */}
+        {/* <div className="reservationSection2">
           <MyCalendar sitteridx={sitterData?.useridx} pay={sitterData?.pay} />
-          {/* </div> */}
-        </div>
+        </div> */}
       </div>
       <Footer />
       {showModal && (

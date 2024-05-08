@@ -324,7 +324,7 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
             <option disabled value=""></option>
             <option value="dog">강아지</option>
             <option value="cat">고양이</option>
-            <option value="etc">그외</option>
+            <option value="etc">기타</option>
           </select>
         </div>
         <div className="animalNumContainer">

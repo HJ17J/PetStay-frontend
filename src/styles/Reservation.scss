@@ -6,7 +6,7 @@
   border: 1px solid #dcdcdc;
   display: flex;
   flex-direction: column;
-  padding: 5px;
+  padding: 25px;
   gap: 10px;
   border-radius: 11px;
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
@@ -15,19 +15,137 @@
 .reservationWrapper {
   border: 1px solid black;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
-  // height: 1000px;
-  gap: 5px;
-  padding: 10px;
+  // gap: 10px;
+  padding: 20px;
+}
+
+.sitter-top-section {
+  @include basic-info-container;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 80%;
+  margin: auto;
+  text-align: center;
+  border-bottom: 1px solid #ececec;
+  border-radius: 20px 20px 0 0;
+  .sitter-title-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 50%;
+    .sitter-profile-img {
+      display: block;
+      margin: auto;
+      border-radius: 50%;
+      width: 150px;
+      height: 150px;
+      position: relative;
+      object-fit: cover;
+      z-index: 1;
+      box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    }
+    .reservation-btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 9.5rem;
+      height: 3rem;
+      background: #00abf0;
+      border: 0.125rem solid #00abf0;
+      border-radius: 0.3rem;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #fff;
+      margin: 0 auto;
+      transition: 0.5s;
+      box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+      &:hover {
+        background: transparent;
+        color: #00abf0;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.sitter-bottom-section {
+  @include basic-info-container;
+  border: none;
+  box-shadow: none;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 80%;
+  margin: auto;
+  padding: 25px 0 0 0;
+  border-radius: 0 0 20px 20px;
+  gap: 50px;
+  .section1 {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .sitter-info-container {
+      @include basic-info-container;
+      justify-content: center;
+      gap: 10px;
+      height: 350px;
+      .info-header {
+        width: 90%;
+        height: 50px;
+        padding: 0 10px;
+        h3 {
+          line-height: 50px;
+        }
+      }
+      hr {
+        margin: 0 10px 10px 0;
+      }
+      .info-container {
+        height: 220px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        .info {
+          width: 100%;
+          height: 36px;
+          display: flex;
+          justify-content: space-between;
+          font-size: 18px;
+          line-height: 36px;
+          padding: 5px 0;
+          overflow: hidden;
+          .info-title {
+            min-width: 100px;
+            width: 20%;
+            text-align: left;
+            font-weight: 600;
+          }
+          .infoContent {
+            min-width: 400px;
+            width: 80%;
+            text-align: left;
+            font-size: 16px;
+          }
+        }
+        .info.self-introduction {
+          height: 100px;
+        }
+      }
+    }
+  }
+  .section2 {
+    width: 50%;
+  }
 }
 
 .reservationSection1,
 .reservationSection2 {
-  // border: 1px solid red;
   display: flex;
   flex-direction: column;
-  // justify-content: center;
   width: 600px;
   gap: 10px;
 }
@@ -47,20 +165,21 @@
 }
 
 /* 리뷰 컨테이너 */
-.trainerInfoContainer3 {
+.sitter-review-container {
   @include basic-info-container;
   /* 리뷰 타이틀 */
-  .reviewHeader {
-    width: 90%;
-    height: 60px;
-    margin: auto;
+  .review-header {
+    width: 100%;
+    height: 50px;
+    margin: auto 0;
+    padding: 0 10px;
     display: flex;
     justify-content: space-around;
-    .reviewTitle {
+    .review-title {
       width: 60%;
-      line-height: 60px;
+      line-height: 50px;
     }
-    .avgRatingBox {
+    .avg-rating-box {
       display: flex;
       justify-content: space-around;
       align-items: center;
@@ -91,9 +210,8 @@
     flex-direction: column;
     .reviewList {
       width: 95%;
-      height: 420px;
-      margin: auto;
-      // padding-right: 10px;
+      height: 590px;
+      margin: 0 auto 10px;
       gap: 10px 0px;
       border-radius: 5px;
       display: flex;
@@ -161,7 +279,25 @@
         width: 100%;
         height: 26px;
         margin: auto;
-        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+        &:hover {
+          cursor: pointer;
+          background-color: #dbdbdb;
+        }
+      }
+    }
+    // 스크롤바
+    .reviewList::-webkit-scrollbar {
+      width: 15px;
+    }
+    .reviewList::-webkit-scrollbar-thumb {
+      background-color: #dbdbdb;
+      background-clip: padding-box;
+      border: 3px solid transparent;
+      border-radius: 10px;
+      &:active {
+        background-color: #9b9b9b;
       }
     }
 
@@ -212,18 +348,18 @@
 //   border-radius: 11px;
 // }
 
-.reservationBtn {
-  background-color: white;
-  border: 1px solid #dcdcdc;
-  color: #000;
-  border-radius: 5px;
-  font-size: 13px;
-  font-weight: bold;
-  cursor: pointer;
-  width: 87px;
-  height: 26px;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
-}
+// .reservationBtn {
+//   background-color: white;
+//   border: 1px solid #dcdcdc;
+//   color: #000;
+//   border-radius: 5px;
+//   font-size: 13px;
+//   font-weight: bold;
+//   cursor: pointer;
+//   width: 87px;
+//   height: 26px;
+//   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+// }
 
 .selectedReservation {
   border: 1px solid black;
@@ -256,18 +392,25 @@
 .sixtyMins {
   width: 42px;
   height: 22px;
-  background-color: #fafafa;
+  background-color: #f0f0f0;
   border-radius: 3px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.sixtyMins span {
+  display: inline-block;
+  margin-left: 5px;
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
+  text-align: center;
+  line-height: 22px;
   font-size: 11px;
   font-weight: 600;
   color: #999999;
 }
+
+// .sixtyMins span {
+//   font-size: 11px;
+//   font-weight: 600;
+//   color: #999999;
+// }
 
 .info1 {
   display: flex;
@@ -323,30 +466,23 @@
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
 }
 
-.selfIntroductionText {
-  text-align: justify;
-}
-
-.front-page .btn-box {
-  margin-top: 1.2rem;
-}
-
-.reservationBtn {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 9.5rem;
-  height: 3rem;
-  background: #00abf0;
-  border: 0.125rem solid #00abf0;
-  border-radius: 0.3rem;
-  font-size: 1rem;
-  color: #fff;
-  font-weight: 500;
-  margin: 0 1rem;
-  transition: 0.5s;
-  text-decoration: none;
-}
+// .reservationBtn {
+//   display: inline-flex;
+//   justify-content: center;
+//   align-items: center;
+//   width: 9.5rem;
+//   height: 3rem;
+//   background: #00abf0;
+//   border: 0.125rem solid #00abf0;
+//   border-radius: 0.3rem;
+//   font-size: 1rem;
+//   color: #fff;
+//   font-weight: 500;
+//   margin: 0 1rem;
+//   transition: 0.5s;
+//   text-decoration: none;
+//   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+// }
 
 .reservationBtn:hover {
   background: transparent;

@@ -11,11 +11,7 @@ const MainPage = () => {
       <Header />
       <section className="intro-section">
         <div className="image-text-overlay">
-          <img
-            src="images/top banner1 edit.png"
-            alt="Happy Pets"
-            className="faded-image"
-          />
+          <img src="images/top banner1 edit.png" alt="Happy Pets" className="faded-image" />
           {/* <p className="overlay-text">
             펫스테이와 함께라면, 집을 떠나도 마음은 항상 함께합니다.
           </p> */}
@@ -41,7 +37,7 @@ const MainPage = () => {
           <img src="images/Main3.png" alt="VIP Pets" />
         </div>
       </section>
-      <section className="team">
+      {/* <section className="team">
         <h3>{t("mainPage.teamTitle")}</h3>
         <div className="team-members">
           <div className="team-member">
@@ -70,7 +66,7 @@ const MainPage = () => {
             <p>CFO</p>
           </div>
         </div>
-      </section>
+      </section> */}
       <Footer />
     </div>
   );

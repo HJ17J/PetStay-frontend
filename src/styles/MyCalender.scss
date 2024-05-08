@@ -75,7 +75,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  // width: 600px;
+  min-width: 600px;
   gap: 10px;
 }
 
@@ -95,11 +95,12 @@
 // 시간 선택 컨테이너
 .calenderContainer2 {
   @include container;
-  height: 150px;
+  max-height: 180px;
   flex-direction: column;
   justify-content: center;
   position: relative;
   align-items: center;
+
   // overflow: hidden;
 
   .sliderBtnContainer {
@@ -141,7 +142,8 @@
     border: none;
     scroll-behavior: smooth;
     left: 24px;
-    height: 150px;
+    min-height: 150px;
+    max-width: 600px;
     overflow: hidden;
     gap: 10px 20px;
     flex-wrap: wrap;

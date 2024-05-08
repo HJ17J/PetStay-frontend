@@ -12,7 +12,7 @@ import { type } from "os";
 interface AnimalType {
   dog: boolean;
   cat: boolean;
-  etc: boolean;
+  other: boolean;
   [key: string]: boolean; // 인덱스 시그니처 추가
 }
 
@@ -31,7 +31,7 @@ export default function PetSitterList() {
   // 동물
   const [animalType, setAnimalType] = useState<string[]>([]);
   // 동물 버튼 클릭 여부
-  const animalTypeInit: AnimalType = { dog: false, cat: false, etc: false };
+  const animalTypeInit: AnimalType = { dog: false, cat: false, other: false };
   const [animalTypeBtn, setAnimalTypeBtn] = useState(animalTypeInit);
 
   // 펫시터 검색 요청
@@ -158,11 +158,11 @@ export default function PetSitterList() {
               고양이
             </button>
             <button
-              className={`animal-btn ${animalTypeBtn.etc ? "active" : ""}`}
+              className={`animal-btn ${animalTypeBtn.other ? "active" : ""}`}
               onClick={() => {
-                filterAnimalType("etc");
+                filterAnimalType("other");
               }}
-              value="etc"
+              value="other"
             >
               기타
             </button>

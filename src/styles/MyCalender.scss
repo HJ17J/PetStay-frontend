@@ -75,7 +75,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 600px;
+  min-width: 600px;
   gap: 10px;
 }
 
@@ -95,11 +95,12 @@
 // 시간 선택 컨테이너
 .calenderContainer2 {
   @include container;
-  height: 150px;
+  max-height: 180px;
   flex-direction: column;
   justify-content: center;
   position: relative;
   align-items: center;
+
   // overflow: hidden;
 
   .sliderBtnContainer {
@@ -141,7 +142,8 @@
     border: none;
     scroll-behavior: smooth;
     left: 24px;
-    height: 150px;
+    min-height: 150px;
+    max-width: 600px;
     overflow: hidden;
     gap: 10px 20px;
     flex-wrap: wrap;
@@ -213,13 +215,6 @@
       @include resv-button;
       width: 70px;
       height: 40px;
-      // border: none;
-      // border-radius: 10px;
-      // background-color: #fff;
-      // color: #000;
-      // font-size: 15px;
-      // transition: transform 0.2s ease;
-      // box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
       &:hover {
         background-color: #ebebeb;
         cursor: pointer;
@@ -234,6 +229,7 @@
 // 추가사항 작성 컨테이너
 .calenderContainer4 {
   @include container;
+  height: 180px;
   flex-direction: column;
   justify-content: center;
   padding: 10px;
@@ -291,6 +287,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 40px;
     .reservationBtn {
       background-color: white;
       border: 1px solid #dcdcdc;

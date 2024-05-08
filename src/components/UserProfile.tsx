@@ -10,8 +10,21 @@ import { PetSitterDetail, ProfileResponse } from "../types/PetSitter";
 import { userInfo } from "os";
 import { CommonUserInterface } from "../types/user";
 import { setPetSitters } from "../store/PetSitterSlice";
+interface UserprofileProps {
+  toggleModal: (e: SyntheticEvent) => void;
+}
 
-export default function Userprofile() {
+export default function Userprofile({ toggleModal }: UserprofileProps) {
+  // 펫시터 동물 항목 한글로 변경
+  const setKoAnimalType = (type: string) => {
+    if (type === "dog") {
+      return "강아지";
+    } else if (type === "cat") {
+      return "고양이";
+    } else {
+      return "기타";
+    }
+  };
   // const [animalTypes, setAnimalTypes] = useState<string[]>([]);
   const DEFAULT_PROFILE: ProfileResponse = {
     address: "",
@@ -96,6 +109,8 @@ export default function Userprofile() {
       const formData = new FormData();
       if (uploadProfileImage) {
         formData.append("profileImage", uploadProfileImage);
+      } else {
+        formData.append("img", "default");
       }
       // 프로필 데이터 추가
       if (sitterProfile.name) {
@@ -127,9 +142,6 @@ export default function Userprofile() {
         formData.append("pay", sitterProfile.pay.toString());
       }
 
-      // formData.append("useridx", String(useridx));
-      console.log("이미지!!!!>>>", uploadProfileImage);
-      console.log("수정후!!!!>>>", formData);
       const response = await axios.post(
         `${process.env.REACT_APP_API_SERVER}/profileUpdate`,
         formData
@@ -148,6 +160,8 @@ export default function Userprofile() {
       const formData = new FormData();
       if (uploadUserImage) {
         formData.append("profileImage", uploadUserImage);
+      } else {
+        formData.append("img", "default");
       }
 
       if (userInfo.userid) {
@@ -161,9 +175,6 @@ export default function Userprofile() {
         formData.append("address", userInfo.address);
       }
 
-      // formData.append("useridx", String(useridx));
-      console.log("이미지!!!!>>>", uploadUserImage);
-      console.log("수정후!!!!>>>", formData);
       const response = await axios.post(
         `${process.env.REACT_APP_API_SERVER}/profileUpdate`,
         formData
@@ -174,7 +185,7 @@ export default function Userprofile() {
   };
   return (
     <div className="outerContainer">
-      {userInfo?.usertype === UserType.SITTER ? (
+      {userInfo?.usertype !== UserType.SITTER ? (
         !disableInput ? (
           <div className="innercontainer">
             <div className="imageContainer sections">
@@ -196,7 +207,14 @@ export default function Userprofile() {
               <div className="typesContainer sections">
                 <div className="mypageTitle">종류</div>
                 <div className="inputDiv">
-                  <input type="text" value={sitterProfile?.type} disabled />
+                  <input
+                    type="text"
+                    value={sitterProfile?.type
+                      ?.split(",")
+                      .map((el) => setKoAnimalType(el))
+                      .join(", ")}
+                    disabled
+                  />
                 </div>
               </div>
               <div className="licenseContainer sections">
@@ -229,6 +247,9 @@ export default function Userprofile() {
               </div>
             </div>
             <div className="myPageBtnContainer">
+              <button className="myPageUpdateBtn" onClick={toggleModal}>
+                채팅창
+              </button>
               <button
                 className="myPageUpdateBtn"
                 onClick={() => {
@@ -240,7 +261,7 @@ export default function Userprofile() {
             </div>
           </div>
         ) : (
-          <div>
+          <div className="innercontainer">
             <div className="imageContainer">
               <img src={sitterProfile.img} alt="Profile Image" className="myPage_profile_image" />
               <div className="image_button_container">
@@ -261,7 +282,19 @@ export default function Userprofile() {
                     setUploadProfileImage(e.target.files[0]);
                   }}
                 />
-                <button type="button">기본 프로필</button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newUpdatedValue = {
+                      ...sitterProfile,
+                      img: "/images/PetStayLogo.png",
+                    };
+                    setSitterProfile(newUpdatedValue);
+                    setUploadProfileImage(null);
+                  }}
+                >
+                  기본 프로필
+                </button>
               </div>
             </div>
             <div className="sectionsContainer">
@@ -435,7 +468,7 @@ export default function Userprofile() {
           </div>
         </div>
       ) : (
-        <div>
+        <div className="innercontainer">
           <div className="imageContainer">
             <img src={userInfo.img} alt="Profile Image" className="myPage_profile_image" />
             <div className="image_button_container">
@@ -456,7 +489,20 @@ export default function Userprofile() {
                   setUploadUserImage(e.target.files[0]);
                 }}
               />
-              <button type="button">기본 프로필</button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const newUpdatedValue = {
+                    ...userInfo,
+                    img: "/images/PetStayLogo.png",
+                  };
+                  setUserInfo(newUpdatedValue);
+                  setUploadUserImage(null);
+                }}
+              >
+                기본 프로필
+              </button>
             </div>
           </div>
           <div className="sectionsContainer">

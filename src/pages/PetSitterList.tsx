@@ -164,7 +164,7 @@ export default function PetSitterList() {
               }}
               value="etc"
             >
-              그외
+              기타
             </button>
           </div>
         </div>

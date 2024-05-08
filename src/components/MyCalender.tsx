@@ -108,12 +108,15 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
     }
   };
 
-  const onChange = (
-    value: Date | [Date, Date] | null,
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const onChange = (value: Date | null, event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     if (value !== null) {
-      setSelectedDate(Array.isArray(value) ? null : value);
+      const month = value.getMonth();
+      const date = value.getDate();
+      const year = value.getFullYear();
+
+      // console.log(year, month, date);
+      const selectedDate = new Date(year, month, date, 10);
+      setSelectedDate(Array.isArray(value) ? null : selectedDate);
       if (Array.isArray(value)) {
         setDate([value[0], value[1]]);
       } else {
@@ -226,14 +229,18 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
     value: Date,
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    console.log("시터번호", sitteridx);
-    console.log("날짜??", value);
+    const month = value.getMonth();
+    const date = value.getDate();
+    const year = value.getFullYear();
+
+    // console.log(year, month, date);
+    const selectedDate = new Date(year, month, date, 10);
 
     try {
       const result = await axios({
         method: "post",
         url: `${process.env.REACT_APP_API_SERVER}/resvDate/${sitteridx}`,
-        data: { date: value },
+        data: { date: selectedDate },
       });
 
       const reservationToday = result.data.reservation
@@ -277,7 +284,7 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
           onChange={onChange as CalendarProps["onChange"]}
           onClickDay={getReservations}
           minDate={new Date()}
-          formatDay={(locale, date) => date.toLocaleString("en", { day: "numeric" })}
+          formatDay={(locale, date) => date.toLocaleString("ko", { day: "numeric" })}
           value={date}
         />
       </div>

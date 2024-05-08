@@ -12,6 +12,16 @@ import { CommonUserInterface } from "../types/user";
 import { setPetSitters } from "../store/PetSitterSlice";
 
 export default function Userprofile() {
+  // 펫시터 동물 항목 한글로 변경
+  const setKoAnimalType = (type: string) => {
+    if (type === "dog") {
+      return "강아지";
+    } else if (type === "cat") {
+      return "고양이";
+    } else {
+      return "기타";
+    }
+  };
   // const [animalTypes, setAnimalTypes] = useState<string[]>([]);
   const DEFAULT_PROFILE: ProfileResponse = {
     address: "",
@@ -196,7 +206,14 @@ export default function Userprofile() {
               <div className="typesContainer sections">
                 <div className="mypageTitle">종류</div>
                 <div className="inputDiv">
-                  <input type="text" value={sitterProfile?.type} disabled />
+                  <input
+                    type="text"
+                    value={sitterProfile?.type
+                      ?.split(",")
+                      .map((el) => setKoAnimalType(el))
+                      .join(", ")}
+                    disabled
+                  />
                 </div>
               </div>
               <div className="licenseContainer sections">

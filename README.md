@@ -1,46 +1,96 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 👨‍👩‍👦‍👦 PetStay 👨‍👩‍👦‍👦 
+## 반려인과 펫시터를 연결시켜주는 중개 사이트 👉 http://13.124.54.214/
+![image](https://github.com/HJ17J/PetStay-backend/assets/57868607/c7cca7cd-e886-4cb8-8822-5491bf2b238b)
 
-## Available Scripts
+### 작업 기간: 2024.04.19 ~ 2024.05.08
+### 인원: 5명(프론트엔드 2명, 프론트앤백 3명)
+### 로그인:
+- ID: `user`
+- PW: `user`
 
-In the project directory, you can run:
+## 📖 Description
 
-### `npm start`
+<p style="font-size: 18px;"><b>✨2차 팀프로젝트 대상 수상작</b></p>
+<div markdown="1">
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+강아지, 고양이 및 모든 반려동물을 취급하는 반려인-펫시터 중개 사이트입니다.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+1시간부터 여러 날까지 유연하게 선택이 가능합니다.
 
-### `npm test`
+펫시터가 의뢰인 동물만 관리하도록 1대1 매칭 및 소통이 됩니다.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+번역기능을 추가해서 외국인도 사용가능하게끔 구현하는 것이 목표입니다.
 
-### `npm run build`
+## :baby_chick: Demo
+![2024-05-10110133-ezgif com-video-to-gif-converter](https://github.com/HJ17J/PetStay-backend/assets/154948606/f490d07c-a792-4757-9fe7-f05bd180aed7)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## ⭐ Main Feature
+### 예약 관리 기능
+- react-calendar를 사용하여 예약 일정 선택 기능 구현
+- sequelize로 db저장
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 회원가입 및 로그인 
+- session-express 사용
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 채팅방 기능
+- socekt.io를 사용하여 실시간 채팅 구현
+- aws의 s3를 사용하여 이미지 저장 및 경로를 소켓으로 전송할 수 있도록 구현
 
-### `npm run eject`
+## 💻 Getting Started
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Installation
+```
+npm install
+```
+### Develop Mode
+```
+npm run dev
+```
+### Production
+```
+npm start
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🔧 Stack
+- **Language**: JavaScript
+- **Library & Framework** : Node.js
+- **Database** : AWS RDS (Mysql)
+- **ORM** : Sequelize
+- **Deploy**: AWS EC2
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## :open_file_folder: Project Structure
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```markdown
+frontend
+├── public
+│   ├── images
+├── src
+    ├── components
+    └── config
+    └── locales
+    └── pages
+    └── store
+    └── styles
+    └── types
+├── App.tsx
+├── index.tsx
+backend
+├── config
+├── controller
+├── models
+├── routes
+├── sockets
+├── app.js
+```
 
-## Learn More
+## 👨‍💻 Role & Contribution
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+![image](https://github.com/HJ17J/PetStay-backend/assets/107241014/65e4ee30-7446-45bc-afab-2b22c5696518)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 👨‍👩‍👧‍👦 Developer
+*  **신동원** ([eastorigin](https://github.com/eastorigin))
+*  **이형석** ([yhs0329](https://github.com/yhs0329))
+*  **임학민** ([sabb12](https://github.com/sabb12)
+*  **진현정** ([HJ17J](https://github.com/HJ17J))
+*  **홍주희** ([hjh3933](https://github.com/hjh3933))

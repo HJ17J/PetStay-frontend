@@ -26,9 +26,9 @@ const Header: React.FC = () => {
   const handleMyPageClick = (event: React.MouseEvent) => {
     event.preventDefault();
     if (isLoggedIn) {
-      navigate("/profile"); // 로그인 상태면 마이페이지로 이동
+      navigate("/profile");
     } else {
-      alert(t("header.loginRequired")); // 로그인 안 했으면 알림창 띄우기
+      alert(t("header.loginRequired"));
     }
   };
 

@@ -2,8 +2,8 @@
   position: fixed;
   top: 0;
   width: 100%;
-  background-color: #333; // 로고의 배경색과 일치하도록 변경
-  height: 70px; // 중복된 height 속성 제거
+  background-color: #333;
+  height: 70px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -12,40 +12,39 @@
 }
 
 .logoTitle {
-  font-family: "Montserrat", sans-serif; // 모던하고 세련된 글씨체로 변경
-  font-size: 1.5em; // 로고와 조화를 이루기 위한 글씨 크기 조정
-  color: #fff; // 로고에 맞는 색상으로 변경
-  font-weight: 600; // 볼드보다 조금 더 세련된 느낌을 위해 가중치 조정
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.5em;
+  color: #fff;
+  font-weight: 600;
   display: flex;
   align-items: center;
 }
 
 .logoTitle img {
-  width: 50px; // 로고 이미지 크기 유지
-  height: auto; // 이미지 비율 유지
-  margin-right: 10px; // 로고와 텍스트 사이 간격 조정
+  width: 50px;
+  height: auto;
+  margin-right: 10px;
 }
 
 .myLinkContainer {
   display: flex;
   justify-content: flex-end;
-  width: 100%; // 컨테이너의 너비를 100%로 설정하여 가능한 최대 공간을 차지하도록 설정
-  align-items: center; // 세로축에서 중앙 정렬
+  width: 100%;
+  align-items: center;
 }
 
 .myLink {
-  font-family: "Montserrat", sans-serif; // 글씨체 일관성을 위해 변경
-  font-size: 1em; // 적절한 크기로 조정
-  font-weight: 500; // 글씨 두께 조정
-  color: #fff; // 흰색으로 조정하여 로고와 매칭
-  margin: 0 15px; // 간격 조정
+  font-family: "Montserrat", sans-serif;
+  font-size: 1em;
+  font-weight: 500;
+  color: #fff;
+  margin: 0 15px;
   &:hover {
-    color: #aaa; // 호버 상태의 색상 변경
+    color: #aaa;
   }
 }
 
 .langContainer {
-  // 갭과 폰트 스타일을 myLink에 맞춰 조정
   font-family: "Montserrat", sans-serif;
   font-size: 1em;
   gap: 10px;
@@ -56,26 +55,25 @@
   margin-left: 1%;
 }
 
-// 언어 선택 부분의 스타일도 myLink와 유사하게 조정
 .en,
 .cn,
 .ko {
   font-weight: 500;
   cursor: pointer;
-  color: #fff; // 텍스트 색상을 흰색으로 설정
+  color: #fff;
   &:hover {
-    color: #aaa; // 호버 시 색상 변경
+    color: #aaa;
   }
 }
 
 /* 중간 크기의 스크린을 위한 반응형 스타일 */
 @media (max-width: 1024px) {
   .headerContainer {
-    padding: 10px 15px; // 패딩 조정
+    padding: 10px 15px;
   }
 
   .logoTitle {
-    font-size: 1.2em; // 로고 타이틀 폰트 크기 조정
+    font-size: 1.2em;
   }
 
   .myLinkContainer {
@@ -83,7 +81,7 @@
     .en,
     .cn,
     .ko {
-      font-size: 0.9em; // 링크 폰트 크기 조정
+      font-size: 0.9em;
     }
   }
 }
@@ -91,11 +89,11 @@
 /* 작은 크기의 스크린을 위한 반응형 스타일 */
 @media (max-width: 768px) {
   .headerContainer {
-    padding: 10px 15px; // 패딩 조정
+    padding: 10px 15px;
   }
 
   .logoTitle {
-    font-size: 1.2em; // 로고 타이틀 폰트 크기 조정
+    font-size: 1.2em;
   }
 
   .myLinkContainer {
@@ -105,7 +103,7 @@
     .en,
     .cn,
     .ko {
-      font-size: 0.6em; // 링크 폰트 크기 조정
+      font-size: 0.6em;
     }
   }
 }
@@ -113,19 +111,19 @@
 /* 가장 작은 크기의 스크린을 위한 반응형 스타일 */
 @media (max-width: 480px) {
   .headerContainer {
-    padding: 8px; // 패딩 더 줄임
+    padding: 8px;
   }
 
   .logoTitle {
     font-size: 5px, img {
-      width: 30px; // 로고 이미지 크기 조정
+      width: 30px;
     }
   }
   .myLink,
   .en,
   .cn,
   .ko {
-    font-size: 0.7em; // 가장 작은 화면에서 폰트 크기 더 줄임
+    font-size: 0.7em;
   }
 }
 

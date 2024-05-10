@@ -13,12 +13,11 @@ const StarRating: React.FC<StarRatingProps> = ({ value, onChange, disabled = tru
   const [rating, setRating] = useState(value);
 
   useEffect(() => {
-    setRating(value); // value prop이 변경될 때마다 rating 상태 업데이트
+    setRating(value);
   }, [value]);
 
   const handleClick = (index: number) => {
     if (disabled) {
-      // disabled prop이 true일 때만 이벤트 핸들러 작동
       setRating(index + 1);
       onChange(index + 1);
     }

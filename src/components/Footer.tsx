@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import "../styles/Footer.scss";
 
 const Footer = () => {
-  const { t } = useTranslation(); // 번역 훅
+  const { t } = useTranslation();
 
   return (
     <footer className="footer">

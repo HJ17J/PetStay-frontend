@@ -25,7 +25,6 @@ export default function Userprofile({ toggleModal }: UserprofileProps) {
       return "기타";
     }
   };
-  // const [animalTypes, setAnimalTypes] = useState<string[]>([]);
   const DEFAULT_PROFILE: ProfileResponse = {
     address: "",
     career: "",
@@ -57,7 +56,6 @@ export default function Userprofile({ toggleModal }: UserprofileProps) {
   const [sitterProfile, setSitterProfile] = useState<ProfileResponse>(DEFAULT_PROFILE);
   const [userInfo, setUserInfo] = useState<CommonUserInterface>(DEFAULT_USER);
 
-  // console.log("userInfo", userInfo);
   const fetchUserData = async () => {
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_SERVER}/profile`);
@@ -77,15 +75,10 @@ export default function Userprofile({ toggleModal }: UserprofileProps) {
 
   const [uploadProfileImage, setUploadProfileImage] = useState<File | null>(null);
   const [uploadUserImage, setUploadUserImage] = useState<File | null>(null);
-  // const uploadImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files && e.target.files.length > 0) {
-  //     setUploadImages(e.target.files[0]);
-  //   }
-  // };
   const [checkedTypes, setCheckedTypes] = useState<string[]>([]);
 
   useEffect(() => {
-    const updatedType = checkedTypes.join(","); // Combine all checked types into a string
+    const updatedType = checkedTypes.join(",");
     setSitterProfile((prevProfile) => ({ ...prevProfile, type: updatedType }));
   }, [checkedTypes]);
 
@@ -124,7 +117,6 @@ export default function Userprofile({ toggleModal }: UserprofileProps) {
       }
       if (sitterProfile.type) {
         formData.append("type", sitterProfile.type);
-        // formData.append("type", sitterProfile.type);
       }
       if (sitterProfile.userid) {
         formData.append("userid", sitterProfile.userid);
@@ -421,7 +413,6 @@ export default function Userprofile({ toggleModal }: UserprofileProps) {
               <button
                 className="myPageUpdateBtn"
                 onClick={(e) => {
-                  console.log("완료", sitterProfile);
                   updateProfile(e);
                   setDisableInput(!disableInput);
                 }}
@@ -457,6 +448,9 @@ export default function Userprofile({ toggleModal }: UserprofileProps) {
             </div>
           </div>
           <div className="myPageBtnContainer">
+            <button className="myPageUpdateBtn" onClick={toggleModal}>
+              채팅창
+            </button>
             <button
               className="myPageUpdateBtn"
               onClick={() => {
@@ -550,7 +544,6 @@ export default function Userprofile({ toggleModal }: UserprofileProps) {
             <button
               className="myPageUpdateBtn"
               onClick={(e) => {
-                console.log("완료", sitterProfile);
                 updateUser(e);
                 setDisableInput(!disableInput);
               }}

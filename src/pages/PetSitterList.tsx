@@ -12,8 +12,8 @@ import { type } from "os";
 interface AnimalType {
   dog: boolean;
   cat: boolean;
-  etc: boolean;
-  [key: string]: boolean; // 인덱스 시그니처 추가
+  other: boolean;
+  [key: string]: boolean;
 }
 
 export default function PetSitterList() {
@@ -31,7 +31,7 @@ export default function PetSitterList() {
   // 동물
   const [animalType, setAnimalType] = useState<string[]>([]);
   // 동물 버튼 클릭 여부
-  const animalTypeInit: AnimalType = { dog: false, cat: false, etc: false };
+  const animalTypeInit: AnimalType = { dog: false, cat: false, other: false };
   const [animalTypeBtn, setAnimalTypeBtn] = useState(animalTypeInit);
 
   // 펫시터 검색 요청
@@ -71,8 +71,6 @@ export default function PetSitterList() {
 
   // 펫시터 동물 항목 필터링 추가
   const filterAnimalType = (type: string) => {
-    console.log(type);
-
     // 필터링할 데이터 추가
     if (!animalTypeBtn[type]) {
       setAnimalType((prev) => [...prev, type]);
@@ -94,13 +92,10 @@ export default function PetSitterList() {
     const filteredData = petSittersInit.filter((sitter) =>
       sitter.animalType.some((animal) => animalType.includes(animal))
     );
-    console.log("필터링한 데이터", filteredData);
     setPetSitters(filteredData);
   };
 
   useEffect(() => {
-    // console.log("동물 타입", animalType);
-    // console.log("동물 버튼", animalTypeBtn);
     setDataFilter();
   }, [animalType]);
 
@@ -158,11 +153,11 @@ export default function PetSitterList() {
               고양이
             </button>
             <button
-              className={`animal-btn ${animalTypeBtn.etc ? "active" : ""}`}
+              className={`animal-btn ${animalTypeBtn.other ? "active" : ""}`}
               onClick={() => {
-                filterAnimalType("etc");
+                filterAnimalType("other");
               }}
-              value="etc"
+              value="other"
             >
               기타
             </button>

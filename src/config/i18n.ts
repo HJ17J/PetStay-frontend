@@ -17,8 +17,8 @@ i18n.use(initReactI18next).init({
   interpolation: {
     escapeValue: false,
   },
-  fallbackLng: "ko", // 기본 언어 파일 찾기 실패시 대체 언어
-  debug: true, // 문제 해결을 위해 디버그 모드 활성화
+  fallbackLng: "ko",
+  debug: true,
 });
 
 export default i18n;

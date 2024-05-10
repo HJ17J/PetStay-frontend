@@ -7,7 +7,7 @@ export interface Reservation {
   animalNumber: number;
   content: string;
   User: {
-    name: string; // 사용자의 이름 속성
+    name: string;
   };
 }
 export interface UserData {

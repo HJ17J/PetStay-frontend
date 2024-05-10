@@ -81,7 +81,6 @@ export default function Reservation() {
   // 리뷰 더 받아오기
   const getMoreReview = async () => {
     try {
-      console.log("page", reviewPage);
       const reviewData = await axios.get(
         process.env.REACT_APP_API_SERVER + `/sitter/review/${useridx}?rvPage=${reviewPage}`
       );
@@ -117,7 +116,6 @@ export default function Reservation() {
 
   const addChatList = useCallback(
     (data: ChatList) => {
-      // console.log(data); //{message, nickname}
       let newChatList;
       if (data.img === "") {
         //텍스트 데이터 일 때
@@ -169,8 +167,6 @@ export default function Reservation() {
 
     // axios-chat
     const chatData = await axios.get(process.env.REACT_APP_API_SERVER + `/chat/${useridx}`);
-
-    console.log(chatData.data); //chats, msg, rooms
     const { chats, msg, rooms, user, sitter, roomidx } = chatData.data;
     if (user.usertype === "sitter") {
       return alert("일반회원만 이용이 가능한 서비스 입니다");
@@ -185,7 +181,6 @@ export default function Reservation() {
     setRoomList(rooms);
     const nowRoom = rooms.filter((room: Room) => room.roomidx === roomidx);
     setActiveRoom(nowRoom[0]);
-    // console.log("현재 room>>", nowRoom[0]);
 
     const roomName = `${userName}+${sitterName}`;
     // room생성
@@ -229,8 +224,6 @@ export default function Reservation() {
   const sendImg = async (e: SyntheticEvent) => {
     // alert("이미지 보냄!");
     e.preventDefault();
-    // console.log(selectedImage?.name);
-
     const formData = new FormData();
     if (selectedImage) {
       formData.append("chatFile", selectedImage);
@@ -247,10 +240,8 @@ export default function Reservation() {
     };
     socket.emit("image", sendData);
 
-    // console.log(imgSrc);
     setSelectedImage(null);
   };
-  // console.log("room목록", roomList);
 
   //room클릭시
   const clickRoom = async (clickroomidx: number) => {
@@ -266,14 +257,12 @@ export default function Reservation() {
     const roomName = `${userName}+${otherName}`;
     // room생성
     socket.emit("createRoom", roomName);
-    // console.log(clickroomidx);
     //1. 클릭한 roomidx로 검색한 채팅 데이터 가져옴
     // axios-chat
     const chatData = await axios.get(
       process.env.REACT_APP_API_SERVER + `/chatRoom/${clickroomidx}`
     );
 
-    // console.log(chatData.data); //chats, msg, rooms
     const { chats, msg, user, sitter, roomidx } = chatData.data;
 
     setChatData(chats);
@@ -288,8 +277,6 @@ export default function Reservation() {
       }
     });
     setOtheridx(newOtheridx);
-
-    // console.log("현재 room>>", activeRoom);
   };
 
   // 번역
@@ -305,8 +292,6 @@ export default function Reservation() {
       alert(t("header.loginRequired"));
     }
   };
-
-  // console.log("otheridx", otheridx);
 
   const enterEvent = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
@@ -456,118 +441,6 @@ export default function Reservation() {
             </div>
           </div>
         </div>
-
-        {/* <div className="reservationSection1"> */}
-        {/* <div className="trainerInfoContainer1">
-            <div className="imageContainer">
-              <img src={sitterData?.img} alt="Profile Image" className="sitterProfileImg" />
-              <div className="image_button_container">
-                <h3 className="trainerName">{sitterData?.name}</h3>
-              </div>
-            </div>
-            <div className="trainerIntroductionContainer">
-              <div className="trainerTitle">
-                <span>{sitterData?.oneLineIntro}</span>
-              </div>
-              <div className="selfIntroductionText">{sitterData?.selfIntroduction}</div>
-            </div>
-            <div className="btn-box">
-              <a href="" className="reservationBtn" onClick={handleClick}>
-                문의하기
-              </a>
-            </div>
-          </div> */}
-        {/* <div className="trainerInfoContainer4">
-            <div className="priceContainer">
-              <div className="priceTitle">이용 금액</div>
-              <hr />
-              <div className="detailPriceWrapper">
-                <div className="detailPriceContainer">
-                  <div className="sixtyMins">
-                    <span className="sixtyMins">60분</span>
-                  </div>
-                </div>
-                <div>₩ {sitterData?.pay}원</div>
-              </div>
-            </div>
-          </div> */}
-
-        {/* <div className="trainerInfoContainer3">
-            <div className="reviewHeader">
-              <h3 className="reviewTitle">리뷰</h3>
-              <div className="avgRatingBox">
-                <DisplayStarRating
-                  rating={sitterData?.rating ? sitterData?.rating : 0}
-                  size={"middle"}
-                />
-                <span className="sitterRating">{sitterData?.rating}</span>
-                <span className="sitterReviewCount">
-                  ({sitterData && sitterData?.reviewCount < 999 ? sitterData?.reviewCount : "999+"})
-                </span>
-              </div>
-            </div>
-            <hr />
-            <div className="reviewContainer">
-              <div className="reviewList">
-                {reviewData?.map((el) => {
-                  return (
-                    <div className="reviewItemContainer" key={el.reviewidx}>
-                      <div className="reviewInfo">
-                        <div className="reviewProfileBox">
-                          <img
-                            src={el.profileImg}
-                            alt="profile image"
-                            className="reviewerProfileImg"
-                          />
-                        </div>
-                        <div className="reviewerName">
-                          <span className="rvName">{el.name}</span>
-                          <span className="rvDate">{formatDate(el.createdAt)}</span>
-                        </div>
-                        <div className="reviewDateBox"></div>
-                        <div className="ratingBox">
-                          <DisplayStarRating rating={el.rate} size={"small"} />
-                          <span>{el.rate}</span>
-                        </div>
-                      </div>
-                      <div className="hr"></div>
-                      <div className="reviewContent">
-                        <span>{el.content}</span>
-                        {el.img && (
-                          <button
-                            onClick={() => {
-                              openReviewImg(el.img);
-                            }}
-                            className="reviewThumb"
-                          >
-                            <img src={el.img} className="imgThumb" />
-                            {!openReviewModal ? null : (
-                              <div className="reviewModal">
-                                <div className="modalContent">
-                                  <img className="naturalImg" src={reviewImage} />
-                                </div>
-                              </div>
-                            )}
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-                <button
-                  className="moreBtn"
-                  style={{ display: reviewPage > totalReviewPage ? "none" : "block" }}
-                  onClick={getMoreReview}
-                >
-                  더보기
-                </button>
-              </div>
-            </div>
-          </div> */}
-        {/* </div> */}
-        {/* <div className="reservationSection2">
-          <MyCalendar sitteridx={sitterData?.useridx} pay={sitterData?.pay} />
-        </div> */}
       </div>
       <Footer />
       {showModal && (
@@ -685,7 +558,6 @@ export default function Reservation() {
                 </div>
                 <div className="chattingInputContainer2">
                   <div className="findImageContainer">
-                    {/* <form onSubmit={onSubmit} className="form-inline"> */}
                     <label htmlFor="firstimg" className="label">
                       <i className="bx bx-plus"></i>
                     </label>
@@ -697,12 +569,10 @@ export default function Reservation() {
                       accept="image/*"
                       name="chatFile"
                     />
-                    {/* </form> */}
                   </div>
                   <div className="sendChattingTextContainer">
                     <input
                       type="text"
-                      // value={currentEmoji || ""}
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
                       onKeyDown={enterEvent}
@@ -716,14 +586,7 @@ export default function Reservation() {
                         position: "relative",
                       }}
                     >
-                      {/* 이모지 변경  */}
-                      {/* <div className="emojiBtnContainer">
-                        <div className="emojiBtn " onClick={toggleEmoji}>
-                          <i className="bx bx-smile"></i>
-                        </div>
-                      </div> */}
                       {isPickerVisible && (
-                        // <div className={isPickerVisible ? "d-block" : "d-none"}>
                         <div
                           className="border border-primary"
                           style={{

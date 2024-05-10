@@ -13,7 +13,7 @@ interface AnimalType {
   dog: boolean;
   cat: boolean;
   other: boolean;
-  [key: string]: boolean; // 인덱스 시그니처 추가
+  [key: string]: boolean;
 }
 
 export default function PetSitterList() {
@@ -71,8 +71,6 @@ export default function PetSitterList() {
 
   // 펫시터 동물 항목 필터링 추가
   const filterAnimalType = (type: string) => {
-    console.log(type);
-
     // 필터링할 데이터 추가
     if (!animalTypeBtn[type]) {
       setAnimalType((prev) => [...prev, type]);
@@ -94,13 +92,10 @@ export default function PetSitterList() {
     const filteredData = petSittersInit.filter((sitter) =>
       sitter.animalType.some((animal) => animalType.includes(animal))
     );
-    console.log("필터링한 데이터", filteredData);
     setPetSitters(filteredData);
   };
 
   useEffect(() => {
-    // console.log("동물 타입", animalType);
-    // console.log("동물 버튼", animalTypeBtn);
     setDataFilter();
   }, [animalType]);
 

@@ -86,7 +86,8 @@ backend
 
 ## 👨‍💻 Role & Contribution
 
-![image](https://github.com/HJ17J/PetStay-backend/assets/107241014/65e4ee30-7446-45bc-afab-2b22c5696518)
+![image](https://github.com/HJ17J/PetStay-frontend/assets/57868607/8d9bb6de-9405-40bf-b8f8-35d7bbf36130)
+
 
 ## 👨‍👩‍👧‍👦 Developer
 *  **신동원** ([eastorigin](https://github.com/eastorigin))

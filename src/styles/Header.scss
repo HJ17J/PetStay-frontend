@@ -1,4 +1,6 @@
 .headerContainer {
+  position: fixed;
+  top: 0;
   width: 100%;
   background-color: #333; // 로고의 배경색과 일치하도록 변경
   height: 70px; // 중복된 height 속성 제거
@@ -6,6 +8,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0 20px; // 양쪽 패딩으로 일관성 있게 조정
+  z-index: 10;
 }
 
 .logoTitle {

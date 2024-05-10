@@ -8,19 +8,19 @@
 
 /* 메인 페이지 스타일 */
 .main-page {
-  color: #666; // 글씨 색상 변경
-  background-color: #f7f7f7; // 밝은 배경색으로 변경
-  min-height: 100vh; // 전체 높이를 화면에 맞게 조정
-  padding-bottom: 50px; // 푸터에 의한 패딩 조정
+  color: #666;
+  background-color: #f7f7f7;
+  min-height: 100vh;
+  padding-bottom: 50px;
 }
 
 /* 섹션별 스타일 조정 */
 section {
-  padding: 40px; // 패딩 증가로 여유로운 레이아웃 조성
-  background-color: #fff; // 섹션 배경색 변경
-  margin: 40px 0; // 상하 마진 증가
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); // 섹션에 그림자 효과 추가
-  border-radius: 8px; // 섹션에 둥근 모서리 추가
+  padding: 40px;
+  background-color: #fff;
+  margin: 40px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
 /* 이미지 오버레이 텍스트 스타일 */
@@ -28,7 +28,7 @@ section {
   position: relative;
   img.faded-image {
     width: 100%;
-    height: auto; // 가변 높이로 조정
+    height: auto;
   }
 }
 
@@ -41,9 +41,9 @@ section {
 
     .sitter-text,
     .sitter-image {
-      flex: 0 1 30%; // 너비를 300px로 고정하고 필요에 따라 축소 가능하도록 설정
+      flex: 0 1 30%;
       padding: 20px;
-      max-width: 50%; // 최대 너비를 50%로 제한
+      max-width: 50%;
     }
 
     .sitter-text {
@@ -65,9 +65,9 @@ section {
 
   .vip-text,
   .vip-image {
-    flex: 0 1 30%; // 너비를 300px로 고정하고 필요에 따라 축소 가능하도록 설정
+    flex: 0 1 30%;
     padding: 20px;
-    max-width: 50%; // 최대 너비를 50%로 제한
+    max-width: 50%;
   }
 
   .vip-image img {
@@ -80,28 +80,28 @@ section {
 .team {
   .team-members {
     display: flex;
-    justify-content: space-evenly; // 요소들 간격을 균일하게 조정
-    flex-wrap: wrap; // 반응형을 위한 래핑 추가
+    justify-content: space-evenly;
+    flex-wrap: wrap;
 
     .team-member {
-      width: 18%; // 너비 조정
-      border: 1px solid #ddd; // 테두리 스타일 변경
-      padding: 20px; // 패딩 조정
+      width: 18%;
+      border: 1px solid #ddd;
+      padding: 20px;
       margin: 10px;
       text-align: center;
-      border-radius: 4px; // 둥근 모서리 추가
+      border-radius: 4px;
 
       img {
-        max-width: 100%; // 최대 너비 조정
+        max-width: 100%;
         height: auto;
-        border-radius: 50%; // 이미지를 원형으로 표시
-        margin-bottom: 10px; // 이미지 아래쪽 마진 추가
+        border-radius: 50%;
+        margin-bottom: 10px;
       }
 
       p {
         margin: 5px 0;
-        font-size: 16px; // 글씨 크기 조정
-        color: #333; // 글씨 색상 변경
+        font-size: 16px;
+        color: #333;
       }
     }
   }

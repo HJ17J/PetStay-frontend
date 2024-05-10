@@ -5,8 +5,7 @@ export default function GoogleAuthPage() {
   const navigate = useNavigate();
 
   const handleGoogleSuccess = (credentialResponse: CredentialResponse) => {
-    console.log("Google credential:", credentialResponse);
-    navigate("/"); // 인증 성공 후 홈 페이지로 이동
+    navigate("/");
   };
 
   const handleGoogleFailure = () => {

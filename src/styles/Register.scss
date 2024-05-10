@@ -6,11 +6,6 @@
   box-sizing: border-box;
 }
 
-/* body,
-input {
-  font-family: "Poppins", sans-serif;
-} */
-
 .container {
   position: relative;
   width: 100%;
@@ -21,7 +16,7 @@ input {
 
 .headerContainer {
   position: relative;
-  z-index: 10; // 다른 요소들보다 높은 값을 설정
+  z-index: 10;
 }
 
 .forms-container {
@@ -84,8 +79,8 @@ form.petsitter-form {
   margin: 10px 0;
   height: 55px;
   border-radius: 55px;
-  display: flex; // Flexbox를 사용하여 자식 요소들을 나란히 배열
-  align-items: center; // 세로 중앙 정렬
+  display: flex;
+  align-items: center;
   padding-left: 13px;
   gap: 5px;
   position: relative;
@@ -94,7 +89,7 @@ form.petsitter-form {
   }
 
   input {
-    flex: 1; // input이 가능한 많은 공간을 차지하도록 설정
+    flex: 1;
     background: none;
     outline: none;
     border: none;
@@ -102,12 +97,12 @@ form.petsitter-form {
     font-weight: 600;
     font-size: 1.1rem;
     color: #333;
-    padding-right: 10px; // 버튼과의 간격을 주기 위해 오른쪽 패딩 추가
+    padding-right: 10px;
   }
 
   .chatPageBtn {
-    margin-left: 10px; // 버튼과 입력 필드 사이의 간격
-    white-space: nowrap; // 버튼 텍스트가 줄바꿈되지 않도록 설정
+    margin-left: 10px;
+    white-space: nowrap;
   }
 }
 .input-field-selfIntro {
@@ -117,8 +112,8 @@ form.petsitter-form {
   margin: 10px 0;
   height: auto;
   border-radius: 55px;
-  display: flex; // Flexbox를 사용하여 자식 요소들을 나란히 배열
-  align-items: center; // 세로 중앙 정렬
+  display: flex;
+  align-items: center;
   padding: 0 0.4rem;
   position: relative;
   textarea {
@@ -129,14 +124,10 @@ form.petsitter-form {
 }
 .button-container {
   display: flex;
-  justify-content: center; // 버튼을 중앙 정렬
-  align-items: center; // 버튼을 수직 중앙 정렬
-  gap: 10px; // 버튼 사이의 간격 설정
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
-
-// .btn {
-//   flex: 1; // 버튼들이 동일한 크기를 가지도록 설정
-// }
 
 .input-field i {
   text-align: center;

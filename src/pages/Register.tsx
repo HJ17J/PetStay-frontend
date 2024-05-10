@@ -119,8 +119,6 @@ export default function Register() {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // 폼 기본 이벤트 방지
 
-    console.log("Login attempt:", { userid, userpw }); // 로그인 시도 로그
-
     try {
       const response = await axios.post(
         process.env.REACT_APP_API_SERVER + "/login",
@@ -134,8 +132,6 @@ export default function Register() {
           },
         }
       );
-
-      console.log("Server response:", response.data); // 서버 응답 로그
 
       if (response.data.statusCode === 200) {
         // 성공 액션 디스패치
@@ -169,9 +165,7 @@ export default function Register() {
   };
 
   // 구글 소셜 로그인
-  const handleGoogleSuccess = (credentialResponse: CredentialResponse) => {
-    console.log(credentialResponse);
-  };
+  const handleGoogleSuccess = (credentialResponse: CredentialResponse) => {};
 
   const handleGoogleFailure = () => {
     console.error("Login Failed");
@@ -186,11 +180,6 @@ export default function Register() {
       setInitiateLogin(false); // 로그인 시도 후 state 초기화
     }
   }, [initiateLogin]);
-
-  // if (!process.env.REACT_APP_GOOGLE_CLIENT_ID) {
-  //   console.error("Google Client ID is undefined.");
-  //   return <div>Configuration Error</div>;
-  // }
 
   // 일반 보호자 - 회원가입
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -233,7 +222,6 @@ export default function Register() {
       );
 
       if (response.data && response.status === 200) {
-        console.log("회원가입 성공");
         dispatch(loginSuccess({ userid }));
         alert(t("signup.success"));
 
@@ -343,7 +331,6 @@ export default function Register() {
       );
 
       if (response.status === 200) {
-        console.log("펫시터 회원가입 성공");
         dispatch(loginSuccess({ userid }));
         alert(t("signup.success"));
 

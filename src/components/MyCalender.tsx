@@ -45,14 +45,12 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
 
   const NexthandleClick = () => {
     if (translation !== 0) {
-      console.log("Next", translation >= 0);
       setTranslation(translation + 100);
     }
   };
 
   const PrevhandleClick = () => {
     if (translation !== -500) {
-      console.log("Next", translation >= -500);
       setTranslation(translation - 100);
     }
   };
@@ -72,8 +70,6 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
   // 예약 시간 클릭 이벤트 핸들러 함수
   const handleTimeslotClick = (index: number) => {
     const clickedTime = timeslots[index];
-    console.log("클릭!", clickedTime);
-    console.log(timeslots);
 
     // 아직 아무것도 선택하지 않았을 경우
     if (startIdx === null) {
@@ -89,7 +85,6 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
       // index가 startIdx보다 작거나, startIdx와 endIdx사이에 있는 경우 선택 취소
       if (startIdx >= index || (endIdx && index <= endIdx)) {
         resetSelectedTime();
-        console.log("취소 후", timeslots);
       }
       // index가 startIdx보다 큰 경우
       else {
@@ -114,7 +109,6 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
       const date = value.getDate();
       const year = value.getFullYear();
 
-      // console.log(year, month, date);
       const selectedDate = new Date(year, month, date, 10);
       setSelectedDate(Array.isArray(value) ? null : selectedDate);
       if (Array.isArray(value)) {
@@ -149,7 +143,6 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
     setAnimalType("");
     setAnimalNum(0);
     resetSelectedTime();
-    console.log("초기화", timeslots);
     txtRef.current && (txtRef.current.value = "");
   };
 
@@ -193,14 +186,12 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
           type: animalType,
           animalNumber: animalNum,
         };
-        console.log(data);
 
         const result = await axios({
           method: "post",
           url: `${process.env.REACT_APP_API_SERVER}/resv/${sitteridx}`,
           data: data,
         });
-        console.log(result);
         if (result.status === 200) {
           alert("예약이 완료되었습니다.");
           // 데이터 리셋
@@ -233,7 +224,6 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
     const date = value.getDate();
     const year = value.getFullYear();
 
-    // console.log(year, month, date);
     const selectedDate = new Date(year, month, date, 10);
 
     try {
@@ -252,18 +242,13 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
 
       // timeslot 값 초기화 후 예약된 시간 표시
       const updatedTimeslots = [...initTimeslot];
-      // console.log("현재 timeslot", timeslots);
       for (const time of reservationToday) {
-        console.log(time);
         const idx = updatedTimeslots.findIndex((el) => el.time === time[0]);
         for (let i = idx; i <= idx + time[1]; i++) {
-          console.log(i);
           updatedTimeslots[i].booked = true;
         }
       }
       setTimeslots(updatedTimeslots);
-      console.log(updatedTimeslots);
-      // console.log("처리 후 timeslot", timeslots);
     } catch (error) {
       console.log(error);
     }
@@ -289,14 +274,6 @@ const MyCalendar = ({ sitteridx, pay }: MyCalendarProps) => {
         />
       </div>
       <div className="calenderContainer2">
-        {/* <div className="sliderBtnContainer">
-          <button onClick={PrevhandleClick} className="sliderBtn prev">
-            <i className="bx bx-chevron-left"></i>
-          </button>
-          <button onClick={NexthandleClick} className="sliderBtn next">
-            <i className="bx bx-chevron-right"></i>
-          </button>
-        </div> */}
         <div className="timeList">
           {timeslots.map((timeslot, index) => (
             <button

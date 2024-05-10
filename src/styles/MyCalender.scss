@@ -31,7 +31,6 @@
   width: 90%;
   margin: auto;
   border: none;
-  // width: unset !important;
 }
 
 .react-calendar__navigation {
@@ -101,11 +100,7 @@
   position: relative;
   align-items: center;
 
-  // overflow: hidden;
-
   .sliderBtnContainer {
-    // position: absolute;
-    // background: black;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -241,22 +236,6 @@
     margin: 10px 0;
   }
 }
-
-/* 슬라이더 css*/
-// .wrapper {
-//   position: relative;
-//   border: 1px solid black;
-//   background-image: url("/public/marguerite-729510_1280.jpg");
-//   background-repeat: no-repeat;
-//   background-size: cover;
-//   background-position: center;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   width: 490px;
-//   height: 100px;
-//   /* overflow: hidden; */
-// }
 
 // 예약 내용 확인 컨테이너
 .calenderContainer5 {

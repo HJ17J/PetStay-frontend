@@ -1,4 +1,3 @@
-// import { useState } from "react";
 import { useState, SyntheticEvent, ChangeEvent, useEffect, useCallback, useRef } from "react";
 import "../styles/Mypage.scss";
 import "../styles/ModalChat.scss";
@@ -63,7 +62,6 @@ export default function Mypage() {
   const fetchUserData = async () => {
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_SERVER}/profile`);
-      console.log("response:", response.data);
 
       // userData를 안전하게 가져와 설정
       const fetchedUserData = response.data.userData;
@@ -74,11 +72,11 @@ export default function Mypage() {
         setReservations(response.data.resvData);
         setUsertype(fetchedUserData.usertype);
         setUserName(response.data.userData.name);
-        setUseridx(response.data.userData.useridx); //현재 로그인 계정의 idx
+        setUseridx(response.data.userData.useridx);
 
         if (response.data.resvData && response.data.resvData.length > 0) {
           const firstReservation = response.data.resvData[0];
-          setResvidx(firstReservation.resvidx); // Set the first 'resvidx'
+          setResvidx(firstReservation.resvidx);
         }
       } else {
         console.warn("User data is not available.");
@@ -143,7 +141,6 @@ export default function Mypage() {
 
   const addChatList = useCallback(
     (data: ChatList) => {
-      console.log(data); //{message, nickname}
       let newChatList;
       if (data.img === "") {
         //텍스트 데이터 일 때
@@ -195,7 +192,6 @@ export default function Mypage() {
     const formData = new FormData();
     formData.append("content", reviewContent);
     if (reviewImage) {
-      console.log("현재 파일데이터", reviewImage);
       formData.append("reviewImage", reviewImage);
     }
     formData.append("rate", String(reviewRate));
@@ -205,7 +201,6 @@ export default function Mypage() {
         `${process.env.REACT_APP_API_SERVER}/review/${selectedResvidx}`,
         formData
       );
-      // alert("리뷰가 등록되었습니다.");
       alert(reviewResponse.data.msg);
       setShowReviewModal(false); // 모달 닫기
       setSelectedResvidx(null); // 선택된 resvidx 초기화
@@ -236,7 +231,6 @@ export default function Mypage() {
     roomList?.forEach((room) => {
       if (room.roomidx === clickroomidx) {
         otherName = room.User.name;
-        console.log("대화 상대이름", otherName);
         setSitterName(otherName);
         setActiveRoom(room);
       }
@@ -250,22 +244,15 @@ export default function Mypage() {
       roomName = `${otherName}+${userName}`;
     }
 
-    console.log("roomName>>>", roomName);
     // room생성
     socket.emit("createRoom", roomName);
-    // console.log(clickroomidx);
-    //1. 클릭한 roomidx로 검색한 채팅 데이터 가져옴
-    // axios-chat
     const chatData = await axios.get(
       process.env.REACT_APP_API_SERVER + `/chatRoom/${clickroomidx}`
     );
 
-    console.log(chatData.data); //chats, msg, rooms
     const { chats, msg, user, sitter, roomidx } = chatData.data;
 
     setChatData(chats);
-    // setUserName(user.name);
-    // setSitterName(sitter.name);
     setRoomidx(roomidx);
   };
 
@@ -300,9 +287,7 @@ export default function Mypage() {
   };
 
   const sendImg = async (e: SyntheticEvent) => {
-    // alert("이미지 보냄!");
     e.preventDefault();
-    // console.log(selectedImage?.name);
     if (roomidx === 0) {
       setInputValue("");
       return alert("채팅방을 선택해주세요");
@@ -324,7 +309,6 @@ export default function Mypage() {
     };
     socket.emit("image", sendData);
 
-    // console.log(imgSrc);
     setSelectedImage(null);
   };
 
@@ -333,7 +317,6 @@ export default function Mypage() {
 
     // axios-chat
     const chatData = await axios.get(process.env.REACT_APP_API_SERVER + "/Onechat");
-    console.log("chatData", chatData.data);
     const { rooms } = chatData.data;
 
     setRoomList(rooms);
@@ -345,22 +328,15 @@ export default function Mypage() {
 
   const handleReviewClick = async (resvidx: number) => {
     const reveiwExist = await axios.get(process.env.REACT_APP_API_SERVER + "/review/" + resvidx);
-    // console.log("review가 있나요??", reveiwExist.data.data);
     if (reveiwExist.data.data.length > 0) {
-      console.log("review있음");
       setExistReview(reveiwExist.data.data[0]);
-      // setReviewRate(reveiwExist.data.data[0].rate);
-      // setReviewContent(reveiwExist.data.data[0].content);
-      // setExistReviewImage(reveiwExist.data.data[0].img);
-      console.log(reveiwExist.data.data[0]);
     } else {
-      console.log("review없음");
       setExistReview(null);
       setReviewRate(0);
       setReviewContent("");
       setReviewImage(null);
     }
-    setSelectedResvidx(resvidx); // 상태에 resvidx 저장
+    setSelectedResvidx(resvidx);
     setShowReviewModal(!showReviewModal);
   };
 
@@ -382,7 +358,6 @@ export default function Mypage() {
       }
     } else {
       // 사용자가 취소를 선택했을 때
-      console.log("예약 취소가 되지 않았습니다.");
     }
   };
 
@@ -456,7 +431,6 @@ export default function Mypage() {
 
   // 보기 버튼 클릭 시 호출되는 함수
   const handleViewReservation = (content: string) => {
-    console.log("모달 열기:", content);
     setSelectedReservationContent(content);
     setIsReservationModalVisible(true);
   };
@@ -545,7 +519,6 @@ export default function Mypage() {
                       ) : reservation.confirm === "refused" ? (
                         <FontAwesomeIcon icon={faTimes} style={{ color: "red" }} /> // X 표시
                       ) : (
-                        // <FontAwesomeIcon icon={faSpinner} style={{ color: "blue" }} />
                         <FontAwesomeIcon icon={faQuestion} style={{ color: "blue" }} /> // ? 표시
                       )}
                     </div>

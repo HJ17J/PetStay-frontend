@@ -91,6 +91,6 @@ backend
 ## 👨‍👩‍👧‍👦 Developer
 *  **신동원** ([eastorigin](https://github.com/eastorigin))
 *  **이형석** ([yhs0329](https://github.com/yhs0329))
-*  **임학민** ([sabb12](https://github.com/sabb12)
+*  **임학민** ([sabb12](https://github.com/sabb12))
 *  **진현정** ([HJ17J](https://github.com/HJ17J))
 *  **홍주희** ([hjh3933](https://github.com/hjh3933))

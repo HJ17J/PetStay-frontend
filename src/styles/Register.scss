@@ -14,11 +14,6 @@
   overflow: hidden;
 }
 
-.headerContainer {
-  position: relative;
-  z-index: 10;
-}
-
 .forms-container {
   position: absolute;
   width: 100%;
@@ -111,9 +106,9 @@ form.petsitter-form {
   background-color: #f0f0f0;
   margin: 10px 0;
   height: auto;
-  border-radius: 55px;
-  display: flex;
-  align-items: center;
+  border-radius: 20px;
+  display: flex; // Flexbox를 사용하여 자식 요소들을 나란히 배열
+  align-items: center; // 세로 중앙 정렬
   padding: 0 0.4rem;
   position: relative;
   textarea {

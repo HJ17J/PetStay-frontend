@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 const MainPage = () => {
   const { t } = useTranslation();
   return (
-    <div className="main-page">
+    <>
       <Header />
       <section className="intro-section">
         <div className="image-text-overlay">
@@ -35,7 +35,7 @@ const MainPage = () => {
         </div>
       </section>
       <Footer />
-    </div>
+    </>
   );
 };
 

@@ -177,7 +177,7 @@ export default function Userprofile({ toggleModal }: UserprofileProps) {
   };
   return (
     <div className="outerContainer">
-      {userInfo?.usertype === UserType.SITTER ? (
+      {userInfo?.usertype !== UserType.SITTER ? (
         !disableInput ? (
           <div className="innercontainer">
             <div className="imageContainer sections">

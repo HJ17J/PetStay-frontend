@@ -53,8 +53,8 @@ npm start
 ```
 
 ## 🔧 Stack
-- **Language**: JavaScript
-- **Library & Framework** : Node.js
+- **Language**: JavaScript, TypeScript
+- **Library & Framework** : Node.js, React
 - **Database** : AWS RDS (Mysql)
 - **ORM** : Sequelize
 - **Deploy**: AWS EC2
